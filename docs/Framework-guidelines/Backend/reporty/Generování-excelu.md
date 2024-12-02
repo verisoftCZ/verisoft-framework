@@ -22,6 +22,6 @@ private record TestDataRecord(string StringValue, int IntValue);
 ```
 
 Výsledný excel:
-![image.png](/.attachments/image-528ee3df-9c75-4206-b31e-edee1d0e7263.png)
+![image.png](/docs/.attachments/image-528ee3df-9c75-4206-b31e-edee1d0e7263.png)
 
 Pokud nejsou konfigurovány header/columns tak se používají defaultní hodnoty.

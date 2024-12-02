@@ -55,7 +55,7 @@ Defaultně není nutné definovat ApplicationInsights (ale loguje až od warnign
 
 
 Pro logování NEPOUŽÍVÁME interpolaci, ale logovací parametry viz výše. (Důvodem je performance a také možnost pak hledat dle logovaných parametrů v application insights)
-![image.png](/.attachments/image-590d8c4d-6a65-4470-803b-1f2fa3587aed.png)
+![image.png](/docs/.attachments/image-590d8c4d-6a65-4470-803b-1f2fa3587aed.png)
 
 Logování uživatelských akcí:
 `logger.LogInformation("User: {userId} updated XY: {entityId}", userId, entityId);`
