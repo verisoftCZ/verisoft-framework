@@ -1,0 +1,52 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/demoapi
+    build:
+      context: ./src
+      dockerfile: Verisoft.DemoApi/Verisoft.DemoApi.Host/Dockerfile
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=DevelopmentDocker
+      - ConnectionStrings__DefaultConnection=Server=db;Database=VerisoftFramework;User Id=sa;Password=your.password!;MultiSubnetFailover=True;TrustServerCertificate=True;Encrypt=False;Persist Security Info=True;
+      - RabbitMQ__Host=rabbitmq
+
+  # frontend:
+  #    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/app
+  #    build:
+  #      context: ./src/Verisoft.Frontend
+  #      dockerfile: Dockerfile
+  #    depends_on:
+  #      - api
+
+  db:
+    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/db
+    build:
+      context: ./deploy/db
+      dockerfile: Dockerfile
+    ports:
+      - 1433:1433
+
+  router:
+     image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/router
+     build:
+       context: ./deploy/router
+       dockerfile: Dockerfile
+     ports:
+       - 80:80
+     depends_on:
+       - api
+       - frontend
+
+  rabbitmq:
+      image: rabbitmq:management
+      container_name: rabbitmq
+      ports:
+        - 5672:5672  
+        - 15672:15672
+      environment:
+        RABBITMQ_DEFAULT_USER: user
+        RABBITMQ_DEFAULT_PASS: password

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<ProjectCapability Include="AspNetCore" />
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
+	<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Core" Version="2.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+    <ProjectReference Include="..\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
+    <ProjectReference Include="..\Verisoft.Core.Common\Verisoft.Core.Common.csproj" />
+    <ProjectReference Include="..\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
+  </ItemGroup>
+	
+	
+	<PropertyGroup>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+</Project>

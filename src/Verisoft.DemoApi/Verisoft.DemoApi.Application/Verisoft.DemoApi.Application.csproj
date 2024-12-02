@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MassTransit.Abstractions" Version="8.1.3" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Excel\Verisoft.Core.Excel.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.ExportStrategies\Verisoft.Core.ExportStrategies.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Pdf\Verisoft.Core.Pdf.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Template\Verisoft.Core.Template.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.TypeMapper\Verisoft.Core.TypeMapper.csproj" />
+	  <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
+	  <ProjectReference Include="..\Verisoft.DemoApi.Contracts\Verisoft.DemoApi.Contracts.csproj" />
+	</ItemGroup>
+
+</Project>

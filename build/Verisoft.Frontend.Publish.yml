@@ -1,0 +1,34 @@
+pool:
+  vmImage: ubuntu-latest
+  name: 'VerisoftHosted'
+
+variables: 
+  applicationPath: 'src/Verisoft.Frontend'
+
+trigger: none
+pr: none
+
+jobs:
+- job: Publish
+  displayName: Publish
+  timeoutInMinutes: 10
+  steps:
+  - checkout: self
+    fetchDepth: 0
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '20.x'
+      registryUrl: 'https://registry.npmjs.org/'
+
+  - script: |
+      npm install --include=optional
+    displayName: 'Install dependencies'
+    workingDirectory: $(applicationPath)
+
+  - script: |
+      npm run publish
+    displayName: 'Publish packages'
+    workingDirectory: $(applicationPath)
+    env:
+      NODE_AUTH_TOKEN: $(NPM_ACCESS_TOKEN)

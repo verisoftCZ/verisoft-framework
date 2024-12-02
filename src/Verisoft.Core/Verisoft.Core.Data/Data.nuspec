@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Verisoft.Core.Data</id>
+    <version>1.0.0.0</version>
+    <title>Verisoft.Core.Data</title>
+    <authors>Verisoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Verisoft.Core.Data</description>
+  </metadata>
+  <files>
+    <file src="bin\Release\net6.0\Verisoft.Core.Data.dll" target="lib\Verisoft.Core.Data.dll" />
+  </files>
+</package>

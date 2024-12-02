@@ -1,0 +1,44 @@
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    include:
+    - src/Verisoft.Core/**
+
+pool:
+  vmImage: 'ubuntu-latest'
+  name: 'VerisoftHosted'
+
+variables:
+  project: '**/Verisoft.Core.*/*.csproj'
+  test: '**/Verisoft.Core.*.Test/*.csproj'
+  buildConfiguration: 'Release'
+  netCoreSdkVersion: '8.x'
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK $(netCoreSdkVersion)'
+  inputs:
+    version: $(netCoreSdkVersion)
+
+- task: NuGetToolInstaller@1
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '$(project)'
+    feedsToUse: 'select'
+    vstsFeed: '5e1c1cd0-6e9d-43e0-a570-faca2b5ac27c'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(project)'
+    arguments: '-c $(buildConfiguration)'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '$(test)'

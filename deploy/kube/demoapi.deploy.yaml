@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verisoft-fmw-demoapi
+  namespace: dev
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector: 
+    matchLabels:
+      app: verisoft-fmw-demoapi
+  template:
+    metadata:
+      labels:
+        app: verisoft-fmw-demoapi
+    spec:
+      containers:
+      - name: verisoft-fmw-demoapi
+        image: verisoft.azurecr.io/verisoft/fmw/demoapi:1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: "ASPNETCORE_ENVIRONMENT"
+          value: "DEV"
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "100m"
+          limits:
+            memory: "300Mi"

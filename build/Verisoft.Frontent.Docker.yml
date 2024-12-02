@@ -1,0 +1,28 @@
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    include:
+    - src/Verisoft.Frontend
+
+pool:
+  vmImage: ubuntu-latest
+  name: 'VerisoftHosted'
+
+variables:
+  tag: '$(Build.BuildId)'
+  imageName: 'verisoft/fmw/frontend'
+  frontendDirectory: 'src/Verisoft.Frontend'
+
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'verisoft'
+    repository: $(imageName)
+    command: 'buildAndPush'
+    Dockerfile: '$(frontendDirectory)/Dockerfile'
+    tags: |
+      $(Build.BuildId)
+      latest

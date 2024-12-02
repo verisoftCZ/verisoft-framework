@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    include:
+    - src/Verisoft.Frontend
+
+pool:
+  vmImage: ubuntu-latest
+  name: 'VerisoftHosted'
+
+variables:
+  applicationPath: 'src/Verisoft.Frontend'
+    
+steps:
+- task: CmdLine@2
+  inputs:
+    script: 'echo $(environment)'
+
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Install Node.js'
+
+
+- script: |
+    npm install --include=optional
+    npm run lint
+    npm run build -- --prod
+  displayName: 'Npm install and build'
+  workingDirectory: $(applicationPath)

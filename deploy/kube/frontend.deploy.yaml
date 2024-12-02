@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verisoft-fmw-frontend
+  namespace: dev
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector: 
+    matchLabels:
+      app: verisoft-fmw-frontend
+  template:
+    metadata:
+      labels:
+        app: verisoft-fmw-frontend
+    spec:
+      containers:
+      - name: verisoft-fmw-frontend
+        image: verisoft.azurecr.io/verisoft/fmw/frontend:1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: "APP_BASE_PATH"
+          value: "/fmw/"
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "100m"
+          limits:
+            memory: "100Mi"

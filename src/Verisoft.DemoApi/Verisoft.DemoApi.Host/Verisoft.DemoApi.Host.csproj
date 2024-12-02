@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+		<UserSecretsId>ffc0067e-a770-4279-a5d8-ba31533fb099</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+		<ContainerUser>root</ContainerUser>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet.Concurency\Verisoft.Core.AspNet.Concurency.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.MicrosoftIdentity\Verisoft.Core.Authentication.MicrosoftIdentity.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
+      <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.BlobStorage\Verisoft.Core.BlobStorage.csproj" />
+	  <ProjectReference Include="..\Verisoft.DemoApi.Application\Verisoft.DemoApi.Application.csproj" />
+	  <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
+	  <ProjectReference Include="..\Verisoft.DemoApi.Data.EF\Verisoft.DemoApi.Data.EF.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="InstallExtensions\Hangfire\" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+	</PropertyGroup>
+
+</Project>

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="NSwag.MSBuild" Version="14.2.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<Target Name="NSwag" AfterTargets="PreBuildEvent" Condition=" '$(GenerateClientProxyOnBuild)' == 'true' ">
+		<Message Importance="High" Text="Proxy is generating" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="$(NSwagExe) openapi2csclient /Output:Client.generated.partial.cs /Input:http://localhost/api/swagger/v2/swagger.json /Namespace:Verisoft.DemoApi.Client /GenerateDtoTypes:True /ClientBaseClass:ClientBase /UseHttpClientCreationMethod:True /InjectHttpClient:False /UseBaseUrl:False /OperationGenerationMode:MultipleClientsFromFirstTagAndOperationId /ResponseArrayType:System.Collections.Generic.List /ConfigurationClass:IClientSettings /DateType:System.DateTime /DateTimeType:System.DateTime" />
+	</Target>
+
+</Project>
