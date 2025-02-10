@@ -1,0 +1,11 @@
+@if (level === 0){
+<h1 class="doc-component__header" [attr.id]="id">{{ title }}</h1>
+} @else if (level && level > 1) {
+<h3 class="doc-component__header" [attr.id]="id">{{ title }}</h3>
+} @else {
+<h2 class="doc-component__header" [attr.id]="id">{{ title }}</h2>
+} @if (description){
+<div class="doc-component__description mb-2">
+  <p [innerHTML]="description"></p>
+</div>
+}

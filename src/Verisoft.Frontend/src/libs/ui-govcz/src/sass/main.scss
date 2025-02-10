@@ -1,0 +1,84 @@
+$version: "0.0.1";
+
+@import "./vendors/bootstrap";
+
+@import "@gov-design-system-ce/styles/lib/tokens.css";
+
+@import "@gov-design-system-ce/styles/lib/styles.css";
+@import "@gov-design-system-ce/styles/lib/layout.css";
+@import "@gov-design-system-ce/styles/lib/components.css";
+
+@import "@gov-design-system-ce/fonts/lib/roboto.css";
+
+:root {
+    --secondary-color: #64748b;
+}
+
+.gov-header {
+    max-height: 11.5rem;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-page-white);
+    font-family: "Roboto", sans-serif;
+    font-size: .9375rem;
+    font-weight: 400;
+    letter-spacing: .0125em;
+    -webkit-font-smoothing: antialiased
+}
+
+.gov-page {
+    display: flex;
+    flex-direction: column;
+}
+
+.gov-main-container {
+    max-width: 70rem;
+    margin: 0 auto;
+    height: 100vh;
+    flex-grow: 1;
+    flex-wrap: wrap;
+}
+
+.gov-sidemenu {
+    min-width: 10rem;
+    overflow: auto;
+    height: calc(100vh - 16rem);
+}
+
+.gov-breadcrums {
+    max-height: 1.5rem;
+}
+
+.gov-accordion-item__summary {
+    background-color: var(--color-primary-200);
+}
+
+.bg-primary {
+    background-color: var(--color-primary-600) !important;
+}
+
+.v-filter h2 {
+    font-size: var(--font-size-1xl);
+}
+
+.v-filter_action-buttons button {
+    background-color: var(--color-primary-50) !important;
+    border: 1px solid var(--border-primary);
+    color: var(--color-primary-600) !important;
+
+    &:hover {
+        background-color: var(--color-primary-200) !important;
+    }
+}
+
+.v-action-button-group button {
+    background-color: var(--color-primary-50) !important;
+    color: var(--color-primary-600) !important;
+
+    &:hover {
+        background-color: var(--color-primary-200) !important;
+    }
+}

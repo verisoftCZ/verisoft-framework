@@ -1,0 +1,25 @@
+:root {
+  font-family: 'Roboto', sans-serif;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../../fonts/orbitron-bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Orbitron';
+  src: url('../../fonts/orbitron-black.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+a {
+  color: var(--primary-color);
+
+  &:visited {
+    color: var(--primary-color);
+  }
+}

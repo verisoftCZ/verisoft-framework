@@ -1,0 +1,20 @@
+.gov-header__button {
+    color: var(--color-neutral-0);
+
+    &:hover {
+        color: var(--gov-color-blue);
+    }
+}
+
+.gov-header__user-info {
+    text-align: right;
+    color: var(--color-neutral-0);
+}
+
+.gov-header__link .gov-link {
+    color: var(--color-neutral-0);
+}
+
+.gov-header__item-user-info {
+    margin-right: 1rem;
+}

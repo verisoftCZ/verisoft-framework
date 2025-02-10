@@ -1,0 +1,36 @@
+{
+  "name": "ui-primeng",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "src/libs/ui-primeng/src",
+  "prefix": "verisoft",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "src/libs/ui-primeng/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "src/libs/ui-primeng/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "src/libs/ui-primeng/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "src/libs/ui-primeng/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

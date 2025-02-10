@@ -1,0 +1,23 @@
+.gov-category-list__nav-link gov-icon {
+    display: block;
+    position: absolute;
+    right: .625rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    
+    &-:hover {
+        color: (--color-neutral-0);
+    }
+}
+
+.gov-link {
+    text-decoration: none;
+}
+
+.gov-category-list__nav-active {
+    background-color: var(--color-primary-600);
+    
+    & span {
+        color: var(--color-neutral-0);
+    }
+}

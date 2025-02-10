@@ -1,0 +1,33 @@
+<gov-form-control>
+  @if (ngControl && ngControl.errors) {
+  <gov-form-message
+    [slot]="errorSlot"
+    color="error"
+  >
+    {{ngControl.errors | error}}
+    <gov-icon 
+      type="components"
+      name="exclamation-triangle-fill" 
+      slot="icon" 
+    />
+  </gov-form-message>
+  } 
+  <gov-form-label 
+    [slot]="label"
+    [size]="size | govSize"
+  >
+    {{ label }}
+  </gov-form-label>
+  <gov-form-multi-select
+    [size]="size | govSize"
+    [formControl]="formControl"
+    [required]="required"
+    [invalid]="ngControl && ngControl.errors" 
+    [options]="options | govMultiselectOptions"
+    [placeholder]="placeholder ?? ''"
+    (gov-focus)="onDropdownShow()"
+    (gov-remove)="onDropdownClear()"
+    (gov-change)="selectionChange($event)"
+    (lazyLoadEvent)="onLazyLoad($any($event))"
+  />
+</gov-form-control>

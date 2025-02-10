@@ -1,0 +1,32 @@
+<div class="v-input-group w-100">
+  <v-form-field
+    [label]="label"
+    [required]="required"
+    [tooltip]="tooltip"
+    [ngControl]="ngControl"
+  >
+    <p-inputGroup>
+      <ng-container *ngFor="let item of items">
+        <p-inputGroupAddon *ngIf="item.position === 'left'">
+          <ng-container *ngIf="item.icon">
+            <i [class]="item.icon"></i>
+          </ng-container>
+          <ng-container *ngIf="item.text">
+            {{ item.text }}
+          </ng-container>
+        </p-inputGroupAddon>
+      </ng-container>
+      <input pInputText [formControl]="formControl" class="w-100" />
+      <ng-container *ngFor="let item of items">
+        <p-inputGroupAddon *ngIf="item.position === 'right'">
+          <ng-container *ngIf="item.icon">
+            <i [class]="item.icon"></i>
+          </ng-container>
+          <ng-container *ngIf="item.text">
+            {{ item.text }}
+          </ng-container>
+        </p-inputGroupAddon>
+      </ng-container>
+    </p-inputGroup>
+  </v-form-field>
+</div>

@@ -1,0 +1,28 @@
+<v-header 
+    class="nav-bar"
+    title="VERISOFT"
+    [logoUrl]="'../../assets/images/_global/logos/v-logo.webp'"
+    [userName]="'Jára da Cimrman'"
+    [userRole]="'ateista strachující se Boha'"
+    [menuRef]="main"
+/>
+
+<div class="main-container" #main>
+    <aside>
+    <v-side-menu 
+        class="d-none d-md-block"
+        [items]="items"
+        (minimalized)="menuMinimalized($event)"
+        logoUrl="./assets/logos/v-logo.svg"
+        />
+    </aside>
+
+    <main class="prime-main w-100">
+        <div class="main-container-content">
+            <v-confirm-dialog/>
+            <v-breadcrumb [useHomeRoute]="true"/>
+            <v-snackbar class="mt-2" />
+            <router-outlet/>
+        </div>
+    </main>
+</div>

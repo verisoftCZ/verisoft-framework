@@ -1,0 +1,16 @@
+<gov-toast
+    [closeLabel]="config.closeLabel ?? closeLabel"
+    [color]="config.color || color"
+    [gravity]="config.gravity || gravity"
+    [position]="config.position || position"
+    [time]="config.time ?? time"
+    [type]="config.type || type"
+>
+    @if (config.icon || icon) {
+    <gov-icon
+        [name]="config.icon || icon"
+        type="components"
+        slot="icon"
+    />
+    } {{ config.message || message }}
+</gov-toast>

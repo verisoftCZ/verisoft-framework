@@ -1,0 +1,27 @@
+<div
+  class="v-action-button-group align-items-center justify-content-center justify-content-md-end"
+>
+  <div class="v-action-button-group__actions d-flex gap-2">
+    @for (action of visibleActions; track action) {
+    <v-action-button
+      [disabled]="action.disabled"
+      [icon]="action.icon"
+      [id]="action.id"
+      [outlined]="action.outlined"
+      [raised]="action.raised"
+      [toolTip]="action.toolTip || action.label"
+      [severity]="action.severity"
+      [size]="action.size"
+      (click)="fireClick(action, $event)"
+    ></v-action-button>
+    } @if (actions.length > visibleActions.length) {
+    <v-button
+      (click)="menu.toggle($event)"
+      [label]="label"
+      [iconPos]="menuIconPos"
+      [icon]="menuIcon"
+    />
+    }
+  </div>
+</div>
+<p-menu #menu [model]="menuItems" [popup]="true" appendTo="body" />

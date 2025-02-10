@@ -1,0 +1,25 @@
+<h6>{{ label }}</h6>
+<gov-form-control>
+  @if (ngControl?.errors) {
+  <gov-form-message [slot]="errorSlot" color="error">
+    {{ ngControl?.errors | error }}
+    <gov-icon type="components" name="exclamation-triangle-fill" slot="icon" />
+  </gov-form-message>
+  }
+  <gov-form-radio-group [formControl]="formControl">
+    @if (items) { @for(item of items; track item) {
+    <gov-form-radio
+      [size]="size"
+      [value]="item.value"
+      [required]="required"
+      [identifier]="item.id"
+      [name]="radioGroupName"
+      [invalid]="ngControl?.errors"
+    >
+      <gov-form-label [size]="size" slot="label">
+        {{ item.value }}
+      </gov-form-label>
+    </gov-form-radio>
+    } }
+  </gov-form-radio-group>
+</gov-form-control>

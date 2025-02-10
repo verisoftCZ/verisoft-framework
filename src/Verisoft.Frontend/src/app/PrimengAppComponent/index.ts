@@ -1,0 +1,1 @@
+export * from './primeng-app.component';

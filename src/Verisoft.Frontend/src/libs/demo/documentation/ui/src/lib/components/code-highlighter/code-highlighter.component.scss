@@ -1,0 +1,9 @@
+@use "sass:meta";
+
+.v-code-highlighter {
+    @include meta.load-css("node_modules/prismjs/themes/prism-okaidia.css");
+    
+    pre {
+        border-radius: 0.5rem;  
+    }
+}

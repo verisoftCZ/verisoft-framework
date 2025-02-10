@@ -1,0 +1,9 @@
+.p-progress-spinner-circle {
+    stroke: var(--primary-color);
+    stroke-linecap: round;
+    animation: p-progress-spinner-dash 1.5s ease-in-out infinite;
+    width: 3rem;
+    height: 3rem;
+    stroke-width: "8";
+    animation-duration: 2s;
+}

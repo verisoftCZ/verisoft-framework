@@ -1,0 +1,67 @@
+<div class="v-filter w-100 p-3 bg-primary">
+  @if (formGroup$ | async; as formGroup){
+  <form [formGroup]="formGroup" class="d-flex align-items-center">
+    @if (title) {
+    <div class="v-filter_title pe-4">
+      <h2 class="text-white m-0">{{ title }}</h2>
+    </div>
+    }
+    <div class="v-filter__fulltext flex-grow-1 pe-4">
+      @if (showFulltext){
+      <v-textfield
+        class="d-none d-lg-block"
+        placeholder="Search"
+        size="large"
+        formControlName="searchField"
+        type="search"
+        [clearable]="true"
+      >
+      </v-textfield>
+      }
+    </div>
+    @if (simpleFormFieldDefinitions$ | async; as declaration){
+       @if (showFilters)
+    {
+    <div class="v-filter_filters d-none d-sm-block me-2">
+      <v-generic-form
+        [fields]="declaration"
+        [formGroup]="formGroup"
+      ></v-generic-form>
+    </div>
+  }
+    <div class="v-filter_action-buttons d-flex">
+      @if (declaration.length && !showFilters) {
+      <v-button 
+        class="me-4"
+        [icon]="icons.filter"
+        [label]="$any(filledFiltersCount$ | async)"
+        (click)="openFilter()"
+      />
+      } @if (!autoBind) {
+      <v-button
+        useShortCut
+        [shortCutFn]="submitValue.bind(this)"
+        shortCutKey="Enter"
+        class="text-white mx-2"
+        [outlined]="true"
+        size="small"
+        label="Apply"
+        (click)="submitValue()"
+      ></v-button>
+      <v-button
+        useShortCut
+        [shortCutFn]="clear.bind(this)"
+        shortCutKey="Escape"
+        class="text-white"
+        [outlined]="true"
+        size="small"
+        label="Clear"
+        (click)="clear()"
+      ></v-button>
+      } 
+    </div>
+    }
+    <ng-content select="v-action-button-group"></ng-content>
+  </form>
+  }
+</div>

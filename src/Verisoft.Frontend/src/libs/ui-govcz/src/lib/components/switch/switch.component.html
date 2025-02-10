@@ -1,0 +1,21 @@
+<gov-form-control>
+  @if (ngControl && ngControl.errors) {
+  <gov-form-message *ngIf="ngControl?.errors" [slot]="errorSlot" color="error">
+    {{ ngControl.errors | error }}
+    <gov-icon type="components" name="exclamation-triangle-fill" slot="icon" />
+  </gov-form-message>
+  }
+  <gov-form-switch
+    [formControl]="formControl"
+    [size]="size"
+    [required]="required"
+    [name]="name"
+    [invalid]="ngControl?.errors"
+  >
+    @if (label && !noLabel) {
+    <gov-form-label [size]="size" slot="label">
+      {{ label }}
+    </gov-form-label>
+    }
+  </gov-form-switch>
+</gov-form-control>

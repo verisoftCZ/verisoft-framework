@@ -1,0 +1,14 @@
+{
+  "name": "@verisoft/store",
+  "version": "18.0.0",
+  "peerDependencies": {
+    "@ngrx/effects": "18.0.2",
+    "@ngrx/store": "^18.0.2",
+    "@verisoft/core": "18.0.0",
+    "rxjs": "~7.8.0"
+  },
+  "dependencies": {
+    "@verisoft/store": "file:"
+  },
+  "sideEffects": false
+}

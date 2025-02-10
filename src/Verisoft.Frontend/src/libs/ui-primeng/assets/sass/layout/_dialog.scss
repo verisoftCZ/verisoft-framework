@@ -1,0 +1,13 @@
+.p-dialog .p-dialog-footer button {
+    margin: 0;
+}
+
+.v-dialog-header > i {
+    font-size: 2rem;
+}
+
+.v-dialog-footer .p-button.p-button-success:not(.p-button-text):not(.p-button-outlined),
+.p-button-group.p-button-success>.p-button,
+.p-splitbutton.p-button-success>.p-button {
+    padding: 0.5rem 2.5rem;
+}

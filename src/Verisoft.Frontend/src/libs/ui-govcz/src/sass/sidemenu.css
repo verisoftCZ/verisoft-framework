@@ -1,0 +1,215 @@
+.gov-category-list {
+    display: block;
+    padding: 1.25rem 0;
+    width: 100%
+}
+
+.gov-category-list__inner {
+    display: flex;
+    width: 100%
+}
+
+.gov-category-list__col {
+    flex: 1
+}
+
+.gov-category-list__col-inner {
+    position: relative;
+    min-height: 100%
+}
+
+.gov-category-list__col-inner:after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--color-neutral-200)
+}
+
+.gov-category-list__back-btn {
+    display: inline-block;
+    margin-left: -0.625rem;
+    cursor: pointer;
+    text-decoration: none;
+    vertical-align: middle
+}
+
+.gov-category-list__back-btn:after {
+    content: "c";
+    display: block;
+    position: relative;
+    color: var(--color-primary-600);
+    font-family: "gov-basic-icons";
+    font-size: 24px
+}
+
+.gov-category-list__nav {
+    position: relative;
+    z-index: 2
+}
+
+.gov-category-list__nav .gov-category-list__nav-item {
+    margin-bottom: 0
+}
+
+.gov-category-list__nav-item:before {
+    display: none
+}
+
+.gov-category-list__nav-link {
+    display: block;
+    padding: .9375rem 1.25rem;
+    padding-right: 1.875rem;
+    width: 100%;
+    color: var(--color-primary-600);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 256ms ease-out;
+    will-change: background-color;
+}
+
+.gov-category-list__nav-link .gov-note {
+    max-width: 90%
+}
+
+.gov-category-list__nav-link.is-active {
+    background-color: var(--color-primary-600);
+    color: var(--color-neutral-0)
+}
+
+.gov-category-list__nav-link.is-active .gov-link,
+.gov-category-list__nav-link.is-active .gov-sortable-table__trigger,
+.gov-category-list__nav-link.is-active .gov-portal-nav__link,
+.gov-category-list__nav-link.is-active .gov-fileinput__attachments>li>span {
+    color: var(--color-neutral-0);
+    text-decoration: none
+}
+
+.gov-category-list__nav-link.is-active .gov-note {
+    color: var(--color-neutral-0)
+}
+
+@media not all and (pointer: coarse) {
+    .gov-category-list__nav-link:hover {
+        background-color: var(--color-primary-600);
+        color: var(--color-neutral-0) !important;
+        text-decoration: none
+    }
+
+    .gov-category-list__nav-link:hover .gov-link,
+    .gov-category-list__nav-link:hover .gov-sortable-table__trigger,
+    .gov-category-list__nav-link:hover .gov-portal-nav__link,
+    .gov-category-list__nav-link:hover .gov-fileinput__attachments>li>span {
+        color: var(--color-neutral-0);
+        text-decoration: none
+    }
+
+    .gov-category-list__nav-link:hover .gov-note {
+        color: var(--color-neutral-0)
+    }
+}
+
+.gov-category-list__subcategories .gov-category-list__col-inner,
+.gov-category-list__tasks .gov-category-list__col-inner {
+    display: none
+}
+
+.gov-category-list__subcategories .gov-category-list__col-inner.is-active,
+.gov-category-list__tasks .gov-category-list__col-inner.is-active {
+    display: block
+}
+
+.gov-category-list__subcategories .gov-category-list__content,
+.gov-category-list__tasks .gov-category-list__content {
+    padding: 0 1.25rem
+}
+
+.gov-category-list__subcategories .gov-note,
+.gov-category-list__tasks .gov-note {
+    margin-top: .625rem
+}
+
+@media(min-width: 52em) {
+
+    .gov-category-list__subcategories .gov-category-list__content,
+    .gov-category-list__subcategories .gov-category-list__nav-link,
+    .gov-category-list__tasks .gov-category-list__content,
+    .gov-category-list__tasks .gov-category-list__nav-link {
+        padding-left: 2.5rem
+    }
+
+    .gov-category-list__tasks .gov-category-list__back-btn {
+        display: none
+    }
+}
+
+@media(max-width: 51.99em) {
+    .gov-category-list {
+        overflow: hidden
+    }
+
+    .gov-category-list__inner {
+        width: 200%
+    }
+
+    .gov-category-list__subcategories .gov-category-list__col-inner:after {
+        display: none
+    }
+
+    .gov-category-list.tasks-visible .gov-category-list__inner {
+        transform: translateX(-50%)
+    }
+}
+
+@media(min-width: 26em) {
+    .gov-category-list__col {
+        flex: 1
+    }
+
+    .gov-category-list__col--wide {
+        flex: 2
+    }
+
+    .gov-category-list__col--wide .gov-category-list__col-inner:after {
+        display: none
+    }
+
+    .gov-category-list__subcategories .gov-category-list__back-btn {
+        display: none
+    }
+}
+
+@media(max-width: 25.99em) {
+    .gov-category-list {
+        position: relative;
+        left: -1.25rem;
+        width: 100vw
+    }
+
+    .gov-category-list__inner {
+        width: 300%
+    }
+
+    .gov-category-list__col-inner:after {
+        display: none
+    }
+
+    .gov-category-list.subcategories-visible .gov-category-list__inner {
+        transform: translateX(-33.3333334%)
+    }
+
+    .gov-category-list.tasks-visible .gov-category-list__inner {
+        transform: translateX(-66.6666667%)
+    }
+
+    .gov-category-list.tasks-visible .gov-category-list__subcategories .gov-category-list__col-inner {
+        display: none
+    }
+
+    .gov-category-list.subcategories-visible .gov-category-list__categories .gov-category-list__col-inner,
+    .gov-category-list.tasks-visible .gov-category-list__categories .gov-category-list__col-inner {
+        display: none
+    }
+}

@@ -1,0 +1,140 @@
+<div class="v-table">
+  @if (loading) {
+  <div class="v-table__loader-wrapper">
+    <div class="v-table__loader">Loading</div>
+  </div>
+  }
+  <div class="v-table__scroll-wrapper">
+    <table class="v-table__table">
+      <thead class="v-table__head">
+        <tr class="v-table__header">
+          @if (selectionMode === 'multiple') {
+          <th scope="col">
+            <gov-form-checkbox
+              [checked]="allSelected"
+              (gov-change)="toggleAll($event)"
+            ></gov-form-checkbox>
+          </th>
+          } @for (column of tableColumns; track column; let index = $index) {
+          <th scope="col" [style.width]="column.width">
+            <span
+              [class.v-table__sortable]="column.sortable"
+              [class.v-table__sortable--desc]="
+                column.sortable && column.sortDirection === 'desc'
+              "
+              [class.v-table__sortable--asc]="
+                column.sortable && column.sortDirection === 'asc'
+              "
+              (click)="sortColumn(column)"
+              >{{ column.headerGetter(column.id, index) }}</span
+            >
+          </th>
+          } @if (this.rowDetailTemplate) {
+          <th></th>
+          }
+        </tr>
+      </thead>
+      <tbody class="v-table__body">
+        @for (data of tableRowView; track data.id; let rowIndex = $index) {
+        <tr
+          class="v-table__row"
+          [class.v-table__row--selected]="
+            data.selected && selectionMode === 'single'
+          "
+          (click)="selectRow(data)"
+        >
+          @if (selectionMode === 'multiple') {
+          <td>
+            <gov-form-checkbox
+              [checked]="data.selected"
+              (gov-change)="selectRowCheckbox(data, $event)"
+            ></gov-form-checkbox>
+          </td>
+          } @for (column of tableColumns; track column; let columnIndex =
+          $index) {
+          <td
+            [class]="column.columnClass!"
+            [class.v-auto-cell]="column.template"
+          >
+            @if (column.template) {
+            <ng-container
+              *ngTemplateOutlet="
+                column.template;
+                context: { $implicit: data.row }
+              "
+            ></ng-container>
+            } @else {
+            <span
+              [queryParams]="
+                column.queryParams ? column.queryParams : undefined
+              "
+              [routerLink]="
+                column.routerLink ? column.routerLink(data.row) : undefined
+              "
+              [innerHTML]="column.valueGetter(data.row, rowIndex)"
+            ></span>
+            }
+          </td>
+          } @if (this.rowDetailTemplate) {
+          <td>
+            <gov-button
+              color="primary"
+              type="outlined"
+              (gov-click)="toggleDetail(data)"
+            >
+              <gov-icon
+                [name]="data.expanded ? 'chevron-up' : 'chevron-right'"
+                slot="icon-start"
+              ></gov-icon>
+            </gov-button>
+          </td>
+          }
+        </tr>
+        @if (this.rowDetailTemplate && data.expanded) {
+        <tr>
+          <td [attr.colspan]="tableColumns.length + 1">
+            <ng-container
+              class="w-100"
+              *ngTemplateOutlet="
+                this.rowDetailTemplate;
+                context: { $implicit: data.row }
+              "
+            ></ng-container>
+          </td>
+        </tr>
+        } } @if (!tableRows.length && !loading){
+        <td [attr.colspan]="tableColumns.length">
+          <div class="text-center">Neobsahuje žádné záznamy</div>
+        </td>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="v-table__paginator d-flex">
+    <div>
+      <gov-pagination
+        [current]="currentPage"
+        [pageSize]="pageSize"
+        [total]="lazy ? total : tableRows.length"
+        [type]="'button'"
+        (gov-page)="changePage($event)"
+      ></gov-pagination>
+    </div>
+    <div class="ms-4">
+      <gov-form-select
+        [options]="pageSizeOptions"
+        [value]="govPageSize"
+        (gov-change)="changePageSize($event)"
+      ></gov-form-select>
+    </div>
+    @if (tableRows.length) {
+    <div class="ms-3 mt-2">
+      <span>
+        Showing {{ (currentPage - 1) * pageSize + 1 }} 
+        to {{ currentPage * pageSize < tableRows.length ? currentPage * pageSize : tableRows.length }} 
+        of {{ tableRows.length }} entries
+      </span>
+    </div>
+    }
+  </div>
+</div>

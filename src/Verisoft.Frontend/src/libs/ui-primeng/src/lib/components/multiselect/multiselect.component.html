@@ -1,0 +1,69 @@
+<div class="v-multiple-select">
+  <ng-container *ngIf="label && !floatLabel">
+    <v-form-field
+      class="w-100"
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [ngControl]="ngControl"
+      [testId]="testId"
+      [display]="formDisplay"
+    >
+      <p-multiSelect
+        [baseZIndex]="9999"
+        class="w-100"
+        appendTo="body"
+        [formControl]="formControl"
+        [title]="label"
+        display="chip"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [optionValue]="optionValue"
+        [loading]="loading"
+        [placeholder]="placeholder ? placeholder : label"
+        [virtualScrollItemSize]="25"
+        [lazy]="true"
+        [tooltip]="tooltip"
+        [required]="isRequired()"
+        [showClear]="formControl && clearable && !readonly"
+        [virtualScroll]="lazy"
+        [virtualScrollItemSize]="virtualOptionSize"
+        [virtualScrollOptions]="virtualScrollOptions"
+        (showEvent)="onDropdownShow()"
+        (clearEvent)="onDropdownClear()"
+        (changeEvent)="selectionChange($event)"
+        (lazyLoadEvent)="onLazyLoad($any($event))"
+      ></p-multiSelect>
+    </v-form-field>
+  </ng-container>
+  <ng-container *ngIf="floatLabel">
+    <p-floatLabel>
+      <p-multiSelect
+        [baseZIndex]="9999"
+        class="w-100"
+        appendTo="body"
+        [formControl]="formControl"
+        [title]="label"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [optionValue]="optionValue"
+        [loading]="loading"
+        [placeholder]="placeholder ? placeholder : label"
+        [virtualScrollItemSize]="25"
+        [lazy]="true"
+        [tooltip]="tooltip"
+        [required]="isRequired()"
+        [inputId]="inputId"
+        [showClear]="formControl && clearable && !readonly"
+        [virtualScroll]="lazy"
+        [virtualScrollItemSize]="virtualOptionSize"
+        [virtualScrollOptions]="virtualScrollOptions"
+        (showEvent)="onDropdownShow()"
+        (clearEvent)="onDropdownClear()"
+        (changeEvent)="selectionChange($event)"
+        (lazyLoadEvent)="onLazyLoad($any($event))"
+      ></p-multiSelect>
+      <label [for]="inputId">{{ floatLabel }}</label>
+    </p-floatLabel>
+  </ng-container>
+</div>

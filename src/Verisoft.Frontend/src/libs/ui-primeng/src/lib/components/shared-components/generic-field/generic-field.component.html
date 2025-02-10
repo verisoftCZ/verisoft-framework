@@ -1,0 +1,54 @@
+@if (!type || type === fieldTypes.text) {
+<v-textfield
+  [label]="label"
+  [floatLabel]="floatLabel === true"
+  [size]="size"
+  [formControl]="formControl"
+></v-textfield>
+} @if (type === fieldTypes.dropdown) {
+<v-dropdown
+  [label]="!floatLabel ? label : ''"
+  [floatLabel]="floatLabel ? label : ''"
+  [testId]="testId"
+  [options]="options"
+  [optionLabel]="optionLabel"
+  [optionValue]="optionValue ?? optionLabel"
+  [loading]="loading"
+  [formControl]="formControl"
+  (changeEvent)="changed.emit($event)"
+  (clearEvent)="cleared.emit($event)"
+  (lazyLoadEvent)="lazyLoad.emit($any($event))"
+  (showEvent)="showed.emit($event)"
+>
+</v-dropdown>
+} @else if (type === fieldTypes.multiselect) {
+<v-multiselect
+  [label]="!floatLabel ? label : ''"
+  [floatLabel]="floatLabel ? label : ''"
+  [testId]="testId"
+  [options]="options"
+  [optionLabel]="optionLabel"
+  [optionValue]="optionValue ?? optionLabel"
+  [loading]="loading"
+  [formControl]="formControl"
+  (changeEvent)="changed.emit($event)"
+  (clearEvent)="cleared.emit($event)"
+  (lazyLoadEvent)="lazyLoad.emit($any($event))"
+  (showEvent)="showed.emit($event)"
+>
+</v-multiselect>
+} @else if (type === fieldTypes.checkbox) {
+<v-tristatecheckbox
+  [label]="label"
+  [testId]="testId"
+  [formControl]="formControl"
+></v-tristatecheckbox>
+} @else if (type === fieldTypes.calendar) {
+<v-calendar
+  [label]="!floatLabel ? label : ''"
+  [floatLabel]="floatLabel ? label : ''"
+  [testId]="testId"
+  [formControl]="formControl"
+  icon="pi pi-calendar"
+></v-calendar>
+}

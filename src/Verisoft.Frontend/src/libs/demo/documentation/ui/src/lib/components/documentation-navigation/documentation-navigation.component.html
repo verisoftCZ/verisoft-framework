@@ -1,0 +1,9 @@
+<nav>
+  <ul class="doc-section-nav">
+    @for (item of items; track $index) {
+    <li class="navbar-item">
+      <a routerLink="." [fragment]="item.url">{{ item.title }}</a>
+    </li>
+    }
+  </ul>
+</nav>

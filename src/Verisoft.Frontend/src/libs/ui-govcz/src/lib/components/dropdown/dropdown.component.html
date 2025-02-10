@@ -1,0 +1,34 @@
+<gov-form-control>
+  @if (label) {
+  <gov-form-label [slot]="labelSlot" [size]="size | govSize">
+    <div class="d-flex">
+      {{ label }}
+      @if (tooltip) {
+      <v-tooltip [message]="tooltip" />
+      }
+    </div>
+  </gov-form-label>
+  }
+  <gov-form-select
+    [size]="size | govSize"
+    [formControl]="formControl"
+    [required]="required"
+    [attr.invalid]="ngControl && ngControl.errors ? 'true' : 'false'"
+    [options]="options | govMultiselectOptions : optionLabel : optionValue : addEmptyOption"
+    (gov-focus)="onDropdownShow()"
+    (gov-remove)="onDropdownClear()"
+    (gov-change)="selectionChange($event)"
+    (lazyLoadEvent)="onLazyLoad($any($event))"
+  />
+  @if (ngControl && ngControl.errors) {
+  <gov-form-message [slot]="errorSlot" color="error">
+    {{ ngControl.errors | error }}
+    <gov-icon
+      color="error"
+      type="components"
+      name="exclamation-triangle-fill"
+      slot="icon"
+    />
+  </gov-form-message>
+  }
+</gov-form-control>

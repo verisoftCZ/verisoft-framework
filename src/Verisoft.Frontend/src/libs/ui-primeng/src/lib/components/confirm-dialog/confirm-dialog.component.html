@@ -1,0 +1,48 @@
+<div class="v-dialog d-flex justify-content-center" *ngIf="data">
+  <p-dialog
+    [(visible)]="visible"
+    [modal]="true"
+    [closable]="closable"
+    [style]="{ width: '25rem' }"
+  >
+    <ng-template pTemplate="header">
+      <div
+        class="v-dialog-header w-100 align-items-center d-flex justify-content-center"
+      >
+        <h1 class="text-center me-3">{{ data.title }}</h1>
+        <i class="{{ data.headerIcon }} text-{{ data.severity }}"></i>
+      </div>
+    </ng-template>
+    <div class="v-dialog-content w-100 align-items-center text-center">
+      @if (data.innerHTML) {
+      <div [innerHTML]="data.innerHTML"></div>
+      } @else if (data.componentType) {
+      <v-dynamic-component
+        [componentType]="data.componentType"
+        [data]="$any(data.data)"
+      ></v-dynamic-component>
+      }
+    </div>
+    <ng-template pTemplate="footer">
+      <div
+        class="v-dialog-footer d-flex justify-content-center w-100 gap-3"
+        [ngClass]="{
+          'flex-row-reverse': data.buttonOrder === 'cancel-confirm'
+        }"
+      >
+        <v-button
+          [label]="data.confirmButtonText ?? 'Yes'"
+          [severity]="data.severity"
+          (click)="data.confirmButtonFn ? dialogClick(true) : (visible = false)"
+        />
+        <v-button
+          *ngIf="data.showCancelButton && data.severity !== 'success'"
+          [label]="data.cancelButtonText ?? 'No'"
+          [outlined]="true"
+          [severity]="'secondary'"
+          (click)="data.cancelButtonFn ? dialogClick(false) : (visible = false)"
+        />
+      </div>
+    </ng-template>
+  </p-dialog>
+</div>

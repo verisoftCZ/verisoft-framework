@@ -1,0 +1,25 @@
+<div class="gov-sidemenu-inner">
+    <div class="gov-category-list__col gov-category-list__categories">
+        <div class="gov-category-list__col-inner">
+            <ul class="gov-list--plain gov-category-list__nav">
+            @for (item of items; track item) {
+                @for (child of item.children; track child) {
+                    <li class="gov-category-list__nav-item">
+                        <a 
+                            class="gov-category-list__nav-link"
+                            [routerLink]="child.url"
+                            routerLinkActive="gov-category-list__nav-active"
+                            title="{{child.label}}"
+                        >
+                            <span class="gov-link gov-link--standalone">{{child.label}}</span>
+                            @if (child.children) {
+                            <gov-icon name="chevron-down" />
+                            }
+                        </a>
+                    </li>
+                }
+            }
+            </ul>
+        </div>
+    </div>
+</div>

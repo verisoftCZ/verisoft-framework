@@ -1,0 +1,19 @@
+<div class="v-slider">
+  <v-form-field
+    class="w-100"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="isRequired()"
+    [ngControl]="ngControl"
+    [testId]="testId"
+  >
+    <p-slider
+      class="w-100"
+      [formControl]="formControl"
+      [step]="step"
+      [range]="range"
+      [min]="min"
+      [max]="max"
+    />
+  </v-form-field>
+</div>

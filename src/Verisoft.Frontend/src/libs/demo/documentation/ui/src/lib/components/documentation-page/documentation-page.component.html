@@ -1,0 +1,24 @@
+<div class="doc-component">
+  <v-doc-header
+    [title]="title"
+    [description]="description"
+    [level]="0"
+  ></v-doc-header>
+  @if (config.isPrimeng) {
+  <v-doc-primeng-tabs
+    [activeIndex]="activeIndex"
+    [docs]="docs"
+    [menu]="menu"
+    [apiDocs]="apiDocs"
+    (activeIndexChange)="changeTab($event)"
+  ></v-doc-primeng-tabs>
+  } @else {
+  <v-doc-govcz-tabs
+    [activeIndex]="activeIndex"
+    [docs]="docs"
+    [menu]="menu"
+    [apiDocs]="apiDocs"
+    (activeIndexChange)="changeTab($event)"
+  ></v-doc-govcz-tabs>
+  }
+</div>

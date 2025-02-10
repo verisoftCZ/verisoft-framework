@@ -1,0 +1,16 @@
+
+<v-tab-view [activeIndex]="activeIndex" (activeIndexChange)="activeIndexChange.emit($event)">
+    <v-tab-view-item title="FEATURE">
+      <div class="row">
+        <div class="col-12 col-lg-10">
+          <v-doc-section [items]="docs"></v-doc-section>
+        </div>
+        <div class="col-12 col-lg-2">
+          <v-doc-navigation [items]="menu"></v-doc-navigation>
+        </div>
+      </div>
+    </v-tab-view-item>
+    <v-tab-view-item title="API">
+      <v-doc-section [items]="apiDocs"></v-doc-section>
+    </v-tab-view-item>
+  </v-tab-view>

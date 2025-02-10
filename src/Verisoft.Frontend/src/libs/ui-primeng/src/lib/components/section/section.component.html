@@ -1,0 +1,23 @@
+<div class="v-section">
+  <div
+    class="v-section-header text-align-center d-flex"
+    [ngStyle]="{ 'background-color': backgroundColor }"
+  >
+    <p
+      class="text-primary align-items-center text-nowrap d-none d-md-block ps-3 m-0 w-100"
+    >
+      {{ title }}
+    </p>
+    <div class="d-flex">
+      <ng-content select="[actions]"></ng-content>
+      <v-button
+        size="small"
+        icon="pi {{ icon }}"
+        (click)="toggle()"
+      />
+    </div>
+  </div>
+  <div class="v-section-content" *ngIf="showContent">
+    <ng-content></ng-content>
+  </div>
+</div>

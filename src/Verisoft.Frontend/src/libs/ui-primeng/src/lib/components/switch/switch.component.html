@@ -1,0 +1,19 @@
+<div class="v-switch d-flex align-items-center">
+  <v-form-field
+    class="w-100"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="isRequired()"
+    [ngControl]="ngControl"
+    [testId]="testId"
+    [display]="formDisplay"
+  >
+    <p-inputSwitch
+      [formControl]="formControl"
+      [required]="isRequired()"
+      [title]="label"
+      [readonly]="readonly"
+      [inputId]="id"
+    />
+  </v-form-field>
+</div>

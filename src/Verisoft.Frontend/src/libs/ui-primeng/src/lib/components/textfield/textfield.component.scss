@@ -1,0 +1,23 @@
+.p-inputtext:focus .ng-invalid.ng-dirty {
+  border-color: var(--error-color);
+}
+
+.p-inputtext.ng-dirty.ng-invalid {
+  border-color: var(--error-color);
+}
+
+.verisoft-text-field {
+  justify-content: center;
+  width: 100%;
+}
+
+.p-input-icon-right {
+  i.pi-times:hover {
+    cursor: pointer;
+  }
+}
+
+.p-inputtext.p-inputtext-lg {
+  font-size: 1rem;
+  padding: 0.75rem;
+}

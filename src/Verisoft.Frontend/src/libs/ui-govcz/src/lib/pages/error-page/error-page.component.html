@@ -1,0 +1,5 @@
+<gov-error-code>
+    <gov-icon type="complex" [name]="errorDetails.iconName" slot="icon"></gov-icon>
+    <p>{{errorDetails.message}}</p>
+    <gov-button color="primary" size="m" type="solid" (gov-click)="navigateToUrl()">Go back</gov-button>
+</gov-error-code>

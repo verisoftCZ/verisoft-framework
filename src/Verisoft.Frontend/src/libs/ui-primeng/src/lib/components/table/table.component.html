@@ -1,0 +1,123 @@
+<div class="v-table">
+  <p-table
+    #table
+    class="v-table"
+    [value]="tableRows"
+    [filters]="filter | primengFilter"
+    [paginator]="showPaginator"
+    [rows]="pageSize"
+    [totalRecords]="total"
+    [loading]="loading"
+    [lazy]="lazy"
+    dataKey="id"
+    [scrollable]="scrollable"
+    [sortMode]="sortMultiple ? 'multiple' : 'single'"
+    [scrollHeight]="'flex'"
+    [selectionMode]="selectionMode"
+    [selection]="tableSelection"
+    [rowsPerPageOptions]="[10, 25, 50, 100]"
+    [expandedRowKeys]="expandedRows"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [customSort]="lazy"
+    [multiSortMeta]="sortMeta"
+    [resizableColumns]="true"
+    columnResizeMode="expand"
+    [globalFilterFields]="globalFilterFields"
+    (onPage)="pageChanged($event)"
+    (onSort)="sortChanged($event)"
+    (selectionChange)="selectionChanged($event)"
+    (onLazyLoad)="fireLazyLoad($event)"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        @if (selectionMode === 'multiple') {
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        } @for (column of tableColumns; track column; let index = $index) {
+        <th
+          *ngIf="column.sortable"
+          pResizableColumn
+          [pSortableColumn]="'row.' + column.id"
+          [style.width]="column.width"
+        >
+          {{ column.headerGetter(column.id, index) }}
+          <p-sortIcon [field]="'row.' + column.id"></p-sortIcon>
+        </th>
+        <th
+          *ngIf="!column.sortable"
+          pResizableColumn
+          [class.v-auto-cell]="column.template"
+          [style.width]="column.width"
+        >
+          {{ column.headerGetter(column.id, index) }}
+        </th>
+        } @if (rowDetailTemplate){
+        <th></th>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row let-expanded="expanded">
+      <tr
+        [pSelectableRow]="row"
+        [pSelectableRowDisabled]="selectionMode !== 'single'"
+        (dblclick)="
+          router.navigate(['./' + row.row[entityKey ?? 'id']], {
+            relativeTo: route
+          })
+        "
+      >
+        @if (selectionMode === 'multiple'){
+        <td>
+          <p-tableCheckbox [value]="row"></p-tableCheckbox>
+        </td>
+        }
+        <td
+          *ngFor="let cd of tableColumns; let index = index"
+          [class]="cd.columnClass!"
+          [class.v-auto-cell]="cd.template"
+        >
+          <ng-container *ngIf="cd.template">
+            <ng-container
+              *ngTemplateOutlet="cd.template; context: { $implicit: row.row }"
+            ></ng-container>
+          </ng-container>
+          <span
+            *ngIf="!row.template"
+            [queryParams]="cd.queryParams ? cd.queryParams : undefined"
+            [routerLink]="cd.routerLink ? cd.routerLink(row.row) : undefined"
+            [innerHTML]="cd.valueGetter(row.row, index)"
+          ></span>
+        </td>
+        @if (rowDetailTemplate){
+        <td>
+          <p-button
+            type="button"
+            pRipple
+            severity="primary"
+            [pRowToggler]="row"
+            [text]="true"
+            [rounded]="true"
+            [plain]="true"
+            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          />
+        </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-row>
+      <tr>
+        <td [attr.colspan]="tableColumns.length + 1">
+          <ng-container
+            class="w-100"
+            *ngTemplateOutlet="
+              expansionTemplate.template;
+              context: { $implicit: row.row }
+            "
+          ></ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

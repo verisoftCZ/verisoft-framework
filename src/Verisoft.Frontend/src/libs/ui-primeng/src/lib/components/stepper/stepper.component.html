@@ -1,0 +1,43 @@
+<div class="v-stepper">
+  <p-stepper>
+    <p-stepperPanel
+      *ngFor="let item of items; let index = index"
+      [header]="item.header"
+    >
+      <ng-template
+        pTemplate="content"
+        let-nextCallback="nextCallback"
+        let-prevCallback="prevCallback"
+        let-index="index"
+      >
+        <ng-container *ngIf="item.template && item.template.elementRef">
+          <ng-template
+            *ngTemplateOutlet="
+              item.template;
+              context: { item: item, index: index }
+            "
+          />
+        </ng-container>
+        <div class="d-flex pt-4 justify-content-between">
+          <v-button
+            *ngIf="index > 0"
+            label="Back"
+            icon="pi pi-arrow-left"
+            size="small"
+            [outlined]="true"
+            (click)="prevCallback.emit()"
+          />
+
+          <v-button
+            *ngIf="index < items.length - 1"
+            label="Next"
+            size="small"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            (click)="nextCallback.emit()"
+          />
+        </div>
+      </ng-template>
+    </p-stepperPanel>
+  </p-stepper>
+</div>

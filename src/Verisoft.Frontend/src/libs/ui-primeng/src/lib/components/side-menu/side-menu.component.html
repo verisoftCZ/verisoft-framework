@@ -1,0 +1,52 @@
+<div class="v-side-menu" #sidemenu>
+  <div
+    [ngClass]="
+      (screenSizeService.isMobileBlock | async)
+        ? 'v-side-menu-container__mobile'
+        : 'v-side-menu-container'
+    "
+  >
+    <ng-container *ngIf="(screenSizeService.isMobileBlock | async) === false">
+      <div class="v-side-menu-header pb-3 text-center">
+        <div class="logo" [routerLink]="[logoRouterLink]">
+          <img [src]="logoUrl" alt="" />
+        </div>
+        <hr />
+      </div>
+    </ng-container>
+    <div
+      [ngClass]="{
+        'v-side-menu-body__mobile': screenSizeService.isMobileBlock | async,
+        'v-side-menu-body': (screenSizeService.isMobileBlock | async) === false
+      }"
+      class="text-center"
+    >
+      <p-tree
+        selectionMode="single"
+        [value]="items"
+        (onNodeExpand)="onSelectionChange($event)"
+        (onNodeCollapse)="onSelectionChange($event)"
+        (onNodeSelect)="onNodeSelect($event)"
+      >
+      </p-tree>
+    </div>
+    <div
+      class="text-center py-3 d-flex justify-content-end flex-column support"
+    >
+      <hr class="mx-4 divider" />
+      <v-button
+        class="support-button"
+        [label]="isMinimalized ? undefined : 'Support'"
+        severity="primary"
+        icon="pi pi-question-circle"
+      ></v-button>
+    </div>
+  </div>
+  <div
+    *ngIf="(screenSizeService.isMobileBlock | async) === false"
+    class="close-button"
+    (click)="menuMinimalize(sidemenu)"
+  >
+    <i class="pi pi-chevron-left text-white close-icon"></i>
+  </div>
+</div>

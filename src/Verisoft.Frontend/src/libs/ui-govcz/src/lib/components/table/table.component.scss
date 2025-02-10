@@ -1,0 +1,80 @@
+.v-table {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-table__loader-wrapper {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+.v-table__scroll-wrapper {
+  overflow: auto;
+}
+
+.v-table__sortable {
+  color: var(--text-primary-color);
+  text-decoration: underline;
+  transition: color 0.15s ease-in-out;
+  cursor: pointer;
+
+  &::after {
+    content: '\2191 \2193';
+    margin-left: 0.5rem;
+    text-decoration: none;
+    display: inline-block;
+  }
+}
+
+.v-table__sortable--asc {
+  &::after {
+    content: '\2191';
+  }
+}
+
+.v-table__sortable--desc {
+  &::after {
+    content: '\2193';
+  }
+}
+
+.v-table__header {
+  background-color: var(--background-page);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  th {
+    font-size: 0.9rem;
+    font-weight: normal;
+    text-align: left;
+  }
+}
+
+.v-table__row {
+  line-height: 2.5rem;
+
+  &:hover {
+    background-color: var(--background-primary-subtle);
+  }
+
+  &.v-table__row--selected {
+    background-color: var(--background-primary);
+
+    td {
+      color: var(--text-white);
+    }
+  }
+}
+
+.v-table__table {
+  width: 100%;
+}

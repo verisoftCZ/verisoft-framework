@@ -1,0 +1,59 @@
+<gov-form-control>
+    @if (label) {
+    <gov-form-label 
+        [slot]="labelSlot"
+        [size]="size | govSize"
+    >
+        {{ label }}
+    </gov-form-label>
+    }
+    <gov-form-group>
+        <gov-form-input 
+            [attr.input-type]="type"
+            [formControl]="formControl"
+            [minlength]="minlength" 
+            [maxlength]="maxlength" 
+            [size]='size | govSize'  
+            [name]='name' 
+            [role]='role'
+            [required]="required"
+            [readonly]="readonly"
+            [invalid]="ngControl?.errors ? true : false"
+        >
+            @if (icon) {
+            <gov-icon
+                [name]="icon"
+                [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
+            />
+            } @if (prefix) {
+            <p slot="prefix">
+                {{ prefix }}
+            </p>
+            } @if (sufix) {
+            <p slot="sufix">
+                {{ sufix }}
+            </p>
+            }
+        </gov-form-input>
+    </gov-form-group>
+    @if (ngControl && ngControl.errors) {
+    <gov-form-message
+        [slot]="errorSlot"
+        color="error"
+    >
+        {{ngControl.errors | error}}
+        <gov-icon 
+            type="components"
+            name="exclamation-triangle-fill"
+            slot="icon"
+        />
+    </gov-form-message>
+    } @if (message) {
+    <gov-form-message
+        [slot]="messageSlot"
+        color="neutral"
+    >
+        {{ message }}
+    </gov-form-message>
+    }
+</gov-form-control>

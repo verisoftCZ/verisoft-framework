@@ -1,0 +1,21 @@
+<div class="gov-page d-flex flex-column">
+  <v-header
+    [logoUrl]="''"
+    [userName]="'Jára da Cimrman'"
+    [userRole]="'ateista strachující se Boha'"
+  />
+  <div class="gov-main-container">
+    <v-breadcrumb [useHomeRoute]="true" class="w-100" />
+    <div class="d-flex ">
+      <aside class="gov-sidemenu d-none d-md-flex">
+        <v-side-menu class="d-none d-md-block" [items]="items" />
+      </aside>
+      <main class="ms-3 w-100">
+        <div class="gov-main-container-content">
+          <router-outlet />
+          <v-confirm-dialog />
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

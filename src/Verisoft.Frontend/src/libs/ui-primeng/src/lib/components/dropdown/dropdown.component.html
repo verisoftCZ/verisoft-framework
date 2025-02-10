@@ -1,0 +1,96 @@
+<div class="v-dropdown">
+  <ng-container *ngIf="label && !floatLabel">
+    <v-form-field
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [ngControl]="ngControl"
+      [testId]="testId"
+      [display]="formDisplay"
+    >
+      <p-dropdown
+        [baseZIndex]="9999"
+        class="w-100"
+        appendTo="body"
+        [formControl]="formControl"
+        [filter]="filter"
+        [title]="label"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [optionValue]="optionValue"
+        [loading]="loading"
+        [placeholder]="placeholder ?? ''"
+        [virtualScroll]="lazy"
+        [virtualScrollItemSize]="virtualOptionSize"
+        [virtualScrollOptions]="virtualScrollOptions"
+        [tooltip]="tooltip"
+        [required]="isRequired()"
+        [showClear]="formControl && clearable && !readonly"
+        [editable]="editable"
+        [dataKey]="optionValue"
+        (showEvent)="onDropdownShow()"
+        (clearEvent)="onDropdownClear()"
+        (onFilter)="filterChange($event)"
+      >
+      </p-dropdown>
+    </v-form-field>
+  </ng-container>
+  <ng-container *ngIf="!label && !floatLabel">
+    <p-dropdown
+      [baseZIndex]="9999"
+      class="w-100"
+      appendTo="body"
+      [formControl]="formControl"
+      [filter]="filter"
+      [title]="label"
+      [options]="options"
+      [optionLabel]="optionLabel"
+      [optionValue]="optionValue"
+      [loading]="loading"
+      [placeholder]="placeholder ? placeholder : label"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [showClear]="formControl && clearable && !readonly"
+      [editable]="editable"
+      [dataKey]="optionValue"
+      [virtualScroll]="lazy"
+      [virtualScrollItemSize]="virtualOptionSize"
+      [virtualScrollOptions]="virtualScrollOptions"
+      (showEvent)="onDropdownShow()"
+      (clearEvent)="onDropdownClear()"
+      (onFilter)="filterChange($event)"
+    >
+    </p-dropdown>
+  </ng-container>
+  <ng-container *ngIf="floatLabel && !label">
+    <p-floatLabel>
+      <p-dropdown
+        [baseZIndex]="9999"
+        class="w-100"
+        appendTo="body"
+        [formControl]="formControl"
+        [title]="label"
+        [options]="options"
+        [optionLabel]="optionLabel"
+        [optionValue]="optionValue"
+        [loading]="loading"
+        [placeholder]="placeholder ? placeholder : label"
+        [filter]="filter"
+        [tooltip]="tooltip"
+        [required]="isRequired()"
+        [showClear]="formControl && clearable && !readonly"
+        [editable]="editable"
+        [dataKey]="optionValue"
+        [virtualScroll]="lazy"
+        [virtualScrollItemSize]="virtualOptionSize"
+        [virtualScrollOptions]="virtualScrollOptions"
+        (showEvent)="onDropdownShow()"
+        (clearEvent)="onDropdownClear()"
+        (onFilter)="filterChange($event)"
+        (lazyLoad)="onLazyLoad($any($event))"
+      >
+      </p-dropdown>
+      <label [for]="inputId">{{ floatLabel }}</label>
+    </p-floatLabel>
+  </ng-container>
+</div>

@@ -1,0 +1,22 @@
+<div class="doc-component">
+  @for(item of items; track item){ @if (item.title || item.description){
+  <v-doc-header
+    [id]="createUrl(item)"
+    [title]="item.title"
+    [description]="item.description"
+    [level]="item.level"
+  ></v-doc-header>
+  } @switch (item.type) { @case (sectionType.CODE) {
+  <v-doc-code [code]="item.code"></v-doc-code>
+  } @case (sectionType.TABLE) {
+  <v-doc-table [table]="item.table"></v-doc-table>
+  }@case (sectionType.TEXT) {
+  <div class="doc-component__text-block">
+    <p [innerHTML]="item.text"></p>
+  </div>
+  }@case (sectionType.SECTION){
+  <v-doc-section [items]="item.items" [title]="item.title"></v-doc-section>
+  }@case (sectionType.API_SECTION){
+  <v-doc-section [items]="item.items" [title]="item.title"></v-doc-section>
+  } } }
+</div>

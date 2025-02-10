@@ -1,0 +1,23 @@
+<div class="v-tab-view">
+  <gov-tabs (gov-change)="handleTabClick($event)">
+    @for (item of mergedItems; track item; let index = $index) {
+      <gov-tabs-item 
+        [label]="item.title"
+        [iconStart]="item.icon"
+        [disabled]="item.disabled"
+        [attr.default]="activeIndex === index ? 'default' : null"
+        [identifier]="index"
+        [triggerIdentifier]="item.url ? item.url : undefined"
+      >
+        @if (item.contentTemplate) {
+          <ng-container *ngTemplateOutlet="item.contentTemplate"></ng-container>
+        } @else if (item.content) {
+          {{ item.content }}
+        }
+      </gov-tabs-item>
+    }
+  </gov-tabs>
+  @if (useRouting) {
+    <router-outlet></router-outlet>
+  }
+</div>

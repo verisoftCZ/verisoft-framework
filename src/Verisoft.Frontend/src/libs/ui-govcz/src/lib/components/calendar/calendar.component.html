@@ -1,0 +1,35 @@
+<gov-form-control>
+    @if (label) {
+    <gov-form-label [slot]="labelSlot" [size]="size | govSize">
+        {{ label }}
+    </gov-form-label>
+    }
+    <gov-form-group>
+        <gov-form-input
+            [formControl]="formControl"
+            [attr.input-type]="type"
+            [invalid]="ngControl?.errors ? true : false"
+            [size]="size | govSize"
+            [required]="required"
+            [readonly]="readonly"
+            [name]="name"
+        />
+    </gov-form-group>
+    @if (ngControl && ngControl.errors) {
+    <gov-form-message [slot]="errorSlot" color="error">
+        {{ngControl.errors | error}}
+        <gov-icon
+            type="components" 
+            name="exclamation-triangle-fill"
+            slot="validation-icon"
+        />
+    </gov-form-message>
+    } @if (message) {
+    <gov-form-message
+        [slot]="messageSlot"
+        color="neutral"
+    >
+        {{ message }}
+    </gov-form-message>
+    }
+</gov-form-control>

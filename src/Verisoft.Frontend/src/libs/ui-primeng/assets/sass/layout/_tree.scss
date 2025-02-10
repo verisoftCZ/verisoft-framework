@@ -1,0 +1,12 @@
+.p-treenode-content {
+    justify-content: flex-start;
+}
+
+.p-tree .p-tree-container .p-treenode .p-treenode-content.p-highlight {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+
+    span {
+        color: var(--primary-color);
+    }
+}

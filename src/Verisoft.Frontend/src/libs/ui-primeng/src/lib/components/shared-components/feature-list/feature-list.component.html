@@ -1,0 +1,56 @@
+<div class="feature-list__container full-height-container">
+  <v-filter
+    #filter
+    [title]="title"
+    [fields]="columns | featureListColumn"
+    [filters]="filters"
+    [fulltextFieldName]="fulltextFieldName"
+    [showFulltext]="showFulltext"
+    [showFilters]="showExtendedFilter"
+  >
+    <v-action-button-group
+      [maxItems]="maxVisibleActions"
+      [maxItemsMobile]="maxVisibleMobileActions"
+    >
+      @if (showAdd) {
+      <v-action-button
+        [icon]="icons.add"
+        label="Add"
+        [disabled]="!canAdd"
+        (click)="addClick.emit()"
+      ></v-action-button>
+      } @if (showDelete){
+      <v-action-button
+        [icon]="icons.delete"
+        label="Delete"
+        [disabled]="!canDelete || !selection.length"
+        (click)="startDeleteItems()"
+      ></v-action-button>
+      } @if (showDownload){
+      <v-action-button
+        [icon]="icons.download"
+        label="Download"
+        [disabled]="!canDownload"
+        (click)="startDownload()"
+      ></v-action-button>
+      }
+    </v-action-button-group>
+  </v-filter>
+  <div class="feature-list__table-container full-height-container">
+    <div class="full-height-container">
+      <v-table
+        useDatasource
+        useFilter
+        [filterComponent]="filter"
+        class="full-height-container"
+        [selectionMode]="selectionMode"
+        [tableName]="tableName"
+        [autoBind]="true"
+        [datasource]="datasource"
+        [columns]="columns"
+        (selectionChange)="selectItems($event)"
+      >
+      </v-table>
+    </div>
+  </div>
+</div>
