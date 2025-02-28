@@ -1,0 +1,46 @@
+$primary-color: #f7a711;
+$secondary-color: #64748b;
+$details-color: #ffeecd;
+$success-color: #90cb8a;
+$error-color: #e27575;
+$soft-error-color: #ffeeed;
+$bg-color: #ffffff;
+$white-color: #ffffff;
+$disabled-color: #646464;
+
+$theme: (
+  'primary': $primary-color,
+  'secondary': $secondary-color,
+  'details': $details-color,
+  'success': $success-color,
+  'error': $error-color,
+  'danger': $error-color,
+  'soft-error': $soft-error-color,
+  'white': $white-color,
+  'disabled': $disabled-color,
+);
+
+:root {
+  @each $key, $value in $theme {
+    .bg-#{$key} {
+      background: $value !important;
+    }
+
+    .text-#{$key} {
+      color: $value !important;
+
+      @if $key == 'error' {
+        padding-left: 0rem !important;
+      }
+    }
+  }
+
+  hr {
+    background-color: $primary-color;
+    border: none;
+    height: 0.125rem;
+  }
+
+  background-color: $white-color !important;
+}
+

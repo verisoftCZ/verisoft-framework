@@ -22,70 +22,6 @@ namespace Verisoft.DemoApi.Database.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Verisoft.Core.Common.Entities.EntityAuditDetailEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ChangedAttribute")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("EntityAuditId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("NewValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OldValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChangedAttribute");
-
-                    b.HasIndex("EntityAuditId");
-
-                    b.ToTable("EntityAuditDetail", "audit");
-                });
-
-            modelBuilder.Entity("Verisoft.Core.Common.Entities.EntityAuditEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ChangedBy")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("EntityId")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Schema")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Table")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChangedBy");
-
-                    b.HasIndex("EntityId");
-
-                    b.HasIndex("Table");
-
-                    b.ToTable("EntityAudit", "audit");
-                });
-
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -172,6 +108,16 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Property<int?>("ParentClientId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("PeriodEnd")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodEnd");
+
+                    b.Property<DateTime>("PeriodStart")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("PeriodStart");
+
                     b.Property<string>("RecruitmentUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -205,6 +151,17 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.HasIndex("ParentClientId");
 
                     b.ToTable("Client");
+
+                    b.ToTable(tb => tb.IsTemporal(ttb =>
+                            {
+                                ttb.UseHistoryTable("ClientHistory");
+                                ttb
+                                    .HasPeriodStart("PeriodStart")
+                                    .HasColumnName("PeriodStart");
+                                ttb
+                                    .HasPeriodEnd("PeriodEnd")
+                                    .HasColumnName("PeriodEnd");
+                            }));
                 });
 
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.DocumentEntity", b =>
@@ -331,17 +288,6 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Verisoft.Core.Common.Entities.EntityAuditDetailEntity", b =>
-            {
-                b.HasOne("Verisoft.Core.Common.Entities.EntityAuditEntity", "EntityAudit")
-                    .WithMany("EntityAuditDetails")
-                    .HasForeignKey("EntityAuditId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("EntityAudit");
-            });
-
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
                     b.HasOne("Verisoft.DemoApi.Common.Entities.DocumentEntity", "Document")
@@ -379,11 +325,6 @@ namespace Verisoft.DemoApi.Database.Migrations
 
                     b.Navigation("User");
                 });
-
-            modelBuilder.Entity("Verisoft.Core.Common.Entities.EntityAuditEntity", b =>
-            {
-                b.Navigation("EntityAuditDetails");
-            });
 
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.ClientEntity", b =>
                 {

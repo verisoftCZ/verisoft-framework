@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+	<metadata>
+		<id>Verisoft.Core.Contracts</id>
+		<version>1.0.0.0</version>
+		<title>Verisoft.Core.Contracts</title>
+		<authors>Verisoft</authors>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Verisoft.Core.Contracts</description>
+	</metadata>
+	<files>
+		<file src="bin\Release\netstandard1.3\Verisoft.Core.Contracts.dll" target="lib\Verisoft.Core.Contracts.dll" />
+	</files>
+</package>

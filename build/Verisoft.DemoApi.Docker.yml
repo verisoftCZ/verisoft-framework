@@ -13,7 +13,7 @@ pool:
 
 variables:
   tag: '$(Build.BuildId)'
-  imageName: 'verisoft/fmw/demoapi'
+  imageName: 'verisoft/hackaton/demoapi'
   backendDirectory: 'src/Verisoft.DemoApi/Verisoft.DemoApi.Host'
 
 steps:

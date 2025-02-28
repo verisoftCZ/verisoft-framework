@@ -1,0 +1,21 @@
+<div class="gov-breadcrums mt-4 mb-4 ms-4 ms-md-0">
+  <gov-breadcrumbs accessible-label="gov-breadcrums">
+    <ul>
+      <li *ngIf="useHomeRoute">
+        <gov-icon [name]="icons.house" />
+        <a [routerLink]="'/'">Home</a>
+      </li>
+      @if (items) { @for (item of items; track item) {
+      <li>
+        <gov-icon [name]="icons.chevronRight" />
+        @if (item.icon) {
+        <gov-icon [name]="item.icon" />
+        }
+        <a [routerLink]="item.routerLink">
+          {{ item.label }}
+        </a>
+      </li>
+      } }
+    </ul>
+  </gov-breadcrumbs>
+</div>

@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Excel.Test", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.ExportStrategies", "Verisoft.Core\Verisoft.Core.ExportStrategies\Verisoft.Core.ExportStrategies.csproj", "{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Validation", "Verisoft.Core\Verisoft.Core.Validation\Verisoft.Core.Validation.csproj", "{71888B38-3C53-499D-850C-19833037AE06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{91F35A89-D4D3-4A6D-92C7-EF1CB21419A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91F35A89-D4D3-4A6D-92C7-EF1CB21419A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91F35A89-D4D3-4A6D-92C7-EF1CB21419A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71888B38-3C53-499D-850C-19833037AE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71888B38-3C53-499D-850C-19833037AE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71888B38-3C53-499D-850C-19833037AE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71888B38-3C53-499D-850C-19833037AE06}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Release|Any CPU.ActiveCfg = Release|Any CPU

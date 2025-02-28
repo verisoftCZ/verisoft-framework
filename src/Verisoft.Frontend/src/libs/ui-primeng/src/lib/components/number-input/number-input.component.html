@@ -1,0 +1,22 @@
+<div class="v-number-input">
+  <v-form-field
+    class="w-100"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="isRequired()"
+    [ngControl]="ngControl"
+    [testId]="testId"
+  >
+    <p-inputNumber
+      class="w-100"
+      [formControl]="formControl"
+      [showButtons]="true"
+      [inputId]="inputId"
+      [mode]="mode"
+      [min]="min"
+      [max]="max"
+      [step]="step"
+      [currency]="currency"
+    />
+  </v-form-field>
+</div>

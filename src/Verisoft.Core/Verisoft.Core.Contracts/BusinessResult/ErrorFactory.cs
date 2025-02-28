@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Verisoft.Core.Contracts.Validation;
 
 namespace Verisoft.Core.Contracts.BusinessResult;
 
@@ -8,6 +11,10 @@ public class ErrorFactory
     public const string ForbiddenErrorCode = "Forbidden";
     public const string BadRequestErrorCode = "BadRequest";
     public const string NullInputErrorCode = "NullInput";
+
+    public const string NotFoundErrorMessage = "{entityTypeName} not found by {propertyName}: {propertyValue}";
+    public const string NullInputErrorMessage = "The input {inputName} cannot be null.";
+
     private const string UnprocessableValidatedErrorCode = "UnprocessableValidated";
 
     /// <summary>
@@ -27,7 +34,7 @@ public class ErrorFactory
     /// </remarks>
     public static BusinessActionError NotFound(string entityTypeName, string propertyName, string propertyValue)
     {
-        return Error(NotFoundErrorCode, "{entityTypeName} not found by {propertyName}: {propertyValue}", new { entityTypeName, propertyName, propertyValue });
+        return Error(NotFoundErrorCode, NotFoundErrorMessage, new { entityTypeName, propertyName, propertyValue });
     }
 
     /// <summary>
@@ -578,7 +585,16 @@ public class ErrorFactory
     /// </remarks>
     public static BusinessActionError NullInput(string inputName)
     {
-        return Error(BadRequestErrorCode, "The input {inputName} cannot be null.", new { inputName });
+        return Error(NullInputErrorCode, NullInputErrorMessage, new { inputName });
+    }
+
+    public static BusinessActionErrors UnprocessableEntity(List<ValidationProblem> validatedObjectValidationProblems)
+    {
+        var errors = new BusinessActionErrors();
+        errors.AddRange(validatedObjectValidationProblems
+            .Select(problems => new BusinessActionError(problems.Code, problems.Message, problems.PropertyName)));
+
+        return errors;
     }
 
     internal static BusinessActionError UnprocessableValidated()

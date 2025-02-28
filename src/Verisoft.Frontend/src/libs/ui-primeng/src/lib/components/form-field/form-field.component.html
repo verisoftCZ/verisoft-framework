@@ -1,0 +1,41 @@
+<div class="v-form-field mt-3" [attr.data-testId]="testId">
+  <div [ngClass]="{ 'd-block d-md-flex': display === 'flex', 'd-lg-flex': display === 'block' }">
+      <div class="col-12 col-md-4 d-flex align-items-center">
+        <label
+          class="v-formfield-label d-flex align-items-center"
+          [ngClass]="{
+            'pb-2': display === 'block',
+            'text-error': (ngControl?.errors | error) && ngControl?.dirty, 
+            'text-warning': (ngControl?.errors | warning) && ngControl?.dirty,
+            'text-default': !ngControl?.invalid && !ngControl?.dirty,
+            'text-secondary': !ngControl?.invalid && ngControl?.dirty
+          }"
+        >{{ label }}<span *ngIf="label">:</span>
+          <span *ngIf="required" class="text-error ps-1">*</span>
+        </label>
+        <i *ngIf="tooltip"
+          [pTooltip]="tooltip"
+          class="ps-2 text-default v-tooltip {{ icons.infoCircle }}"
+        ></i>
+      </div>
+      <div 
+        class="col-sm-12 col-md-8 col-lg-8"
+      >
+        <div 
+          class="v-form-field-content align-items-center w-100"
+          [ngClass]="{ 'd-flex': display === 'flex', 'd-block': display === 'block', 'input-warning': ngControl?.errors | warning }"
+        >
+          <ng-content></ng-content>
+        </div>
+      </div>
+      <div class="align-content-center">
+        <ng-container *ngIf="ngControl?.invalid && ngControl?.dirty">
+          <i
+            [pTooltip]="(ngControl?.errors | error) || (ngControl?.errors | warning)"
+            [ngClass]="{ 'text-error': ngControl?.errors | error, 'text-warning': ngControl?.errors | warning }"
+            [class]="icons.crossCircle"
+          ></i>
+        </ng-container>
+      </div>
+  </div>
+</div>

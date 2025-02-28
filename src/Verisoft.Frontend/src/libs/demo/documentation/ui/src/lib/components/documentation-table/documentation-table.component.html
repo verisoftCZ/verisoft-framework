@@ -1,0 +1,30 @@
+<table class="documentation-table w-100">
+  <thead>
+    <tr>
+      <th class="text-start">{{ table?.nameColumnHeader }}</th>
+      @if (table?.showParameters){
+      <th class="text-start">Parameters</th>
+      } @if (table?.showType){
+      <th class="text-start">Type</th>
+      } @if (table?.showDefault){
+      <th class="text-start">Default</th>
+      }
+      <th class="text-start">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    @if (orderedItems){ @for(item of orderedItems; track item) {
+    <tr>
+      <td class="col-name">{{ item.name }}</td>
+      @if (table?.showParameters){
+      <td class="col-params">{{ item.parameters }}</td>
+      } @if (table?.showType){
+      <td class="col-type">{{ item.type }}</td>
+      } @if (table?.showDefault){
+      <td class="col-default">{{ item.default }}</td>
+      }
+      <td class="col-description">{{ item.description }}</td>
+    </tr>
+    } }
+  </tbody>
+</table>

@@ -1,0 +1,40 @@
+<div class="v-textarea">
+  <ng-container *ngIf="!floatLabel">
+    <v-form-field
+      [label]="label"
+      [ngControl]="ngControl"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [display]="formDisplay"
+    >
+      <textarea
+        class="flex-grow-1"
+        pInputTextarea
+        [rows]="rows"
+        [cols]="cols"
+        [formControl]="formControl"
+        [placeholder]="placeholder"
+        [required]="isRequired()"
+        [readOnly]="readonly"
+        [autoResize]="autoResize"
+      ></textarea>
+    </v-form-field>
+  </ng-container>
+  <ng-container *ngIf="floatLabel">
+    <p-floatLabel>
+      <textarea
+        class="flex-grow-1"
+        pInputTextarea
+        [rows]="rows"
+        [cols]="cols"
+        [id]="inputId"
+        [formControl]="formControl"
+        [placeholder]="placeholder"
+        [required]="isRequired()"
+        [readOnly]="readonly"
+        [autoResize]="autoResize"
+      ></textarea>
+      <label [for]="inputId">{{ floatLabel }}</label>
+    </p-floatLabel>
+  </ng-container>
+</div>

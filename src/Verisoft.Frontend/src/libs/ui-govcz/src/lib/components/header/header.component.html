@@ -1,0 +1,73 @@
+<div class="gov-header">
+    <header class="gov-container--no-y-offset gov-header">
+        <div class="gov-container__content">
+            <div class="gov-header__holder">
+                <div class="gov-header__left">
+                    <a href="/" class="gov-link--inversed gov-header__logo" [attr.aria-label]="title"></a>
+                    <a class="gov-logo gov-logo--inversed" href="/" [attr.aria-label]="title">
+                        <div class="gov-pictogram--logo gov-pictogram--inversed">
+                            @if (logoUrl) {
+                            <img src="{{ logoUrl }}" height="100%" width="100%" alt="GACR logo">
+                            }
+                        </div>
+                            
+                        <span *ngIf="title" class="gov-logo__sitename">
+                            {{ title }}
+                        </span>
+                    </a>
+                </div>
+                <div class="gov-header__right">
+                    <div class="gov-header__item gov-header__user-info">
+                        <span class="gov-header__item-user-info">{{ userName }}</span>
+                        <button class="gov-header__button">
+                            <gov-icon [name]="icons.user" size="xl" />
+                        </button>
+                    </div>
+                    <div class="gov-header__fixed-items">
+                        <div class="gov-header__item gov-header__item--mobile">
+                            <button 
+                                class="gov-header__hamburger"
+                                [ngClass]="this.menuVisible ? 'active' : ''"
+                                (click)="toggleMenu()"
+                            >
+                                <span></span>
+                                <span></span>
+                                <div>MENU</div>
+                            </button>                 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="gov-header__separator">
+        
+            <div 
+                class="gov-header__overlay"
+                [ngClass]="this.menuVisible ? 'active' : ''"
+            ></div>
+            <nav 
+                class="gov-header__nav"
+                [ngClass]="this.menuVisible ? 'active' : ''"
+            >
+                <div 
+                    class="gov-header__nav-logo"
+                    [ngClass]="this.menuVisible ? 'active' : ''"
+                ></div>
+            
+                <div class="gov-header__nav-holder">
+                    @for (item of tabsService.menuItems$ | async; track item) {
+                    <div class="gov-header__link">
+                        <a 
+                            [routerLink]="item.url"
+                            class="gov-link gov-link--standalone gov-link--large gov-link--inversed"
+                            [attr.aria-label]="item.label"
+                        >
+                            {{ item.label }}
+                        </a>
+                    </div>
+                    }
+                </div>
+            </nav>
+        </div>
+    </header>
+</div>

@@ -9,15 +9,33 @@ namespace Verisoft.Core.Data.EntityFramework.Extensions;
 public static class EntityTypeBuilderExtensions
 {
     public static EntityTypeBuilder<TEntity> ConfigureEnumAsString<TEntity, TEnum>(
-       this EntityTypeBuilder<TEntity> builder,
-       Expression<Func<TEntity, TEnum>> propertyExpression)
-       where TEntity : class
-       where TEnum : struct, Enum
+    this EntityTypeBuilder<TEntity> builder,
+    Expression<Func<TEntity, TEnum>> propertyExpression)
+    where TEntity : class
+    where TEnum : struct, Enum
     {
         builder.Property(propertyExpression)
                .HasConversion(
-                   v => v.ToString(),
-                   v => (TEnum)Enum.Parse(typeof(TEnum), v));
+                   enumValue => enumValue.ToString(),
+                   stringValue => (TEnum)Enum.Parse(typeof(TEnum), stringValue))
+               .IsRequired();
+
+        return builder;
+    }
+
+    public static EntityTypeBuilder<TEntity> ConfigureEnumAsString<TEntity, TEnum>(
+    this EntityTypeBuilder<TEntity> builder,
+    Expression<Func<TEntity, TEnum?>> propertyExpression)
+    where TEntity : class
+    where TEnum : struct, Enum
+    {
+        builder.Property(propertyExpression)
+               .HasConversion(
+                   enumValue => enumValue.HasValue ? enumValue.Value.ToString() : null,
+                   stringValue => string.IsNullOrEmpty(stringValue)
+                       ? null
+                       : (TEnum)Enum.Parse(typeof(TEnum), stringValue))
+               .IsRequired(false);
 
         return builder;
     }

@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Verisoft.Core.AspNet.Filters;
+using Verisoft.Core.AspNet.OpenApi;
 using Verisoft.Core.Common.Logging;
 using Verisoft.Core.Common.Store;
 
@@ -26,13 +28,19 @@ namespace Verisoft.Core.AspNet
             tracker.StartSelfAvailabilityTest(CancellationToken.None);
         }
 
-        public static IApplicationBuilder AddOpenApi(this IApplicationBuilder app)
+        public static IApplicationBuilder AddOpenApi(this IApplicationBuilder app, Action<VerisoftSwaggerOptions> setupAction = null)
         {
+            VerisoftSwaggerOptions veriOptions = new VerisoftSwaggerOptions();
+            setupAction?.Invoke(veriOptions);
+
             app.UseSwagger(c =>
             {
                 c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                 {
-                    swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://{httpReq.Host.Value}/api" } };
+                    if (veriOptions.Url != null)
+                    {
+                        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"https://{httpReq.Host.Value}/{veriOptions.Url}" } };
+                    }
                 });
             });
             app.UseSwaggerUI(options =>
@@ -43,7 +51,7 @@ namespace Verisoft.Core.AspNet
                 // Build a swagger endpoint for each discovered API version
                 foreach (var description in groupNames)
                 {
-                    var url = $"/api/swagger/{description}/swagger.json";
+                    var url = veriOptions.Url != null ? $"{veriOptions.Url}/{description}/swagger.json" : $"{description}/swagger.json";
                     var name = description.ToUpperInvariant();
                     options.SwaggerEndpoint(url, name);
                 }

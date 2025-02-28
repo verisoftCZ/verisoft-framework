@@ -1,0 +1,31 @@
+<div
+  class="v-page-header d-block d-md-flex px-3 w-100 gap-0 gap-md-4 align-items-center text-center text-md-start"
+>
+  <v-button
+    *ngIf="showBackButton"
+    size="small"
+    [icon]="icons.arrowLeft"
+    label="Back"
+    [outlined]="true"
+    (click)="locationBack()"
+  ></v-button>
+  <div
+    class="align-items-center justify-content-center justify-content-md-start gap-2 w-100 d-flex"
+  >
+    <h1 class="text-primary m-0" [innerText]="title"></h1>
+    <div
+      *ngIf="subtitle"
+      class="d-flex gap-2 align-items-center text-center text-md-start"
+    >
+      <h1 class="text-default m-0" [innerText]="'-'"></h1>
+      <h1 class="text-default" [innerText]="subtitle"></h1>
+    </div>
+  </div>
+  <div
+    class="align-content-center page-header-action-buttons justify-content-center w-100"
+  >
+    <div *ngIf="buttonGroup">
+      <ng-content [select]="buttonGroup"></ng-content>
+    </div>
+  </div>
+</div>

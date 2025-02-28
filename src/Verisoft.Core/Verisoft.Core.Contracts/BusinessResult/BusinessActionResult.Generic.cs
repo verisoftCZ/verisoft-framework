@@ -1,5 +1,5 @@
-﻿using Verisoft.Core.Contracts.Validations;
-using Verisoft.Core.Contracts.Validations.Extensions;
+﻿using Verisoft.Core.Contracts.Validation;
+using Verisoft.Core.Contracts.Validation.Extensions;
 
 namespace Verisoft.Core.Contracts.BusinessResult;
 
@@ -40,7 +40,14 @@ public class BusinessActionResult<TResult> : BusinessActionResult
     {
         if (result is IValidatedObject validatedObject && validatedObject.HasValidationErrors())
         {
-            return new BusinessActionResult<TResult>(result, ErrorFactory.UnprocessableValidated());
+            var highestSeverityError = validatedObject.GetHighestSeverityValidationError();
+
+            return highestSeverityError.Code switch
+            {
+                ErrorFactory.NullInputErrorCode => new BusinessActionResult<TResult>(ErrorFactory.NullInput(highestSeverityError.PropertyName)),
+                ErrorFactory.NotFoundErrorCode => new BusinessActionResult<TResult>(ErrorFactory.NotFound(highestSeverityError.TryGetAttemptedValueValue("entityTypeName"), highestSeverityError.PropertyName, highestSeverityError.TryGetAttemptedValueValue("propertyValue"))),
+                _ => new BusinessActionResult<TResult>(result, ErrorFactory.UnprocessableEntity(validatedObject.ValidationProblems)),
+            };
         }
 
         return new BusinessActionResult<TResult>(result);

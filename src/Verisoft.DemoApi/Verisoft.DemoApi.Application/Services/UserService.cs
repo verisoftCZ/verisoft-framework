@@ -1,4 +1,5 @@
-﻿using Verisoft.Core.Common.TypeMapper;
+﻿using Verisoft.Core.Common.Store;
+using Verisoft.Core.Common.TypeMapper;
 using Verisoft.Core.Contracts;
 using Verisoft.Core.Contracts.BusinessResult;
 using Verisoft.DemoApi.Application.Services.Interfaces;
@@ -89,7 +90,7 @@ public class UserService(IUserRepository repository, ITypeMapper typeMapper) : I
             return ErrorFactory.NotFound<UserEntity>(nameof(UserEntity.Id), id);
         }
 
-        await repository.RemoveAsync(userEntity);
+        repository.Remove(userEntity);
         repository.UnitOfWork.Commit();
         return typeMapper.Map<User>(userEntity);
     }
@@ -108,7 +109,7 @@ public class UserService(IUserRepository repository, ITypeMapper typeMapper) : I
         }
 
         userEntity = typeMapper.Map(userEditModel, userEntity);
-        await repository.UpdateAsync(userEntity);
+        repository.Update(userEntity);
         repository.UnitOfWork.Commit();
         return typeMapper.Map<User>(userEntity);
     }

@@ -1,0 +1,1 @@
+export * from './govcz-app.component'

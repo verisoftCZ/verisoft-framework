@@ -1,0 +1,23 @@
+<div class="v-tristatecheckbox d-flex align-items-center mt-2">
+  <v-form-field
+    class="w-100"
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="isRequired()"
+    [ngControl]="ngControl"
+    [testId]="testId"
+    [display]="formDisplay"
+  >
+    <p-triStateCheckbox
+      [ngClass]="{
+        'tristate-error':
+          ngControl?.invalid && ngControl?.dirty && ngControl?.value === false
+      }"
+      [formControl]="formControl"
+      [required]="required"
+      [readonly]="readonly"
+      [inputId]="testId"
+      [checkboxFalseIcon]="icons.minus"
+    />
+  </v-form-field>
+</div>

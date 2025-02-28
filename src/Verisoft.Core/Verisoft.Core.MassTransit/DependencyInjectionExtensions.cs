@@ -8,8 +8,11 @@ using Microsoft.Extensions.Logging;
 
 public static class DependencyInjectionExtensions
 {
-    public static void AddServiceBus(this IServiceCollection serviceCollection, IConfiguration configuration, Action<IBusRegistrationConfigurator> registration = null, Action<IBusRegistrationContext, IRabbitMqBusFactoryConfigurator> usingRabbitMqInjection = null)
+    public static IServiceCollection AddVerisoftServiceBus<T>(this IServiceCollection serviceCollection, IConfiguration configuration, Action<VerisoftServiceBusOptions> configure)
     {
+        var options = new VerisoftServiceBusOptions();
+        configure(options);
+
         var config = new MassTransitConfig(configuration);
         if (string.IsNullOrEmpty(config.Server?.Url))
         {
@@ -26,8 +29,9 @@ public static class DependencyInjectionExtensions
 
         serviceCollection.AddMassTransit(c =>
         {
-            c.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter(true));
+            c.AddConsumers(typeof(T).Assembly);
 
+            c.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter(true));
             c.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(config.Server.Url, hostConfig =>
@@ -43,12 +47,19 @@ public static class DependencyInjectionExtensions
                     }
                 });
 
-                usingRabbitMqInjection?.Invoke(context, cfg);
+                foreach (var consumerConfig in options.GetConsumerConfigurations().Values)
+                {
+                    cfg.ReceiveEndpoint(consumerConfig.EndpointName, e =>
+                    {
+                        e.ConfigureConsumer(context, consumerConfig.ConsumerType);
+                        consumerConfig.ApplyConfigurations(context, e);
+                    });
+                }
 
                 cfg.ConfigureEndpoints(context);
             });
-
-            registration?.Invoke(c);
         });
+
+        return serviceCollection;
     }
 }

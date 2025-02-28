@@ -2,7 +2,9 @@
 
 namespace Verisoft.Core.Common.Entities;
 
-public interface IBaseEntity<TKey> : IEntity<TKey>
+public interface IBaseEntity<TKey> : IBaseEntity, IEntity<TKey>;
+
+public interface IBaseEntity
 {
     string CreatedBy { get; set; }
 

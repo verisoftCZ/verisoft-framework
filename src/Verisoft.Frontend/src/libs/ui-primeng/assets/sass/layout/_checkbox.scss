@@ -1,0 +1,33 @@
+.p-checkbox-label {
+    color: var(--secondary-color);
+}
+
+.p-checkbox-label-active {
+    color: var(--primary-color);
+}
+
+.p-checkbox .p-checkbox-box {
+    border-color: var(--secondary-color);
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+    border-color: var(--primary-color);
+}
+
+.p-checkbox .p-checkbox-box .p-checkbox-icon {
+    color: var(--white-color);
+}
+
+.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-focus {
+    box-shadow: none;
+}
+
+p-checkbox.ng-dirty.ng-invalid {
+    .p-checkbox>.p-checkbox-box {
+        border-color: var(--error-color);
+    }
+
+    .p-checkbox-label {
+        color: var(--error-color);
+    }
+}

@@ -13,8 +13,8 @@ using Verisoft.DemoApi.Contracts.Models.Document;
 
 namespace Verisoft.DemoApi.Application.Services;
 
-public class DocumentService
-    (IDocumentRepository documentRepository,
+public class DocumentService(
+    IDocumentRepository documentRepository,
     ITypeMapper typeMapper,
     IIdentityService identityService,
     IClientRepository clientRepository)
@@ -101,7 +101,7 @@ public class DocumentService
             documentEntity.UserId = (await identityService.GetCurrentUser()).Id;
             documentEntity.Name = documentFile.FileName;
             documentEntity.ContentType = documentFile.ContentType;
-            await documentRepository.UpdateAsync(documentEntity);
+            documentRepository.Update(documentEntity);
             documentEntity.Blob.CreatedBy = documentEntity.UpdatedBy;
             documentEntity.Blob.CreatedAt = documentEntity.UpdatedAt.Value;
         }
@@ -119,7 +119,7 @@ public class DocumentService
             return ErrorFactory.NotFound<DocumentEntity>(nameof(DocumentEntity.Id), id);
         }
 
-        await documentRepository.RemoveAsync(documentEntity);
+        documentRepository.Remove(documentEntity);
         documentRepository.UnitOfWork.Commit();
 
         return typeMapper.Map<Document>(documentEntity);
@@ -129,10 +129,9 @@ public class DocumentService
     {
         if (originalBlobEntity is null)
         {
-            var blobEntity = new BlobEntity();
             using var stream = new MemoryStream();
             await document.CopyToAsync(stream);
-            blobEntity = new BlobEntity
+            var blobEntity = new BlobEntity
             {
                 Content = stream.ToArray(),
             };

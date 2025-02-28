@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Verisoft.Core.Authentication;
 using Verisoft.DemoApi.Common.Entities;
 using Verisoft.DemoApi.Common.Repositories;
@@ -7,8 +6,8 @@ using Verisoft.DemoApi.Data.EF.Context;
 
 namespace Verisoft.DemoApi.Data.EF.Repositories;
 
-public class UserRepository(IDemoApiDbContext unitOfWork, IUserContext userContext, ILogger<UserRepository> logger)
-    : BaseRepository<UserEntity, int>(unitOfWork, userContext, logger), IUserRepository
+public class UserRepository(IDemoApiDbContext unitOfWork, IUserContext userContext)
+    : BaseRepository<UserEntity, int>(unitOfWork, userContext), IUserRepository
 {
     public async Task<UserEntity> GetUserById(int id)
     {

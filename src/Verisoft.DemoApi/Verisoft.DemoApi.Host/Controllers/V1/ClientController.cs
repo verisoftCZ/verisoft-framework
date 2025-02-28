@@ -36,12 +36,21 @@ public class ClientController(IClientService clientService)
     }
 
     [HttpGet]
-    [Route("list")]
     [HasPermission(DemoApiPermissions.ReadClient)]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientListData))]
     public async Task<ClientListData> GetClientListAsync([FromQuery] FilteredRequest<ClientFilter> request)
     {
         return await clientService.GetClientListAsync(request);
+    }
+
+    [HttpGet]
+    [Route("history")]
+    [HasPermission(DemoApiPermissions.ReadClient)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientListData))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionResult<ClientListData>))]
+    public async Task<BusinessActionResult<ClientListData>> GetClientHistoryListAsync([FromQuery] FilteredRequest<ClientHistoryFilter> request)
+    {
+        return await clientService.GetClientHistoryListAsync(request);
     }
 
     [HttpGet]

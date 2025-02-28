@@ -1,0 +1,49 @@
+{
+  "name": "ui-govcz",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "src/libs/ui-govcz/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "src/libs/ui-govcz/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "src/libs/ui-govcz/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "src/libs/ui-govcz/tsconfig.lib.json"
+        }
+      },
+      "dependsOn": [
+        "sync-shared",
+        {
+          "target": "build",
+          "projects": ["core", "store", "ui-core"]
+        }
+      ],
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "src/libs/ui-govcz/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "sync-shared": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cpx \"src/libs/ui-primeng/src/lib/components/shared-components/**/*.*\" \"src/libs/ui-govcz/src/lib/components/shared-components\" --update"
+      }
+    }
+  }
+}

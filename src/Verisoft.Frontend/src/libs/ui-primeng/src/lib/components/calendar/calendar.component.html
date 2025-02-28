@@ -1,0 +1,53 @@
+<div class="v-calendar w-100">
+  <ng-container *ngIf="label && !floatLabel">
+    <v-form-field
+      class="w-100"
+      [label]="label"
+      [ngControl]="ngControl"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [display]="formDisplay"
+    >
+      <p-calendar
+        appendTo="body"
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%'}" 
+        [formControl]="formControl"
+        [showClear]="clearable"
+        [dataType]="'string'"
+        [selectionMode]="selectionMode"
+        [icon]="icon"
+        [maxDate]="maxDate"
+        [id]="inputId"
+        [showButtonBar]="true"
+        [placeholder]="placeholder"
+        [required]="isRequired()"
+        [minDate]="minDate"
+        [showIcon]="formControl && !formControl.value"
+        iconDisplay="input"
+      />
+    </v-form-field>
+  </ng-container>
+  <ng-container *ngIf="floatLabel">
+    <p-floatLabel>
+      <p-calendar
+        appendTo="body"
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%'}" 
+        [formControl]="formControl"
+        [showClear]="clearable"
+        [maxDate]="maxDate"
+        [id]="inputId"
+        [icon]="icon"
+        [selectionMode]="selectionMode"
+        [showButtonBar]="true"
+        [placeholder]="placeholder"
+        [required]="isRequired()"
+        [minDate]="minDate"
+        [showIcon]="formControl && !formControl.value"
+        iconDisplay="input"
+      />
+      <label [for]="inputId" [innerHTML]="floatLabel"></label>
+    </p-floatLabel>
+  </ng-container>
+</div>

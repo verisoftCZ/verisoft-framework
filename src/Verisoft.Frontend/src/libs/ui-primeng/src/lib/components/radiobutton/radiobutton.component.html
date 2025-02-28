@@ -1,0 +1,32 @@
+<div class="v-radiobutton">
+  <v-form-field
+    [label]="label"
+    [required]="required"
+    [tooltip]="tooltip"
+    [ngControl]="ngControl"
+    [testId]="testId"
+  >
+    <div class="d-flex align-items-center gap-3">
+      <div *ngFor="let item of items">
+        <p-radioButton
+          [inputId]="item.id"
+          [ngClass]="{
+                    'radio-error': ngControl?.invalid && ngControl?.dirty,
+                    }"
+          [name]="radioGroupName"
+          [value]="item.value"
+          [formControl]="formControl"
+        />
+        <label [for]="item.id" class="ps-2">
+          <span
+            [ngClass]="{
+              'text-error': ngControl?.invalid && ngControl?.dirty,
+              'text-primary': ngControl?.value === item.value
+            }"
+            >{{ item.value }}</span
+          >
+        </label>
+      </div>
+    </div>
+  </v-form-field>
+</div>

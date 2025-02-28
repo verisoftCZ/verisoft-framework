@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Verisoft.Core.Authentication;
+﻿using Verisoft.Core.Authentication;
 using Verisoft.Core.Common.TypeMapper;
 using Verisoft.Core.Contracts;
 using Verisoft.Core.Contracts.BusinessResult;
@@ -22,7 +21,6 @@ public class ClientService(
     IClientRepository clientRepository,
     ExportStrategyResolver<Client> exportStrategyResolver,
     IUserContext httpUserContext,
-    ILogger<ClientService> logger,
     ITypeMapper typeMapper)
 : IClientService
 {
@@ -82,6 +80,35 @@ public class ClientService(
         };
     }
 
+    public async Task<BusinessActionResult<ClientListData>> GetClientHistoryListAsync(FilteredRequest<ClientHistoryFilter> request)
+    {
+        var clientSpecification = typeMapper.Map<ClientSpecification>(request.Filter);
+        var filter = clientSpecification?.SatisfiedBy();
+        var historyFilters = new HistoryFilters(request.Filter.HistoryQueryType, request.Filter?.PeriodStart, request.Filter?.PeriodEnd);
+        try
+        {
+            var totalItems = await clientRepository.GetHistoryCountAsync(filter, historyFilters);
+            var items = await clientRepository.GetPagedHistoryAsync<ClientSort>(
+                request.Offset,
+                request.Limit,
+                filter,
+                request.Sort,
+                historyFilters);
+
+            var mappedClientData = typeMapper.Map<ClientListItem>(items);
+
+            return new ClientListData
+            {
+                Total = totalItems,
+                Data = mappedClientData,
+            };
+        }
+        catch (ArgumentException ex)
+        {
+            return ErrorFactory.BadRequest(ex.Message);
+        }
+    }
+
     public async Task<BusinessActionResult<ExportResult>> GetClientsForExportAsync(FilteredRequest<ClientFilter> request, ExportType exportType)
     {
         var clientSpecification = typeMapper.Map<ClientSpecification>(request.Filter);
@@ -111,7 +138,7 @@ public class ClientService(
             return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), id);
         }
 
-        await clientRepository.RemoveAsync(clientEntity);
+        clientRepository.Remove(clientEntity);
         clientRepository.UnitOfWork.Commit();
 
         return typeMapper.Map<Client>(clientEntity);
@@ -124,7 +151,7 @@ public class ClientService(
             return ErrorFactory.NullInput(nameof(clientEditModel));
         }
 
-        var clienEntity = await clientRepository.GetAsync(id);
+        var clientEntity = await clientRepository.GetAsync(id);
         if (clientEditModel.ParentClientId.HasValue)
         {
             var clientParentEntityExists = await clientRepository.ExistsAsync(clientEditModel.ParentClientId.Value);
@@ -134,16 +161,16 @@ public class ClientService(
             }
         }
 
-        if (clienEntity is null)
+        if (clientEntity is null)
         {
             return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), id);
         }
 
-        clienEntity = typeMapper.Map(clientEditModel, clienEntity);
-        await clientRepository.UpdateAsync(clienEntity);
+        clientEntity = typeMapper.Map(clientEditModel, clientEntity);
+        clientRepository.Update(clientEntity);
         clientRepository.UnitOfWork.Commit();
 
-        return typeMapper.Map<Client>(clienEntity);
+        return typeMapper.Map<Client>(clientEntity);
     }
 
     private int GetLimit() => httpUserContext.User.IsInRole(DemoApiPermissions.ExportAllClients.ToString())

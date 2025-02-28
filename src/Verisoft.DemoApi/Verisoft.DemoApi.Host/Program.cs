@@ -7,7 +7,10 @@ using Verisoft.DemoApi.Host.HangfireJobs;
 using Verisoft.DemoApi.Host.InstallExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddAzureKeyVault(builder.Configuration);
+if (builder.Configuration["AzureAd:ClientSecret"] != null)
+{
+    builder.AddAzureKeyVault(builder.Configuration);
+}
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers().AddJsonOptions(options =>

@@ -32,6 +32,7 @@ public static class AutoMapperFactory
         cfg.CreateMap<ClientEntity, Client>();
         cfg.CreateMap<ClientEntity, ClientListItem>();
         cfg.CreateMap<ClientEditModel, ClientEntity>();
+        cfg.CreateMap<ClientEditModel, ClientValidatedObject>();
     }
 
     private static void MapUser(IMapperConfigurationExpression cfg)

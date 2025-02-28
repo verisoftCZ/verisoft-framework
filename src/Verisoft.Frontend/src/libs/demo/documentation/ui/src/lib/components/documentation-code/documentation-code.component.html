@@ -1,0 +1,17 @@
+@if (code){
+<div class="doc-component__code">
+  @if (code.componentType) {
+  <div class="doc-component__preview mb-4 p-4">
+    <ng-container *ngComponentOutlet="code.componentType"></ng-container>
+  </div>
+  }
+  <div class="doc-component__code_list">
+    @if (code.files){ @for(file of code.files; track file){ @if (file.visible){
+    <v-doc-code-highlighter
+      [code]="file.content"
+      [language]="file.language"
+    ></v-doc-code-highlighter>
+    } } }
+  </div>
+</div>
+}

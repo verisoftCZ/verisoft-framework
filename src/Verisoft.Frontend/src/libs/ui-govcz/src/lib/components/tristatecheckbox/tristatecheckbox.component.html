@@ -1,0 +1,33 @@
+<gov-form-control class="mt-3">
+    @if (ngControl && ngControl.errors) {
+    <gov-form-message
+        [slot]="errorSlot"
+        color="error"
+    >
+        {{ngControl.errors | error}}
+        <gov-icon 
+            [name]="icons.warning"
+            slot="validation-icon"
+        />
+    </gov-form-message>
+    }
+    <gov-form-checkbox 
+        [formControl]="formControl"
+        [size]="size | govSize"
+        [value]="value"
+        [required]="required"
+        [checked]="checked"
+        [indeterminate]="isChecked === 0"
+        [name]="name"
+        [invalid]="ngControl?.errors"
+        [noLabel]="noLabel"
+        (gov-change)="toggleCheckbox()"
+    > 
+        <gov-form-label
+            [size]="size | govSize"
+            slot="label"
+        >
+            {{ label }}
+        </gov-form-label>
+    </gov-form-checkbox>
+</gov-form-control>

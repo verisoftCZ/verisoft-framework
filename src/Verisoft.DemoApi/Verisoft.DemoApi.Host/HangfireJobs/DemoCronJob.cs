@@ -1,26 +1,18 @@
-﻿namespace Verisoft.DemoApi.Host.HangfireJobs
+﻿namespace Verisoft.DemoApi.Host.HangfireJobs;
+
+public class DemoCronJob(ILogger<DemoCronJob> logger)
 {
-    public class DemoCronJob
+    public async Task MakeSomeCronJob()
     {
-        private readonly ILogger<DemoCronJob> logger;
+        logger.LogInformation("Starting CRON job");
+        await Task.Delay(1000);
+        logger.LogInformation("Finishing CRON job");
+    }
 
-        public DemoCronJob(ILogger<DemoCronJob> logger)
-        {
-            this.logger = logger;
-        }
-
-        public async Task MakeSomeCronJob()
-        {
-            logger.LogInformation("Starting CRON job");
-            await Task.Delay(1000);
-            logger.LogInformation("Finishing CRON job");
-        }
-
-        public async Task MakeSomeCronJobTwo()
-        {
-            logger.LogInformation("Starting CRON job");
-            await Task.Delay(1000);
-            logger.LogInformation("Finishing CRON job");
-        }
+    public async Task MakeSomeCronJobTwo()
+    {
+        logger.LogInformation("Starting CRON job");
+        await Task.Delay(1000);
+        logger.LogInformation("Finishing CRON job");
     }
 }

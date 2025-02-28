@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Verisoft.Core.Common</id>
+    <version>1.0.0.0</version>
+    <title>Verisoft.Core.Common</title>
+    <authors>Verisoft</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Verisoft.Core.Common</description>
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard2.1\Verisoft.Core.Common.dll" target="lib\Verisoft.Core.Common.dll" />
+  </files>
+</package>

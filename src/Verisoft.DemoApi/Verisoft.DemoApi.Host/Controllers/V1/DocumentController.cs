@@ -43,7 +43,7 @@ public class DocumentController(IDocumentService documentService) : ControllerBa
     [HttpGet]
     [Route("{id}/download")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    public async Task<IActionResult> DowloadDocumentAsync(int id)
+    public async Task<IActionResult> DownloadDocumentAsync(int id)
     {
         return await documentService.GetDocumentContentAsync(id);
     }

@@ -1,0 +1,47 @@
+<gov-dialog
+    [open]="visible"
+    [attr.block-close]="data.closable ?? false"
+    [attr.block-backdrop-close]="data.closable ?? false"
+    role="dialog"
+    accessible-close-label="Close dialog box with more information"
+    (gov-close)="data.cancelButtonFn ? dialogClick(false) : (visible = false)"
+>
+    <gov-icon
+        type="components"
+        [name]="data.headerIcon"
+        slot="icon"
+        [color]="data.severity | govColor"
+    />
+    
+    <h2 slot="title">{{ data.title ?? 'Title' }}</h2>
+
+    @if (data && data.innerHTML) {
+    <div [innerHTML]="data.innerHTML"></div>
+    } @else if (data.componentType) {
+    <v-dynamic-component
+        [componentType]="data.componentType"
+        [data]="$any(data.data)"
+    ></v-dynamic-component>
+    }
+
+    <gov-button
+        color="primary"
+        size="m"
+        type="solid"
+        slot="footer"
+        (gov-click)="data.confirmButtonFn ? dialogClick(true) : (visible = false)"
+    >
+        {{ data.confirmButtonText ?? 'Yes'}}
+    </gov-button>
+    
+    <gov-button
+        color="primary"
+        size="m"
+        type="outlined"
+        slot="footer"
+        [disabled]="!data.showCancelButton"
+        (gov-click)="data.cancelButtonFn ? dialogClick(false) : (visible = false)"
+    >
+        {{ data.cancelButtonText ?? 'No' }}
+    </gov-button>
+</gov-dialog>

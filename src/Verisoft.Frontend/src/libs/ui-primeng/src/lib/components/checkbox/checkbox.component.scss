@@ -1,0 +1,15 @@
+p-echeckbox.ng-dirty.ng-invalid {
+    .p-checkbox>.p-checkbox-box {
+        border-color: var(--error-color);
+    }
+
+    .p-checkbox-label {
+        color: var(--error-color);
+    }
+}
+
+.checkbox-error {
+    .p-checkbox-box.p-highlight {
+        background: var(--error-color);
+    }
+}

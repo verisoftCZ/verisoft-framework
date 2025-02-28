@@ -1,0 +1,18 @@
+p-breadcrumb > nav {
+  border: none;
+  > ol {
+    align-items: stretch;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  a[aria-current='page'] > span {
+    color: var(--primary-color) !important;
+  }
+}
+.p-menuitem-link {
+  gap: 0.5rem;
+  text-align: center;
+}
+.p-menuitem-text {
+  align-self: baseline;
+}

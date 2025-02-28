@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/mssql/server
-ENV SA_PASSWORD=your.password!
+ENV SA_PASSWORD=.share8!klaus
 ENV ACCEPT_EULA=Y
 
 COPY ./*.sql /tmp/sql/

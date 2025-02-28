@@ -14,5 +14,7 @@ public class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
                .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasQueryFilter(r => !r.IsDeleted);
+
+        builder.ToTable(clientTable => clientTable.IsTemporal());
     }
 }

@@ -1,0 +1,35 @@
+<gov-stepper 
+  [ngClass]="layout === 'vertical' ? 'd-block' : 'd-flex justify-content-between'"
+  [size]="size | govSize"
+>
+  @for (item of items; track item; let index = $index) {
+  <gov-stepper-item
+    [ngClass]="{ 'active-step': index === currentStep }"
+  >
+    <span 
+      slot="prefix"
+      [ngStyle]="{ 'background-color': index === currentStep ? 'var(--gov-color-primary-300)' : 'var(--gov-color-primary)' }"
+    >
+      {{ item.prefix }}
+    </span>
+    <p slot="headline">{{ item.header }}</p>
+    <p slot="annotation">{{ item.annotation }}</p>
+  </gov-stepper-item>
+  }
+</gov-stepper>
+<div class="d-flex pt-4 justify-content-between">
+  @if (currentStep > 0) {
+  <v-button
+    [label]="'Back'"
+    [size]="size"
+    (click)="previousStep()"
+  />
+  }
+  @if (currentStep < steps - 1) {
+  <v-button
+    [label]="'Next'"
+    [size]="size"
+    (click)="nextStep()"
+  />
+  }
+</div>

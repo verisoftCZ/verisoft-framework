@@ -1,12 +1,17 @@
-﻿namespace Verisoft.Core.Contracts.BusinessResult;
+﻿using Newtonsoft.Json;
 
-public class BusinessActionErrors<TResult> : BusinessActionErrors
+namespace Verisoft.Core.Contracts.BusinessResult;
+
+[JsonObject]
+public class BusinessActionErrors<TResult>
 {
     public BusinessActionErrors(TResult data, BusinessActionErrors errors)
     {
         Data = data;
-        AddRange(errors);
+        Errors = errors;
     }
 
-    public TResult Data { get; }
+    public TResult Data { get; private set; }
+
+    public BusinessActionErrors Errors { get; set; }
 }

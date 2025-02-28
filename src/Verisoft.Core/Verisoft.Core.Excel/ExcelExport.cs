@@ -85,7 +85,7 @@ public class ExcelExport<TData>(IEnumerable<TData> data)
             return;
         }
 
-        var tableRange = worksheet.Range(1, 1, data.Count(), settings.Columns.Count);
+        var tableRange = worksheet.Range(1, 1, data.Count() + 1, settings.Columns.Count);
         tableRange.CreateTable();
     }
 

@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Verisoft.Core.Common.Entities;
 using Verisoft.Core.Common.Store;
 using Verisoft.Core.Data.EntityFramework.Atributes;
-using Verisoft.Core.Data.EntityFramework.Configuration;
 using Verisoft.Core.Data.EntityFramework.Extensions;
 
 namespace Verisoft.Core.Data.EntityFramework;
@@ -14,7 +14,6 @@ namespace Verisoft.Core.Data.EntityFramework;
 public abstract class EntityFrameworkDbContextBase : DbContext, IUnitOfWork, IMigrable
 {
     protected EntityFrameworkDbContextBase()
-        : base()
     {
     }
 
@@ -23,20 +22,14 @@ public abstract class EntityFrameworkDbContextBase : DbContext, IUnitOfWork, IMi
     {
     }
 
-    public DbSet<EntityAuditEntity> EntityAudit { get; set; }
-
-    public DbSet<EntityAuditDetailEntity> EntityAuditDetail { get; set; }
-
-    public string DefaultSchema { get; protected set; } = "dbo";
-
     public void Commit()
     {
-        this.SaveChanges();
+        SaveChanges();
     }
 
     public void Migrate()
     {
-        this.Database.Migrate();
+        Database.Migrate();
     }
 
     public void Rollback()
@@ -47,9 +40,9 @@ public abstract class EntityFrameworkDbContextBase : DbContext, IUnitOfWork, IMi
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new EntityAuditConfiguration());
-        modelBuilder.ApplyConfiguration(new EntityAuditDetailConfiguration());
-        AddVersionPropertyForOptimisticConcurency(modelBuilder);
+
+        AddSoftDeleteQueryFilterToBaseEntities(modelBuilder);
+        AddVersionPropertyForOptimisticConcurrency(modelBuilder);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -61,19 +54,37 @@ public abstract class EntityFrameworkDbContextBase : DbContext, IUnitOfWork, IMi
     private static void RegisterInterceptorsByAttribute(DbContextOptionsBuilder optionsBuilder)
     {
         var interceptors = AppDomain.CurrentDomain.GetAssemblies()
-       .Where(assembly => assembly.FullName.StartsWith("Verisoft"))
-       .SelectMany(assembly => assembly.GetTypes())
-       .Where(x => x.IsClass && x.IsPublic)
-       .Where(x => x.GetCustomAttributes<RegisterInterceptorAttribute>().Any())
-       .Select(Activator.CreateInstance)
-       .Cast<IInterceptor>();
+           .Where(assembly => assembly.FullName != null && assembly.FullName.StartsWith("Verisoft"))
+           .SelectMany(assembly => assembly.GetTypes())
+           .Where(x => x.IsClass && x.IsPublic)
+           .Where(x => x.GetCustomAttributes<RegisterInterceptorAttribute>().Any())
+           .Select(Activator.CreateInstance)
+           .Cast<IInterceptor>();
 
         optionsBuilder.AddInterceptors(interceptors);
     }
 
-    private void AddVersionPropertyForOptimisticConcurency(ModelBuilder modelBuilder)
+    private static void AddSoftDeleteQueryFilterToBaseEntities(ModelBuilder modelBuilder)
     {
-        var properties = this.GetType().GetProperties();
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (!typeof(IBaseEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                continue;
+            }
+
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            var property = Expression.Property(parameter, nameof(IBaseEntity.IsDeleted));
+            var notExpression = Expression.Not(property);
+            var lambda = Expression.Lambda(notExpression, parameter);
+
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
+        }
+    }
+
+    private void AddVersionPropertyForOptimisticConcurrency(ModelBuilder modelBuilder)
+    {
+        var properties = GetType().GetProperties();
 
         foreach (var property in properties)
         {
@@ -85,8 +96,8 @@ public abstract class EntityFrameworkDbContextBase : DbContext, IUnitOfWork, IMi
             }
 
             var entityType = setType.GetGenericArguments().First();
-            var isOptimisticLocable = typeof(IOptimisticLockable).IsAssignableFrom(entityType);
-            if (!isOptimisticLocable)
+            var isOptimisticLockable = typeof(IOptimisticLockable).IsAssignableFrom(entityType);
+            if (!isOptimisticLockable)
             {
                 continue;
             }

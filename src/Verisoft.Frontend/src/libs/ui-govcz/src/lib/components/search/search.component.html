@@ -1,0 +1,23 @@
+<gov-form-control>
+    <gov-form-group>
+        <gov-form-search color="neutral">
+            <gov-form-input 
+                [placeholder]="placeholder"
+                [size]="size | govSize"
+                slot="input"
+                (gov-input)="setValue($event)"
+            />
+            <gov-button
+                [size]="size | govSize"
+                color="primary"
+                type="solid"
+                slot="button"
+                (click)="search()"
+            >
+                <gov-icon
+                    [name]="icons.search"
+                />
+            </gov-button>
+        </gov-form-search>
+    </gov-form-group>
+</gov-form-control>

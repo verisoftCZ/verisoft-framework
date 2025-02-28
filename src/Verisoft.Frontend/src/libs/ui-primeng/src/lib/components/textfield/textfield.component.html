@@ -1,0 +1,83 @@
+<div class="v-text-field">
+  <ng-container *ngIf="!floatLabel && label; else floatLabelInput">
+    <v-form-field
+      class="w-100"
+      [label]="label"
+      [tooltip]="tooltip"
+      [required]="isRequired()"
+      [ngControl]="ngControl"
+      [testId]="testId"
+      [display]="formDisplay"
+    >
+      <span
+        class="w-100 flex-grow-1"
+        [ngClass]="{ 'p-input-icon-right': type === 'search' }"
+      >
+        <input
+          pInputText
+          [id]="inputId"
+          [formControl]="formControl"
+          [type]="type === 'search' ? 'text' : type"
+          class="w-100 flex-grow-1 v-text-field"
+          [required]="isRequired()"
+          [readOnly]="readonly"
+          [title]="label"
+          [placeholder]="placeholder ? placeholder : ''"
+          [ngClass]="{
+            'p-inputtext-sm': size === 'small',
+            'p-inputtext-lg': size === 'large'
+          }"
+        />
+        <ng-container *ngIf="type === 'search'">
+          <i
+            class="pi ms-2 v-text-field__icon"
+            [ngStyle]="{
+              cursor: ngControl && ngControl.value ? 'pointer' : 'default'
+            }"
+            [ngClass]="{
+              'pi-search': ngControl && !ngControl.value,
+              'pi-times': ngControl && ngControl.value,
+            }"
+            (click)="ngControl && ngControl.value ? ngControl.reset() : null"
+          ></i>
+        </ng-container>
+      </span>
+    </v-form-field>
+  </ng-container>
+  <ng-template #floatLabelInput>
+    <span
+      class="w-100 flex-grow-1"
+      [ngClass]="{ 'p-input-icon-right': type === 'search' }"
+    >
+      <p-floatLabel>
+        <input
+          pInputText
+          type="text"
+          [id]="inputId"
+          class="w-100 flex-grow-1"
+          [required]="isRequired()"
+          [formControl]="formControl"
+          [placeholder]="placeholder ? placeholder : ''"
+          [ngClass]="{
+            'p-inputtext-sm': size === 'small',
+            'p-inputtext-lg': size === 'large'
+          }"
+        />
+        <label [for]="inputId" class="v-text-field__label">{{ label }}</label>
+      </p-floatLabel>
+      <ng-container *ngIf="type === 'search'">
+        <i
+          class="pi ms-2 v-text-field__icon"
+          [ngStyle]="{
+            cursor: ngControl && ngControl.value ? 'pointer' : 'default'
+          }"
+          [ngClass]="{
+            'pi-search': ngControl && !ngControl.value,
+            'pi-times': ngControl && ngControl.value,
+          }"
+          (click)="ngControl && ngControl.value ? ngControl.reset() : null"
+        ></i>
+      </ng-container>
+    </span>
+  </ng-template>
+</div>

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication\Verisoft.Core.Authentication.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Common\Verisoft.Core.Common.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Contracts\Verisoft.Core.Contracts.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.TypeMapper\Verisoft.Core.TypeMapper.csproj" />
+	</ItemGroup>
+
+</Project>

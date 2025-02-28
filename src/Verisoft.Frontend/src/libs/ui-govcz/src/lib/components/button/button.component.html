@@ -1,0 +1,25 @@
+<div class="v-button d-inline-block">
+    <a
+        [routerLink]="routerLink ? routerLink : undefined"
+        [queryParams]="queryParams ? queryParams : undefined"
+    >
+        <gov-button
+            [type]="outlined === true ? 'outlined' : type"
+            [color]="severity | govColor"
+            [disabled]="disabled"
+            [size]="size | govSize"
+            [name]="name"
+            [expanded]="expanded"
+            (gov-click)="handleClick($event)"
+        >
+        @if (icon) {
+            <gov-icon 
+                [name]="icon"
+                [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
+            />
+        } @if (label) {
+            {{ label }}
+        }
+        </gov-button>
+    </a>
+</div>

@@ -1,0 +1,63 @@
+.v-header {
+    height: 5.25rem;
+    top: 0;
+  
+      &-title {
+      align-content: center;
+      justify-content: center;
+      padding-left: 15rem;
+      text-transform: uppercase;
+      font-size: 2.25rem;
+      letter-spacing: 0.1rem;
+      font-family: "Orbitron";
+      font-weight: bold;
+       p {
+        user-select: none;
+      }
+    }
+  }
+
+  .title-closed {
+    .v-header-title {
+      padding-left: 7rem;
+      transition: padding 0.2s ease;
+    }
+  }
+  
+  .header-username {
+    font-weight: 600;
+  }
+
+  .burger-menu {
+    width: 3rem;
+    display: flex;
+    align-items: center;
+    padding-left: 2rem;
+    > v-button {
+      scale: 1.5;
+    }
+
+    > v-button .pi-times {
+      color: var(--primary-color) !important;
+    }
+
+    img {
+      margin-left: 1rem;
+      height: 2rem;
+      width: 2rem;
+    }
+    .logo {
+      cursor: pointer;
+      z-index: 1;
+    }
+  }
+  
+  .header-userrole {
+    font-weight: 300;
+    font-size: 0.6875rem;
+  }
+
+  .user-info-container .header-username {
+    color: var(--primary-color);
+  }
+  

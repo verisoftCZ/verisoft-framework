@@ -1,8 +1,5 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -17,22 +14,20 @@ using Verisoft.Core.BlobStorage.InstallExtensions;
 using Verisoft.Core.Common.Configuration;
 using Verisoft.Core.Common.TypeMapper;
 using Verisoft.Core.Data.EntityFramework.Configuration;
-using Verisoft.Core.ExportStrategies;
-using Verisoft.Core.ExportStrategies.Strategies;
 using Verisoft.Core.MassTransit;
 using Verisoft.Core.Pdf.Extensions;
 using Verisoft.Core.Template.Extensions;
 using Verisoft.Core.TypeMapper;
-using Verisoft.DemoApi.Application.Consumers;
+using Verisoft.Core.Validation;
 using Verisoft.DemoApi.Application.Helpers;
 using Verisoft.DemoApi.Application.Services;
 using Verisoft.DemoApi.Application.Services.Interfaces;
+using Verisoft.DemoApi.Application.Validators.Client;
 using Verisoft.DemoApi.Common.Repositories;
-using Verisoft.DemoApi.Contracts.ModelValidators;
 using Verisoft.DemoApi.Data.EF.Context;
 using Verisoft.DemoApi.Data.EF.Repositories;
+using Verisoft.DemoApi.Host.Consumers;
 using Verisoft.DemoApi.Host.HangfireJobs;
-using static Verisoft.DemoApi.Application.Helpers.MassTransitEndpointConfigurator;
 
 namespace Verisoft.DemoApi.Host.InstallExtensions;
 
@@ -71,7 +66,6 @@ public static class InstallExtensions
         RegisterRepositories(serviceCollection);
         RegisterAuthentication(serviceCollection, configuration);
         RegisterMapper(serviceCollection);
-        RegisterFluentApiValidation(serviceCollection);
         RegisterMonitoring(serviceCollection, configuration);
         RegisterHealthChecks(serviceCollection, configuration);
         RegisterHangfire(serviceCollection, configuration);
@@ -79,6 +73,7 @@ public static class InstallExtensions
         RegisterBlobStorage(serviceCollection, configuration);
         RegisterPdfGenerator(serviceCollection);
         RegisterTemplates(serviceCollection);
+        serviceCollection.AddVerisoftFluentValidation<ClientValidator>();
     }
 
     private static void RegisterTemplates(IServiceCollection serviceCollection)
@@ -112,7 +107,7 @@ public static class InstallExtensions
         serviceCollection.AddVerisoftHealth(c =>
         {
             c.ConnectionString = configuration["Database:ConnectionString"];
-            c.DatabaseName = "VerisoftFramework";
+            c.DatabaseName = "hackaton";
         });
     }
 
@@ -173,20 +168,13 @@ public static class InstallExtensions
         serviceCollection.AddDefaultExportStrategies();
     }
 
-    private static void RegisterFluentApiValidation(IServiceCollection serviceCollection)
-    {
-        serviceCollection.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-        serviceCollection.AddValidatorsFromAssemblyContaining<ClientEditModelValidator>();
-    }
-
     private static void RegisterMassTransit(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddServiceBus(
+        services.AddVerisoftServiceBus<Program>(
             configuration,
-            registration =>
-            {
-                registration.AddConsumers(typeof(CreateDocumentConsumer).Assembly);
-            },
-            (context, cfg) => { ConfigureConsumerEndpoints(cfg, context); });
+            options
+                => options.ConfigureConsumer<CreateDocumentConsumer>()
+                    .MaxRetries(3)
+                    .ConcurrencyLimit(1));
     }
 }

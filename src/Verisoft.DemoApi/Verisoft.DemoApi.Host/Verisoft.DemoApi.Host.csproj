@@ -28,15 +28,16 @@
 
 	<ItemGroup>
 
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet.Concurency\Verisoft.Core.AspNet.Concurency.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.MicrosoftIdentity\Verisoft.Core.Authentication.MicrosoftIdentity.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
-      <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.BlobStorage\Verisoft.Core.BlobStorage.csproj" />
-	  <ProjectReference Include="..\Verisoft.DemoApi.Application\Verisoft.DemoApi.Application.csproj" />
-	  <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
-	  <ProjectReference Include="..\Verisoft.DemoApi.Data.EF\Verisoft.DemoApi.Data.EF.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet.Concurency\Verisoft.Core.AspNet.Concurency.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.MicrosoftIdentity\Verisoft.Core.Authentication.MicrosoftIdentity.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.BlobStorage\Verisoft.Core.BlobStorage.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Validation\Verisoft.Core.Validation.csproj" />
+		<ProjectReference Include="..\Verisoft.DemoApi.Application\Verisoft.DemoApi.Application.csproj" />
+		<ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
+		<ProjectReference Include="..\Verisoft.DemoApi.Data.EF\Verisoft.DemoApi.Data.EF.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

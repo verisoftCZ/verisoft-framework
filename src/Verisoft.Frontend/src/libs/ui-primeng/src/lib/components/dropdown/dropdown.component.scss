@@ -1,0 +1,16 @@
+.v-dropdown {
+  justify-content: center;
+  width: 100%;
+}
+
+.p-dropdown-items-wrapper,
+.p-scroller-viewport,
+.p-scroller {
+  min-width: 8rem !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.p-dropdown {
+  width: 100%;
+}

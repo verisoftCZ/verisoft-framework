@@ -1,0 +1,13 @@
+p-inputswitch.ng-dirty.ng-invalid>.p-inputswitch>.p-inputswitch-slider {
+    border: none;
+    background: var(--error-color);
+}
+
+.p-inputswitch .p-inputswitch-slider {
+    background: var(--secondary-color);
+    border: none
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+    background: var(--primary-color);
+}

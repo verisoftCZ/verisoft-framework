@@ -1,0 +1,6 @@
+.radio-error {
+  .p-radiobutton .p-radiobutton-box.p-highlight {
+    border-color: var(--error-color);
+    background: var(--error-color);
+  }
+}

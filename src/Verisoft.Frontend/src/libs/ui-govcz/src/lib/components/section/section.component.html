@@ -1,0 +1,26 @@
+<gov-accordion>
+    <gov-accordion-item 
+        [size]="size | govSize"
+        [identifier]="identifier"
+        [open]="open"
+    >
+        @if (icon) {
+            <gov-icon
+                [name]="icons.chevronDown"
+            />
+        } @if (title) {
+            <h2 slot="label">{{ title }}</h2>
+        } @if (badge) {
+            <gov-badge 
+                inverse="true"
+                size="s"
+                [slot]="badgeSlot"
+            >
+                {{ badge }}
+            </gov-badge>
+        } @if (annotation) {
+            <p slot="annotation">{{ annotation }}</p>
+        }
+        <ng-content></ng-content>
+    </gov-accordion-item>
+</gov-accordion>

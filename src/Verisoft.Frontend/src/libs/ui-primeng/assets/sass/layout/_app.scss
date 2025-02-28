@@ -1,0 +1,27 @@
+.nav-bar {
+    display: block;
+    height: 5.25rem;
+    width: 100%;
+}
+
+.main-container {
+    display: flex;
+    height: calc(100vh - 5.25rem);
+    width: 100%;
+
+    &-content {
+        overflow: auto;
+        padding: 1.2rem;
+        height: calc(100vh - 5.85rem);
+        
+    }
+}
+
+.prime-main {
+    overflow: hidden;
+    padding: 0.3rem;
+    padding-right: 0;
+    -webkit-box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+}

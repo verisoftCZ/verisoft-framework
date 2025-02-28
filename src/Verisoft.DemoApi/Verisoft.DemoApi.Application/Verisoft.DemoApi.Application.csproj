@@ -24,6 +24,7 @@
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Pdf\Verisoft.Core.Pdf.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Template\Verisoft.Core.Template.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.TypeMapper\Verisoft.Core.TypeMapper.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Validation\Verisoft.Core.Validation.csproj" />
 	  <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
 	  <ProjectReference Include="..\Verisoft.DemoApi.Contracts\Verisoft.DemoApi.Contracts.csproj" />
 	</ItemGroup>

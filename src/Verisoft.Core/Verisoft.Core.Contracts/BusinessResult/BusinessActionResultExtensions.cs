@@ -36,11 +36,9 @@ public static class BusinessActionResultExtensions
         return result.IsSuccess ? new OkResult() : GetErrorResult(result, customCases);
     }
 
-
     private static IActionResult GetErrorResult<T>(BusinessActionResult<T> result, IDictionary<string, IActionResult> customCases)
     {
         var switchCases = GetSwitchCases(result, customCases);
-
         return switchCases.TryGetValue(result.Code, out var actionResult)
             ? actionResult
             : result.Data != null

@@ -29,21 +29,11 @@ public interface IRepository<TEntity, TKey>
 
     Task AddAsync(TEntity entity);
 
-    Task UpdateAsync(TEntity entity);
+    void Update(TEntity entity);
 
-    Task UpdateRangeAsync(TEntity[] entities);
+    void UpdateRange(TEntity[] entities);
 
-    Task RemoveAsync(TEntity entity);
+    void Remove(TEntity entity);
 
-    Task RemoveRangeAsync(TEntity[] entities);
-
-    Task<IEnumerable<EntityAuditEntity>> GetPagedEntityAuditAsync<TSort>(int offset, int limit, Expression<Func<EntityAuditEntity, bool>> filter, SortDefinition sort, bool isAscendingSortByDefault = true)
-        where TSort : BaseSort<EntityAuditEntity>;
-
-    Task<int> GetEntityAuditCountAsync(Expression<Func<EntityAuditEntity, bool>> filter);
-
-    Task<IEnumerable<EntityAuditDetailEntity>> GetPagedEntityAuditDetailAsync<TSort>(int offset, int limit, Expression<Func<EntityAuditDetailEntity, bool>> filter, SortDefinition sort, bool isAscendingSortByDefault = true)
-        where TSort : BaseSort<EntityAuditDetailEntity>;
-
-    Task<int> GetEntityAuditDetailCountAsync(Expression<Func<EntityAuditDetailEntity, bool>> filter);
+    void RemoveRange(TEntity[] entities);
 }

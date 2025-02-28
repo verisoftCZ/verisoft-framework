@@ -1,0 +1,20 @@
+<div class="v-button d-inline-block" 
+(click)="fireClick($event)">
+  <a
+    [routerLink]="routerLink ? routerLink : undefined"
+    [queryParams]="queryParams ? queryParams : undefined"
+  >
+    <p-button
+      [disabled]="disabled"
+      [icon]="icon"
+      [badge]="badge"
+      [outlined]="outlined"
+      [rounded]="rounded"
+      [raised]="raised"
+      [label]="label"
+      [size]="$any(size)"
+      [severity]="severity"
+      [iconPos]="iconPos"
+    />
+  </a>
+</div>

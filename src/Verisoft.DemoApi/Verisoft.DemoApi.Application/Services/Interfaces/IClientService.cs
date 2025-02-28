@@ -13,6 +13,8 @@ public interface IClientService
 
     Task<ClientListData> GetClientListAsync(FilteredRequest<ClientFilter> request);
 
+    Task<BusinessActionResult<ClientListData>> GetClientHistoryListAsync(FilteredRequest<ClientHistoryFilter> request);
+
     Task<BusinessActionResult<ExportResult>> GetClientsForExportAsync(FilteredRequest<ClientFilter> request, ExportType exportType);
 
     Task<BusinessActionResult<Client>> AddClientAsync(ClientEditModel clientEditModel);

@@ -1,0 +1,23 @@
+<div class="v-tab-view">
+  @if (useRouting) {
+  <p-tabMenu
+    [model]="mergedItems | tabMenu"
+    [activeItem]="items[activeIndex]"
+    (activeItemChange)="activeItemChanged($event)"
+  >
+  </p-tabMenu>
+  <router-outlet></router-outlet>
+  } @else {
+  <p-tabView (activeIndexChange)="activeItemChanged($event)">
+    @for (item of mergedItems; track item; let index = $index) {
+    <p-tabPanel [selected]="activeIndex === index" [header]="item.title" [disabled]="item.disabled === true">
+      @if (item.contentTemplate){
+      <ng-container *ngTemplateOutlet="item.contentTemplate"></ng-container>
+      } @else if (item.content) {
+      {{ item.content }}
+      }
+    </p-tabPanel>
+    }
+  </p-tabView>
+  }
+</div>

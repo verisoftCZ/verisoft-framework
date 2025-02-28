@@ -13,7 +13,7 @@ pool:
 
 variables:
   tag: '$(Build.BuildId)'
-  imageName: 'verisoft/fmw/frontend'
+  imageName: 'verisoft/hackaton/frontend'
   frontendDirectory: 'src/Verisoft.Frontend'
 
 steps:
