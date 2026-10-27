@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Directive,
   EventEmitter,
+  HostListener,
   inject,
   Input,
   OnChanges,
@@ -10,19 +11,21 @@ import {
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { cloneDeep } from 'lodash-es';
-import { Subject, takeUntil, filter, map } from 'rxjs';
+import { cloneDeep } from '@verisoft/core';
+import { Subject, takeUntil, filter, map, Observable } from 'rxjs';
+import { PreventUnsavedChangesCore } from '../../common';
+import { PreventUnsavedChangesDirective } from '../../services';
 import { FormState, isFormStateEqual } from './models';
-
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[v-baseForm]',
   standalone: true,
 })
 export abstract class BaseFormDirective<T extends object>
-  implements OnInit, OnChanges, OnDestroy, AfterViewInit
+  implements OnInit, OnChanges, OnDestroy, AfterViewInit, PreventUnsavedChangesCore
 {
   @Input() data!: T | any;
   @Output() dataChange = new EventEmitter<T>();
@@ -36,13 +39,32 @@ export abstract class BaseFormDirective<T extends object>
   cd = inject(ChangeDetectorRef);
   valueInitialization = false;
   lastState!: FormState;
+  guardViewChild!: ViewChild;
+  formSubmitted = false;
+  protected guard = inject(PreventUnsavedChangesDirective);
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadHandler(event: BeforeUnloadEvent) {
+    if (this.formGroup.dirty) {
+      event.preventDefault();
+    }
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.formGroup.dirty && !this.formSubmitted) {
+      const result = this.guard.showConfirmationDialog();
+      return result;
+    }
+
+    return true;
+  }
 
   ngOnInit(): void {
     this.initializeFormGroup();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['initialData'] && this.formGroup) {
+    if (changes['data'] && this.formGroup) {
       this.valueInitialization = true;
       const dirty = this.formGroup.dirty;
 
@@ -84,11 +106,12 @@ export abstract class BaseFormDirective<T extends object>
   }
 
   submit() {
+    this.formSubmitted = true;
     this.formGroup.markAllAsTouched();
     if (!this.formGroup.invalid) {
       this.formSubmit.emit(this.createCompleteData());
     }
-    this.formGroup.markAsUntouched();
+    this.formGroup.markAsPristine();
   }
 
   clear() {
@@ -203,7 +226,11 @@ export abstract class BaseFormDirective<T extends object>
   private transformEmptyStringToNullStringFn(obj: any, key: string) {
     // if empty string - transformation to null string
     if (typeof obj[key] === 'string' && obj[key] === '') {
-      obj[key] = null;
+      try {
+        obj[key] = null;
+      } catch (error) {
+        console.error(`Cannot modify ${key}: ${error}`)
+      }
     }
   }
 }

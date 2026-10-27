@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-switch-basic-example',
-  imports: [SwitchComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-switch-basic-example',
+    imports: [SwitchComponent, FormsModule],
+    template: template
 })
 export class GovCzSwitchBasicExampleComponent {
   value: boolean | null = null;

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
 import {
   CONFIRM_DIALOG_COMPONENT_TOKEN,
@@ -10,25 +10,24 @@ import {
 } from '@verisoft/ui-core';
 import { takeUntil } from 'rxjs';
 import { GovColorPipe } from '../../pipes';
-import { DynamicComponent } from '../shared-components';
+import { DynamicComponent } from '../shared-components/dynamic-component';
 
 @Component({
-  selector: 'v-confirm-dialog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    GovDesignSystemModule,
-    GovColorPipe,
-    DynamicComponent,
-  ],
-  templateUrl: './confirm-dialog.component.html',
-  styleUrl: './confirm-dialog.component.scss',
-  providers: [
-    {
-      provide: CONFIRM_DIALOG_COMPONENT_TOKEN,
-      useExisting: ConfirmDialogComponent,
-    },
-  ],
+    selector: 'v-confirm-dialog',
+    imports: [
+        CommonModule,
+        GovDesignSystemModule,
+        GovColorPipe,
+        DynamicComponent,
+    ],
+    templateUrl: './confirm-dialog.component.html',
+    styleUrl: './confirm-dialog.component.scss',
+    providers: [
+        {
+            provide: CONFIRM_DIALOG_COMPONENT_TOKEN,
+            useExisting: ConfirmDialogComponent,
+        },
+    ]
 })
 export class ConfirmDialogComponent
   extends UnsubscribeComponent
@@ -53,6 +52,14 @@ export class ConfirmDialogComponent
         this.visible = true;
         this.cdr.detectChanges();
       });
+
+    this.dialogService.closeEvent
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(() => {
+        this.data = {};
+        this.visible = false;
+        this.cdr.detectChanges();
+      })
   }
 
   protected dialogClick(confirm: boolean) {

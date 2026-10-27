@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-text-field-size-example',
-  imports: [TextfieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-text-field-size-example',
+    imports: [TextfieldComponent],
+    template: template
 })
 export class PrimengTextFieldSizeExampleComponent {
   code = new DocumentationCodeBuilder()

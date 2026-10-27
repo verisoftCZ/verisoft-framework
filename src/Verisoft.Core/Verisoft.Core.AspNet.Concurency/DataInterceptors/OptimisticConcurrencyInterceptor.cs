@@ -10,13 +10,13 @@ namespace Verisoft.Core.AspNet.Concurency.DataInterceptors
     {
         InterceptionResult<int> ISaveChangesInterceptor.SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
-            UpdateVersion(eventData.Context);
+            UpdateVersion(eventData!.Context!);
             return result;
         }
 
         ValueTask<InterceptionResult<int>> ISaveChangesInterceptor.SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken)
         {
-            UpdateVersion(eventData.Context);
+            UpdateVersion(eventData!.Context!);
             return ValueTask.FromResult(result);
         }
 

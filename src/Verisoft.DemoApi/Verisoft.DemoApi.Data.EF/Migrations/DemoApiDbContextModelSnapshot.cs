@@ -17,10 +17,108 @@ namespace Verisoft.DemoApi.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StringValue")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Codebook.Accessibility", "codebook", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
+
+            modelBuilder.Entity("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordTranslationEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CodebookRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CodebookRecordId");
+
+                    b.ToTable("Codebook.AccessibilityTranslation", "codebook", t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
+                });
 
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
@@ -33,7 +131,7 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Property<byte[]>("Content")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
@@ -57,7 +155,8 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[IsDeleted] = CAST(0 AS bit)");
 
                     b.ToTable("Blob");
                 });
@@ -79,7 +178,7 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Property<string>("ContactNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
@@ -164,6 +263,67 @@ namespace Verisoft.DemoApi.Database.Migrations
                             }));
                 });
 
+            modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.CodebookParentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccessibilityStringValue")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Accessibility")
+                        .HasComment("CodebookType: Accessibility");
+
+                    b.Property<int?>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessibilityStringValue");
+
+                    b.HasIndex("ClientId", "Code")
+                        .IsUnique()
+                        .HasFilter("(IsActive = 1) AND [IsDeleted] = CAST(0 AS bit)");
+
+                    b.ToTable("CodebookParent");
+                });
+
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.DocumentEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -179,7 +339,7 @@ namespace Verisoft.DemoApi.Database.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
@@ -233,10 +393,11 @@ namespace Verisoft.DemoApi.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApiKey")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
@@ -288,6 +449,40 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Verisoft.DemoApi.Contracts.Sagas.DocumentSagaState", b =>
+                {
+                    b.Property<Guid>("CorrelationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CurrentState")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CorrelationId");
+
+                    b.ToTable("DocumentSagaState", "MassTransit");
+                });
+
+            modelBuilder.Entity("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordTranslationEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", b =>
+                {
+                    b.HasOne("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", "CodebookRecord")
+                        .WithMany("Translations")
+                        .HasForeignKey("CodebookRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CodebookRecord");
+                });
+
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
                     b.HasOne("Verisoft.DemoApi.Common.Entities.DocumentEntity", "Document")
@@ -309,6 +504,24 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Navigation("ParentClient");
                 });
 
+            modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.CodebookParentEntity", b =>
+                {
+                    b.HasOne("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", "AccessibilityCodebookRecord")
+                        .WithMany()
+                        .HasForeignKey("AccessibilityStringValue")
+                        .HasPrincipalKey("StringValue")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Verisoft.DemoApi.Common.Entities.ClientEntity", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.Navigation("AccessibilityCodebookRecord");
+
+                    b.Navigation("Client");
+                });
+
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.DocumentEntity", b =>
                 {
                     b.HasOne("Verisoft.DemoApi.Common.Entities.ClientEntity", "Client")
@@ -324,6 +537,11 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Navigation("Client");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Verisoft.Core.Common.Entities.Codebooks.CodebookRecordEntity<Verisoft.DemoApi.Common.Entities.CodebookRecords.Accessibility>", b =>
+                {
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.ClientEntity", b =>

@@ -1,16 +1,14 @@
 <div class="v-multiple-select">
-  <ng-container *ngIf="label && !floatLabel">
+  @if (label && !floatLabel) {
     <v-form-field
       class="w-100"
       [label]="label"
       [tooltip]="tooltip"
       [required]="isRequired()"
-      [ngControl]="ngControl"
       [testId]="testId"
       [display]="formDisplay"
-    >
+      >
       <p-multiSelect
-        [baseZIndex]="9999"
         class="w-100"
         appendTo="body"
         [formControl]="formControl"
@@ -35,11 +33,11 @@
         (lazyLoadEvent)="onLazyLoad($any($event))"
       ></p-multiSelect>
     </v-form-field>
-  </ng-container>
-  <ng-container *ngIf="floatLabel">
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
+  }
+  @if (floatLabel) {
     <p-floatLabel>
       <p-multiSelect
-        [baseZIndex]="9999"
         class="w-100"
         appendTo="body"
         [formControl]="formControl"
@@ -65,5 +63,5 @@
       ></p-multiSelect>
       <label [for]="inputId">{{ floatLabel }}</label>
     </p-floatLabel>
-  </ng-container>
+  }
 </div>

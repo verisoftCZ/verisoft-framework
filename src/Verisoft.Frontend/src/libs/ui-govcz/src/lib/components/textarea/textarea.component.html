@@ -1,0 +1,50 @@
+<gov-form-control class="mb-3">
+    @if (label) {
+    <gov-form-label 
+        [slot]="labelSlot"
+        [size]="size | govSize"
+    >
+        {{ label | translate }}
+    </gov-form-label>
+    }
+    <gov-form-group>
+        <gov-form-input [type]="type"
+            [formControl]="formControl"
+            [minlength]="minlength" 
+            [maxlength]="maxlength" 
+            [size]='size | govSize'  
+            [name]='name' 
+            [role]='role'
+            [required]="required"
+            [readonly]="readonly"
+            [invalid]="ngControl?.errors ? true : false"
+            [multiline]="true"
+            [rows]="rows"
+            [cols]="cols"
+        >
+            @if (icon) {
+            <gov-icon
+                [name]="icon"
+                [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
+            />
+            } @if (prefix) {
+            <p slot="prefix">
+                {{ prefix }}
+            </p>
+            } @if (sufix) {
+            <p slot="sufix">
+                {{ sufix }}
+            </p>
+            }
+        </gov-form-input>
+    </gov-form-group>
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
+    @if (message) {
+    <gov-form-message 
+        [slot]="messageSlot" 
+        color="neutral"
+        >
+        {{ message | translate }}
+    </gov-form-message>
+    }
+</gov-form-control>

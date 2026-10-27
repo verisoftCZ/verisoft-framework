@@ -14,10 +14,9 @@ options: string[] = ['First', 'Second', 'Third'];
 `;
 
 @Component({
-  selector: 'v-doc-govcz-dropdown-basic-example',
-  imports: [DropdownComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-dropdown-basic-example',
+    imports: [DropdownComponent],
+    template: template
 })
 export class GovCzDropdownBasicExampleComponent {
   code = new DocumentationCodeBuilder()

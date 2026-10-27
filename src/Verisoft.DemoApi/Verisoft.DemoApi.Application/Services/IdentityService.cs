@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Verisoft.Core.Contracts;
 using Verisoft.DemoApi.Application.Services.Interfaces;
 using Verisoft.DemoApi.Common.Entities;
 using Verisoft.DemoApi.Common.Repositories;
@@ -16,7 +15,7 @@ public class IdentityService(IHttpContextAccessor contextAccessor, IUserReposito
         var user = await userRepository.GetUserByEmail(email);
         if (user == null)
         {
-            throw new BusinessException($"User with mail: {email} not found");
+            throw new Exception($"User with mail: {email} not found");
         }
 
         return user;

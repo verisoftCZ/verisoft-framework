@@ -4,11 +4,7 @@ import {
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
 import { DialogService } from '@verisoft/ui-core';
-import {
-  ButtonComponent,
-  SnackbarService,
-  Icons
-} from '@verisoft/ui-govcz';
+import { ButtonComponent, SnackbarService, Icons } from '@verisoft/ui-govcz';
 
 const template = `
 <div class="row">
@@ -18,13 +14,19 @@ const template = `
       (click)="showDialog()"
     />
   </div>
-  <div class="col-2">
+  <div class="col-3">
     <v-button
       label="Show success dialog"
       severity="success"
       (click)="showSuccessDialog()"
     />
   </div>
+  <div class="col-2">
+     <v-button
+       label="Show dialog and disable button"
+       (click)="showDialogWithDisableButton()"
+     />
+   </div>
 </div>
 `;
 
@@ -55,7 +57,6 @@ showSuccessDialog() {
 @Component({
   selector: 'v-doc-govcz-confirm-dialog-basic-example',
   imports: [ButtonComponent],
-  standalone: true,
   template: template,
 })
 export class GovCzConfirmDialogBasicExampleComponent {
@@ -88,5 +89,13 @@ export class GovCzConfirmDialogBasicExampleComponent {
       confirmButtonText: 'Show a toast',
       confirmButtonFn: () => this.snackbar.showSuccess('Action successful!'),
     });
+  }
+
+  showDialogWithDisableButton() {
+    this.showDialog();
+
+    setTimeout(() => {
+      this.dialogService.updateDialog({ confirmButtonDisabled: true });
+    }, 3000);
   }
 }

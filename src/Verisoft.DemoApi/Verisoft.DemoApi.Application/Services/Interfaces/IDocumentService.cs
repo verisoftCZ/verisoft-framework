@@ -11,7 +11,7 @@ public interface IDocumentService
 {
     Task<BusinessActionResult<Document>> GetDocumentAsync(int id);
 
-    Task<IEnumerable<Document>> GetDocumentsAsync(FilteredRequest<DocumentFilter> request);
+    Task<IEnumerable<Document>?> GetDocumentsAsync(FilteredRequest<DocumentFilter> request);
 
     Task<FileContentResult> GetDocumentContentAsync(int id);
 

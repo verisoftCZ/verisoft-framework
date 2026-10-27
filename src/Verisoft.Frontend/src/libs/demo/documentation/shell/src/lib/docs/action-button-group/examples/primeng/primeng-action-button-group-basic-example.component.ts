@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-action-button-group-basic-example',
-  imports: [ActionButtonGroupComponent, ActionButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-action-button-group-basic-example',
+    imports: [ActionButtonGroupComponent, ActionButtonComponent],
+    template: template
 })
 export class PrimengActionButtonGroupBasicExampleComponent {
   code = new DocumentationCodeBuilder()

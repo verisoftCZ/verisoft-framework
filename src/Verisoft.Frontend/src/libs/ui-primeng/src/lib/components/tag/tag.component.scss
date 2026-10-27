@@ -1,0 +1,33 @@
+:host {
+  display: inline-block;
+
+  .p-tag {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+
+    &.v-primeng-tag--small {
+      font-size: 0.75rem;
+      padding: 0.1rem 0.4rem;
+    }
+
+    &.v-primeng-tag--medium {
+      font-size: 0.875rem;
+      padding: 0.15rem 0.5rem;
+    }
+
+    &.v-primeng-tag--large {
+      font-size: 1rem;
+      padding: 0.25rem 0.6rem;
+    }
+
+    &.v-primeng-tag--xl {
+      font-size: 1.125rem;
+      padding: 0.3rem 0.75rem;
+    }
+
+    &.v-primeng-tag--subtle {
+      filter: brightness(1.1) saturate(0.5);
+    }
+  }
+}

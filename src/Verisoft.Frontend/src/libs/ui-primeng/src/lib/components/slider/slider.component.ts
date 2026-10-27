@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,29 +14,29 @@ import {
 } from '@angular/forms';
 import { BaseFormInputComponent, BaseInputControls, SLIDER_COMPONENT_TOKEN, SliderCore } from '@verisoft/ui-core';
 import { SliderModule } from 'primeng/slider';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
-  selector: 'v-slider',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-slider',
+    imports: [
     SliderModule,
     ReactiveFormsModule,
     FormFieldComponent,
-  ],
-  templateUrl: './slider.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => SliderComponent),
-    },
-    {
-      provide: SLIDER_COMPONENT_TOKEN,
-      useExisting: SliderComponent,
-    },
-  ],
+    ErrorComponent
+],
+    templateUrl: './slider.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => SliderComponent),
+        },
+        {
+            provide: SLIDER_COMPONENT_TOKEN,
+            useExisting: SliderComponent,
+        },
+    ]
 })
 export class SliderComponent
   extends BaseFormInputComponent

@@ -11,7 +11,7 @@ public class ValidationService(ITypeMapper typeMapper, IServiceProvider serviceP
     private readonly ITypeMapper typeMapper = typeMapper ?? throw new ArgumentNullException(nameof(typeMapper));
     private readonly IServiceProvider serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-    public async Task<TValidatedObject> ValidateAsync<TValidatedObject, TSource>(TSource sourceObject, object id = null)
+    public async Task<TValidatedObject> ValidateAsync<TValidatedObject, TSource>(TSource sourceObject, object? id = null)
         where TValidatedObject : class, IValidatedObject
         where TSource : class
     {
@@ -20,7 +20,7 @@ public class ValidationService(ITypeMapper typeMapper, IServiceProvider serviceP
         return validatedObject;
     }
 
-    private async Task ValidateObjectRecursivelyAsync(IValidatedObject validatedObject, object id = null)
+    private async Task ValidateObjectRecursivelyAsync(IValidatedObject validatedObject, object? id = null)
     {
         var validatorType = typeof(IValidator<>).MakeGenericType(validatedObject.GetType());
         var validator = serviceProvider.GetService(validatorType) as IValidator;
@@ -43,8 +43,8 @@ public class ValidationService(ITypeMapper typeMapper, IServiceProvider serviceP
 
             if (validateAsyncMethod is not null)
             {
-                var validationResult = await (Task<FluentValidation.Results.ValidationResult>)validateAsyncMethod.Invoke(validator, [validationContext, CancellationToken.None]);
-                validationResult.Errors?.ForEach(validatedObject.LogError);
+                var validationResult = await (Task<FluentValidation.Results.ValidationResult>)validateAsyncMethod.Invoke(validator, [validationContext, CancellationToken.None])!;
+                validationResult.Errors.ForEach(validatedObject.LogError);
             }
         }
 

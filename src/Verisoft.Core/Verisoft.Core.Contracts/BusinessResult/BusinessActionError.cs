@@ -2,7 +2,7 @@
 
 public class BusinessActionError
 {
-    internal BusinessActionError(string code, string message, object parameters = null)
+    internal BusinessActionError(string code, string message, object? parameters = null)
     {
         Code = code ?? string.Empty;
         Message = message;
@@ -13,5 +13,5 @@ public class BusinessActionError
 
     public string Message { get; }
 
-    public object Parameters { get; }
+    public object? Parameters { get; }
 }

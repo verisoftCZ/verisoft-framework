@@ -5,15 +5,14 @@ import { DocumentationHeaderComponent } from '../documentation-header/documentat
 import { DocumentationTableComponent } from '../documentation-table/documentation-table.component';
 
 @Component({
-  selector: 'v-doc-section',
-  standalone: true,
-  imports: [
-    DocumentationHeaderComponent,
-    DocumentationCodeComponent,
-    DocumentationTableComponent,
-  ],
-  templateUrl: './documentation-section.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-doc-section',
+    imports: [
+        DocumentationHeaderComponent,
+        DocumentationCodeComponent,
+        DocumentationTableComponent,
+    ],
+    templateUrl: './documentation-section.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentationSectionComponent {
   @Input() items?: DocumentationItem[];

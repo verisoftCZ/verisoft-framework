@@ -38,10 +38,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-number-input-reactive-forms-example',
-  imports: [NumberInputComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-number-input-reactive-forms-example',
+    imports: [NumberInputComponent, ReactiveFormsModule],
+    template: template
 })
 export class PrimengNumberInputReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

@@ -11,7 +11,23 @@
   width: 100%;
 }
 
+// primeng no longer ships CSS for this class - redefine it locally to overlay
+// the icon inside the input instead of pushing it out as a flex sibling.
 .p-input-icon-right {
+  position: relative;
+
+  input {
+    padding-right: 2.25rem;
+  }
+
+  .v-text-field__icon {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+  }
+
   i.pi-times:hover {
     cursor: pointer;
   }

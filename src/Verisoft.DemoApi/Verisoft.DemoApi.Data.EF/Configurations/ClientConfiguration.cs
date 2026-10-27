@@ -13,8 +13,6 @@ public class ClientConfiguration : IEntityTypeConfiguration<ClientEntity>
                .HasForeignKey(client => client.ParentClientId)
                .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasQueryFilter(r => !r.IsDeleted);
-
         builder.ToTable(clientTable => clientTable.IsTemporal());
     }
 }

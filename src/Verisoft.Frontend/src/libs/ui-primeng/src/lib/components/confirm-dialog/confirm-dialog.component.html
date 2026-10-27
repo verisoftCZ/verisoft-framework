@@ -1,4 +1,5 @@
-<div class="v-dialog d-flex justify-content-center" *ngIf="data">
+@if (data) {
+<div class="v-dialog d-flex justify-content-center">
   <p-dialog
     [(visible)]="visible"
     [modal]="true"
@@ -33,16 +34,19 @@
         <v-button
           [label]="data.confirmButtonText ?? 'Yes'"
           [severity]="data.severity"
+          [disabled]="data.confirmButtonDisabled ?? false"
           (click)="data.confirmButtonFn ? dialogClick(true) : (visible = false)"
         />
+        @if (data.showCancelButton && data.severity !== 'success') {
         <v-button
-          *ngIf="data.showCancelButton && data.severity !== 'success'"
           [label]="data.cancelButtonText ?? 'No'"
           [outlined]="true"
           [severity]="'secondary'"
           (click)="data.cancelButtonFn ? dialogClick(false) : (visible = false)"
         />
+        }
       </div>
     </ng-template>
   </p-dialog>
 </div>
+}

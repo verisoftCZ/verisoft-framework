@@ -44,7 +44,7 @@ export class TableBuilder<TEntity> {
   ): TableBuilder<TEntity> {
     return this.addColumn(id, (x) => {
       config?.(x);
-      x.type('date').valueFunction((row) => covertFromDate(row, id as string));
+      x.type('date').valueFunction((row) => covertFromDateToUserLocale(row, id as string));
     });
   }
 
@@ -73,18 +73,20 @@ export class TableBuilder<TEntity> {
   }
 }
 
-function covertFromDate<TEntity>(row: TEntity, id: string) {
+function covertFromDateToUserLocale<TEntity>(row: TEntity, id: string) {
   const value = (row as { [key: string]: undefined | string | Date })[id];
   if (value === undefined) {
     return '';
   }
 
+  const locale = navigator.language;
+
   if (value instanceof Date) {
-    return value.toLocaleDateString('cs-CZ');
+    return value.toLocaleDateString(locale);
   }
 
   if (typeof value === 'string' && !isNaN(Date.parse(value))) {
-    return new Date(value).toLocaleDateString('cs-CZ');
+    return new Date(value).toLocaleDateString(locale);
   }
 
   return value;

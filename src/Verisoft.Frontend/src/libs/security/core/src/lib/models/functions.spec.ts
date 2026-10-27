@@ -122,6 +122,7 @@ describe('Permissions Utils', () => {
         btoa('header') + '.' + btoa(JSON.stringify(payload)) + '.signature';
       const user = convertJWTToUser(token);
       expect(user).toEqual({
+        userId: undefined,
         userName: 'testUser',
         email: 'test@example.com',
         displayName: 'Test User',
@@ -142,6 +143,7 @@ describe('Permissions Utils', () => {
         btoa('header') + '.' + btoa(JSON.stringify(payload)) + '.signature';
       const user = convertJWTToUser(token);
       expect(user).toEqual({
+        userId: 'testUser',
         userName: 'testUser',
         email: 'test@example.com',
         displayName: 'Test User',

@@ -20,10 +20,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-table-template-example',
-  imports: [TableComponent, TableColumnDirective],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-template-example',
+    imports: [TableComponent, TableColumnDirective],
+    template: template
 })
 export class PrimengTableTemplateExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -20,7 +20,7 @@ public class BusinessActionResult
         Code = errors[0].Code;
     }
 
-    public BusinessActionErrors Errors { get; protected set; }
+    public BusinessActionErrors? Errors { get; protected set; }
 
     public string Code { get; set; }
 

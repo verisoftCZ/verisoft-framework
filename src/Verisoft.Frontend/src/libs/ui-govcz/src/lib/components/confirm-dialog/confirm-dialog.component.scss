@@ -1,0 +1,4 @@
+:host ::ng-deep dialog {
+  max-width: var(--dialog-max-width, 95%); // default 52.5rem
+  max-height: var(--dialog-max-height, 95%); // default 100%
+}

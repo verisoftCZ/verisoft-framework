@@ -53,7 +53,7 @@ public class JwtTokenGenerator<TUser>
 
         foreach (string permission in permissions)
         {
-            claims.Add(new (VerisoftClaims.Permission, permission));
+            claims.Add(new(VerisoftClaims.Permission, permission));
         }
 
         return claims;

@@ -1,10 +1,11 @@
-﻿namespace Verisoft.Core.MassTransit;
+﻿using MassTransit.Configuration;
 
-using System;
+namespace Verisoft.Core.MassTransit;
 using global::MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 public static class DependencyInjectionExtensions
 {
@@ -29,7 +30,25 @@ public static class DependencyInjectionExtensions
 
         serviceCollection.AddMassTransit(c =>
         {
-            c.AddConsumers(typeof(T).Assembly);
+            var sagaRepositoryConfigurator = options.GetSagaRepositoryConfigurator();
+            if (sagaRepositoryConfigurator != null)
+            {
+                sagaRepositoryConfigurator(c);
+            }
+            else
+            {
+                c.SetSagaRepositoryProvider(new InMemorySagaRepositoryRegistrationProvider());
+            }
+
+            foreach (var consumerConfig in options.GetConsumerConfigurations().Values)
+            {
+                c.AddConsumer(consumerConfig.ConsumerType, consumerConfig.ConsumerDefinitionType);
+            }
+
+            foreach (var sagaConfig in options.GetSagaConfigurations().Values)
+            {
+                c.AddSagaStateMachines(sagaConfig.SagaStateMachineType);
+            }
 
             c.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter(true));
             c.UsingRabbitMq((context, cfg) =>
@@ -47,12 +66,24 @@ public static class DependencyInjectionExtensions
                     }
                 });
 
+                cfg.UsePublishFilter(typeof(AutoAuthorizationHeaderPublishFilter<>), context);
+                cfg.UseConsumeFilter(typeof(UserContextPopulationConsumeFilter<>), context);
+
                 foreach (var consumerConfig in options.GetConsumerConfigurations().Values)
                 {
                     cfg.ReceiveEndpoint(consumerConfig.EndpointName, e =>
                     {
                         e.ConfigureConsumer(context, consumerConfig.ConsumerType);
                         consumerConfig.ApplyConfigurations(context, e);
+                    });
+                }
+
+                foreach (var sagaConfig in options.GetSagaConfigurations().Values)
+                {
+                    cfg.ReceiveEndpoint(sagaConfig.EndpointName, e =>
+                    {
+                        e.ConfigureSaga(context, sagaConfig.SagaStateType);
+                        sagaConfig.ApplyConfigurations(context, e);
                     });
                 }
 

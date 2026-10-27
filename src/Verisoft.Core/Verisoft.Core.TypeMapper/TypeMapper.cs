@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Verisoft.Core.Common.TypeMapper;
 using System;
 using System.Collections.Generic;
+using Verisoft.Core.Common.TypeMapper;
 
 namespace Verisoft.Core.TypeMapper
 {

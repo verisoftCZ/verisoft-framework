@@ -34,22 +34,27 @@ public class DocumentService(
     public async Task<FileContentResult> GetDocumentContentAsync(int id)
     {
         var document = await documentRepository.GetDocumentWithBlobContent(id);
-        return new FileContentResult(document.Blob.Content, document.ContentType)
+        return new FileContentResult(document.Blob!.Content!, document.ContentType!)
         {
             FileDownloadName = document.Name,
         };
     }
 
-    public async Task<IEnumerable<Document>> GetDocumentsAsync(FilteredRequest<DocumentFilter> request)
+    public async Task<IEnumerable<Document>?> GetDocumentsAsync(FilteredRequest<DocumentFilter> request)
     {
         var documentSpecification = typeMapper.Map<DocumentSpecification>(request.Filter);
         var filter = documentSpecification?.SatisfiedBy();
-        var items = await documentRepository.GetPagedSortAsync<DocumentSort>(
-            request.Offset,
-            request.Limit,
-            filter,
-            request.Sort);
-        return typeMapper.Map<Document>(items).ToList();
+        if (filter is not null)
+        {
+            var items = await documentRepository.GetPagedSortAsync<DocumentSort>(
+                request.Offset,
+                request.Limit,
+                filter,
+                request.ParsedSorts);
+            return typeMapper.Map<Document>(items.Items).ToList();
+        }
+
+        return null;
     }
 
     public async Task<BusinessActionResult<Document>> AddDocumentAsync(DocumentCreateModel documentEditModel, IFormFile document)
@@ -103,7 +108,7 @@ public class DocumentService(
             documentEntity.ContentType = documentFile.ContentType;
             documentRepository.Update(documentEntity);
             documentEntity.Blob.CreatedBy = documentEntity.UpdatedBy;
-            documentEntity.Blob.CreatedAt = documentEntity.UpdatedAt.Value;
+            documentEntity.Blob.CreatedAt = documentEntity!.UpdatedAt!.Value;
         }
 
         documentRepository.UnitOfWork.Commit();
@@ -125,7 +130,7 @@ public class DocumentService(
         return typeMapper.Map<Document>(documentEntity);
     }
 
-    private static async Task<BlobEntity> GetBlobEntityFromDocAsync(IFormFile document, BlobEntity originalBlobEntity)
+    private static async Task<BlobEntity> GetBlobEntityFromDocAsync(IFormFile document, BlobEntity? originalBlobEntity)
     {
         if (originalBlobEntity is null)
         {

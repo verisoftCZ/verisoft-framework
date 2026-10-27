@@ -1,0 +1,7 @@
+
+@if (ngControl && ngControl.errors) {
+  <p-message
+    [severity]="severity | messageSeverity"
+    text="{{ getErrorMessage(ngControl.errors) | async }}">
+  </p-message>
+}

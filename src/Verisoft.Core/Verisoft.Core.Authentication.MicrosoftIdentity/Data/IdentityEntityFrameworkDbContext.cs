@@ -23,6 +23,11 @@ public class IdentityEntityFrameworkDbContext<TUser>(IDatabaseConfig databaseCon
         this.Database.Migrate();
     }
 
+    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        await SaveChangesAsync(cancellationToken);
+    }
+
     public void Rollback()
     {
         this.RollbackChanges();

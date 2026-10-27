@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 
@@ -16,11 +16,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Export\Verisoft.Core.Export.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Authentication.Permissions\Verisoft.Core.Authentication.Permissions.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Excel\Verisoft.Core.Excel.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.ExportStrategies\Verisoft.Core.ExportStrategies.csproj" />
-	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Common\Verisoft.Core.Common.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Pdf\Verisoft.Core.Pdf.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Template\Verisoft.Core.Template.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.TypeMapper\Verisoft.Core.TypeMapper.csproj" />

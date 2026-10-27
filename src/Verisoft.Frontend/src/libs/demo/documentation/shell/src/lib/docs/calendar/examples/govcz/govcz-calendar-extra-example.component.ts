@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-calendar-extra-example',
-  imports: [CalendarComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-calendar-extra-example',
+    imports: [CalendarComponent],
+    template: template
 })
 export class GovCzFormFieldExtraExampleComponent {
   code = new DocumentationCodeBuilder()

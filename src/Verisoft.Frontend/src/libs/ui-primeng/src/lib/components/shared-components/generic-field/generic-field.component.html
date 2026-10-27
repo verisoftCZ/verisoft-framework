@@ -4,8 +4,8 @@
   [floatLabel]="floatLabel === true"
   [size]="size"
   [formControl]="formControl"
-></v-textfield>
-} @if (type === fieldTypes.dropdown) {
+/>
+} @else if (type === fieldTypes.dropdown && !datasource) {
 <v-dropdown
   [label]="!floatLabel ? label : ''"
   [floatLabel]="floatLabel ? label : ''"
@@ -14,14 +14,36 @@
   [optionLabel]="optionLabel"
   [optionValue]="optionValue ?? optionLabel"
   [loading]="loading"
+  [forceMinWidth]="true"
   [formControl]="formControl"
+  [showFilter]="showFilter ?? false"
+  [localSearch]="localSearch ?? false"
   (changeEvent)="changed.emit($event)"
   (clearEvent)="cleared.emit($event)"
   (lazyLoadEvent)="lazyLoad.emit($any($event))"
   (showEvent)="showed.emit($event)"
->
-</v-dropdown>
-} @else if (type === fieldTypes.multiselect) {
+/> 
+} @else if (type === fieldTypes.dropdown && datasource) {
+  <v-dropdown
+    useDatasource
+    [forceMinWidth]="true"
+    [datasource]="datasource"
+    [optionLabel]="optionLabel"
+    [optionValue]="optionValue ?? optionLabel"
+    [label]="!floatLabel ? label : ''"
+    [floatLabel]="floatLabel ? label : ''"
+    [testId]="testId"
+    [loading]="loading"
+    [formControl]="formControl"
+    [showFilter]="showFilter ?? false"
+    [filterField]="filterField ?? 'fulltext'"
+    [localSearch]="localSearch ?? false"
+    (changeEvent)="changed.emit($event)"
+    (clearEvent)="cleared.emit($event)"
+    (lazyLoadEvent)="lazyLoad.emit($any($event))"
+    (showEvent)="showed.emit($event)"
+  />
+} @else if (type === fieldTypes.multiselect && !datasource) {
 <v-multiselect
   [label]="!floatLabel ? label : ''"
   [floatLabel]="floatLabel ? label : ''"
@@ -35,14 +57,36 @@
   (clearEvent)="cleared.emit($event)"
   (lazyLoadEvent)="lazyLoad.emit($any($event))"
   (showEvent)="showed.emit($event)"
->
-</v-multiselect>
+/>
+} @else if (type === fieldTypes.multiselect && datasource) {
+<v-multiselect
+  useDatasource
+  [datasource]="datasource"
+  [optionLabel]="optionLabel"
+  [optionValue]="optionValue ?? optionLabel"
+  [label]="!floatLabel ? label : ''"
+  [floatLabel]="floatLabel ? label : ''"
+  [testId]="testId"
+  [loading]="loading"
+  [formControl]="formControl"
+  (changeEvent)="changed.emit($event)"
+  (clearEvent)="cleared.emit($event)"
+  (lazyLoadEvent)="lazyLoad.emit($any($event))"
+  (showEvent)="showed.emit($event)"
+/>
 } @else if (type === fieldTypes.checkbox) {
-<v-tristatecheckbox
+<v-checkbox
   [label]="label"
   [testId]="testId"
   [formControl]="formControl"
-></v-tristatecheckbox>
+  [indeterminate]="true"
+/>
+} @else if (type === fieldTypes.simplecheckbox) {
+<v-checkbox
+  [label]="label"
+  [testId]="testId"
+  [formControl]="formControl"
+/>
 } @else if (type === fieldTypes.calendar) {
 <v-calendar
   [label]="!floatLabel ? label : ''"
@@ -50,5 +94,5 @@
   [testId]="testId"
   [formControl]="formControl"
   [icon]="icons.calendar"
-></v-calendar>
+/>
 }

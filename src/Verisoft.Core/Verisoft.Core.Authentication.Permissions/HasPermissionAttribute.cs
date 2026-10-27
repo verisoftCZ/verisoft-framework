@@ -5,9 +5,9 @@ namespace Verisoft.Core.Authentication.Permissions
     public sealed class HasPermissionAttribute : AuthorizeAttribute
     {
         public HasPermissionAttribute(object permission)
-            : base(policy: permission.ToString())
+            : base(policy: permission.ToString() ?? throw new ArgumentNullException(nameof(permission)))
         {
-
+          
         }
     }
 }

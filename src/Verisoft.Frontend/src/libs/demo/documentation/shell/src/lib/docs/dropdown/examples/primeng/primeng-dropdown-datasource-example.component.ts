@@ -40,10 +40,9 @@ interface Car {
 }
 
 @Component({
-  selector: 'v-doc-primeng-dropdown-datasource-example',
-  imports: [DropdownComponent, DatasourceDirective, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-dropdown-datasource-example',
+    imports: [DropdownComponent, DatasourceDirective, FormsModule],
+    template: template
 })
 export class PrimengDropdownDatasourceExampleComponent {
   code = new DocumentationCodeBuilder()

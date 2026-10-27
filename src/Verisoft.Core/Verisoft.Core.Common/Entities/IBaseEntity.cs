@@ -6,11 +6,11 @@ public interface IBaseEntity<TKey> : IBaseEntity, IEntity<TKey>;
 
 public interface IBaseEntity
 {
-    string CreatedBy { get; set; }
+    string? CreatedBy { get; set; }
 
-    DateTime CreatedAt { get; set; }
+    DateTime? CreatedAt { get; set; }
 
-    string UpdatedBy { get; set; }
+    string? UpdatedBy { get; set; }
 
     DateTime? UpdatedAt { get; set; }
 

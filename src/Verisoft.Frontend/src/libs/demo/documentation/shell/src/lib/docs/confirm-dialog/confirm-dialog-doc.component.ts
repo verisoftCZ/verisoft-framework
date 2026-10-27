@@ -8,13 +8,12 @@ import {
 import { getDocumentation } from './confirm-dialog-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Confirm dialog"
     description="Confirm dialog is an extension to the prime-ng component <strong>p-dialog</strong>."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class ConfirmDialogDocComponent {
   builder = inject(DocumentationBuilderService);

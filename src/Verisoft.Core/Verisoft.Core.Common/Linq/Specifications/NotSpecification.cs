@@ -17,7 +17,7 @@ namespace Verisoft.Core.Common.Linq.Specifications
                 throw new ArgumentNullException(nameof(originalSpecification));
             }
 
-            originalCriteria = originalSpecification.SatisfiedBy();
+            originalCriteria = originalSpecification.SatisfiedBy()!;
         }
 
         public NotSpecification(Expression<Func<TEntity, bool>> originalSpecification)

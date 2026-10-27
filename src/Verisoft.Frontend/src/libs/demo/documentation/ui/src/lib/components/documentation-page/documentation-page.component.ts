@@ -23,15 +23,14 @@ import { DocumentationGovCzTabsComponent } from '../documentation-tabs/documenta
 import { DocumentationPrimengTabsComponent } from '../documentation-tabs/documentation-primeng-tabs.component';
 
 @Component({
-  selector: 'v-doc-page',
-  standalone: true,
-  imports: [
-    DocumentationPrimengTabsComponent,
-    DocumentationGovCzTabsComponent,
-    DocumentationHeaderComponent,
-  ],
-  templateUrl: './documentation-page.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-doc-page',
+    imports: [
+        DocumentationPrimengTabsComponent,
+        DocumentationGovCzTabsComponent,
+        DocumentationHeaderComponent,
+    ],
+    templateUrl: './documentation-page.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentationPageComponent implements OnChanges {
   @Input() title!: string;

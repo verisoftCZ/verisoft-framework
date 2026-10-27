@@ -8,13 +8,12 @@ import {
 import { getDocumentation } from './breadcrumb-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Breadcrumb"
     description="Breadcrumb is an extension to the prime-ng component <strong>p-breadcrumb</strong>."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class BreadcrumbDocComponent {
   builder = inject(DocumentationBuilderService);

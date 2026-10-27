@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +15,17 @@ namespace Verisoft.DemoApi.Host.Controllers.V2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("v{v:apiVersion}/[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Verisoft.Core.Contracts.FailureDetail))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 public class DocumentController(IDocumentService documentService) : ControllerBase
 {
     [HttpGet]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Document))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFound))]
-    public async Task<IActionResult> GetDocumentAsync(int id)
+    [ProducesResponseType<Document>(StatusCodes.Status200OK)]
+    [ProducesResponseType<NotFound>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> GetDocumentAsync(int id)
     {
         var result = await documentService.GetDocumentAsync(id);
         return result.ToActionResult();
@@ -33,9 +33,9 @@ public class DocumentController(IDocumentService documentService) : ControllerBa
 
     [HttpGet]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Document>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    public async Task<IEnumerable<Document>> GetDocumentsAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<DocumentFilter> request)
+    [ProducesResponseType<IEnumerable<Document>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IEnumerable<Document>?> GetDocumentsAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<DocumentFilter> request)
     {
         return await documentService.GetDocumentsAsync(request);
     }
@@ -49,10 +49,10 @@ public class DocumentController(IDocumentService documentService) : ControllerBa
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Document))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(UnprocessableEntity))]
-    public async Task<IActionResult> AddDocumentAsync([FromForm] DocumentCreateModel documentEditModel, IFormFile document)
+    [ProducesResponseType<Document>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<UnprocessableEntity>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> AddDocumentAsync([FromForm] DocumentCreateModel documentEditModel, IFormFile document)
     {
         var result = await documentService.AddDocumentAsync(documentEditModel, document);
         return result.ToActionResult();
@@ -61,11 +61,11 @@ public class DocumentController(IDocumentService documentService) : ControllerBa
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Document))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundObjectResult))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(UnprocessableEntity))]
-    public async Task<IActionResult> UpdateClientsAsync([FromForm] DocumentUpdateModel clientEditModel, int id, IFormFile document)
+    [ProducesResponseType<Document>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<NotFoundObjectResult>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<UnprocessableEntity>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> UpdateClientsAsync([FromForm] DocumentUpdateModel clientEditModel, int id, IFormFile document)
     {
         var result = await documentService.UpdateDocumentAsync(id, clientEditModel, document);
         return result.ToActionResult();
@@ -74,9 +74,9 @@ public class DocumentController(IDocumentService documentService) : ControllerBa
     [HttpDelete]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoDelete},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Document))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundObjectResult))]
-    public async Task<IActionResult> DeleteClientAsync(int id)
+    [ProducesResponseType<Document>(StatusCodes.Status200OK)]
+    [ProducesResponseType<NotFoundObjectResult>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> DeleteClientAsync(int id)
     {
         var result = await documentService.RemoveDocumentAsync(id);
         return result.ToActionResult();

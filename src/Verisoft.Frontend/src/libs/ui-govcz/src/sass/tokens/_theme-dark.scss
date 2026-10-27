@@ -1,0 +1,18 @@
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --v-filter-background: var(--background-block-primary);
+    --v-filter-header-background: var(--background-block-secondary);
+    --v-table-filter-background: var(--background-block-primary);
+    --v-filter-border: var(--border-subtlest);
+    --v-filter-records-text-color: var(--color-neutral-0);
+  }
+}
+
+:root[data-theme="dark"] {
+  --v-filter-background: var(--background-block-primary);
+  --v-filter-header-background: var(--background-block-secondary);
+  --v-table-filter-background: var(--background-block-primary);
+  --v-filter-border: var(--border-subtlest);
+  --v-filter-records-text-color: var(--color-neutral-0);
+}
+

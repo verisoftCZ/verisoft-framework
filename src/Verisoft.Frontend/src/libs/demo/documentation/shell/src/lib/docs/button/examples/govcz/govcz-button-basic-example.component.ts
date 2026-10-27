@@ -81,10 +81,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-button-basic-example',
-  imports: [ButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-button-basic-example',
+    imports: [ButtonComponent],
+    template: template
 })
 export class GovCzButtonBasicExampleComponent {
   code = new DocumentationCodeBuilder()

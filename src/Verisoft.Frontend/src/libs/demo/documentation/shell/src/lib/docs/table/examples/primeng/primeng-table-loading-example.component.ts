@@ -14,10 +14,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-table-loading-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-loading-example',
+    imports: [TableComponent],
+    template: template
 })
 export class PrimengTableLoadingExampleComponent {
   code = new DocumentationCodeBuilder()

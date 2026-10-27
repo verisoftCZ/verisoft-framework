@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
 } from '@angular/core';
@@ -7,19 +7,21 @@ import {
   BreadcrumbCoreComponent,
 } from '@verisoft/ui-core';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { ConvertMenuItemPipe } from './breadcrumb.pipe';
 
 @Component({
-  selector: 'v-breadcrumb',
-  standalone: true,
-  imports: [CommonModule, BreadcrumbModule],
-  templateUrl: './breadcrumb.component.html',
-  styleUrl: './breadcrumb.component.scss',
-  providers: [
-    { 
-      provide: BREADCRUMB_COMPONENT_TOKEN,
-      useExisting: BreadcrumbComponent
-    },
-  ],
+    selector: 'v-breadcrumb',
+    imports: [
+    BreadcrumbModule,
+    ConvertMenuItemPipe
+],
+    templateUrl: './breadcrumb.component.html',
+    styleUrl: './breadcrumb.component.scss',
+    providers: [
+        {
+            provide: BREADCRUMB_COMPONENT_TOKEN,
+            useExisting: BreadcrumbComponent
+        },
+    ]
 })
-export class BreadcrumbComponent extends BreadcrumbCoreComponent { 
-}
+export class BreadcrumbComponent extends BreadcrumbCoreComponent { }

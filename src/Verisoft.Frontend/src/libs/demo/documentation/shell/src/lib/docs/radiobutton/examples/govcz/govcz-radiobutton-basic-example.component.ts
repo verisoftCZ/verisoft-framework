@@ -13,10 +13,9 @@ const template = `
 const typescript = `items: RadioButtonItem<any>[] = [ { id: '123', value: 'Yes' }, { id: '321', value: 'No' } ];`;
 
 @Component({
-  selector: 'v-doc-govcz-radiobutton-basic-example',
-  imports: [RadioButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-radiobutton-basic-example',
+    imports: [RadioButtonComponent],
+    template: template
 })
 export class GovCzRadiobuttonBasicExampleComponent {
   code = new DocumentationCodeBuilder()

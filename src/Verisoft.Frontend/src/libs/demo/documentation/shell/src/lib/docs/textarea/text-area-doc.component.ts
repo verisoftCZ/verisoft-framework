@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './text-area-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="TextArea"
     description="TextArea is an extension to the standard textarea element with validation messages and a label."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class TextAreaDocComponent {
   builder = inject(DocumentationBuilderService);

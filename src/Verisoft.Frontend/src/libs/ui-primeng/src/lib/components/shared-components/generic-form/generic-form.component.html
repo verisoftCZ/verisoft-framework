@@ -1,10 +1,33 @@
 @if (formGroupComputed) {
-<div class="v-generic-form row" [formGroup]="formGroupComputed">
-  @for(field of fields; track field){ @if (columnClass) {
-  <div class="v-generic-form__column {{ columnClass }}">
+  <div
+    class="v-generic-form"
+    [ngClass]="showAsRow ? 'd-flex flex-row' : 'row'"
+    [formGroup]="formGroupComputed"
+  >
+    @for(field of fields; track field) { @if (columnClass) {
+    <div class="v-generic-form__column {{ columnClass }}">
+      <v-generic-field
+        [type]="field.type"
+        [label]="field.label ?? 'NOT SET' | translate"
+        [floatLabel]="field.floatLabel"
+        [testId]="field.testId"
+        [options]="field.options"
+        [optionLabel]="field.optionLabel"
+        [optionValue]="field.optionValue ?? field.optionLabel"
+        [options]="field.options"
+        [size]="field.size"
+        [formControlName]="field.name"
+        [datasource]="field.datasource"
+        [showFilter]="field.showFilter"
+        [filterField]="field.filterField"
+        [localSearch]="field.localSearch"
+      ></v-generic-field>
+    </div>
+    } @else {
     <v-generic-field
+      class="me-4"
       [type]="field.type"
-      [label]="field.label"
+      [label]="field.label ?? 'NOT SET' | translate"
       [floatLabel]="field.floatLabel"
       [testId]="field.testId"
       [options]="field.options"
@@ -13,21 +36,11 @@
       [options]="field.options"
       [size]="field.size"
       [formControlName]="field.name"
+      [datasource]="field.datasource"
+      [showFilter]="field.showFilter"
+      [filterField]="field.filterField"
+      [localSearch]="field.localSearch"
     ></v-generic-field>
+    } }
   </div>
-  } @else {
-  <v-generic-field
-    [type]="field.type"
-    [label]="field.label"
-    [floatLabel]="field.floatLabel"
-    [testId]="field.testId"
-    [options]="field.options"
-    [optionLabel]="field.optionLabel"
-    [optionValue]="field.optionValue ?? field.optionLabel"
-    [options]="field.options"
-    [size]="field.size"
-    [formControlName]="field.name"
-  ></v-generic-field>
-  } }
-</div>
-}
+  }

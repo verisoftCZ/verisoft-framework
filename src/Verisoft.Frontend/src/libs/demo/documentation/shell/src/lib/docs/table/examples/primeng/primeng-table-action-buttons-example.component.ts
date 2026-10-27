@@ -33,15 +33,14 @@ const ts =
   'imports: [TableComponent, ActionButtonGroupComponent, ActionButtonComponent, TableColumnDirective]';
 
 @Component({
-  selector: 'v-doc-primeng-table-action-buttons-example',
-  imports: [
-    TableComponent,
-    ActionButtonGroupComponent,
-    ActionButtonComponent,
-    TableColumnDirective,
-  ],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-action-buttons-example',
+    imports: [
+        TableComponent,
+        ActionButtonGroupComponent,
+        ActionButtonComponent,
+        TableColumnDirective,
+    ],
+    template: template
 })
 export class PrimengTableActionButtonsExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -6,22 +6,28 @@ import {
   GovCzTableActionButtonsExampleComponent,
   GovCzTableBasicExampleComponent,
   GovCzTableBuilderExampleComponent,
+  GovCzTableCellTemplateExampleComponent,
   GovCzTableDataSourceObservableExampleComponent,
   GovCzTableDataSourceUrlExampleComponent,
   GovCzTableLoadingExampleComponent,
   GovCzTableRowDetailExampleComponent,
+  GovCzTableRowDoubleClickExampleComponent,
   GovCzTableSelectableExampleComponent,
   GovCzTableSortExampleComponent,
+  GovCzTableDefaultSortExampleComponent,
   GovCzTableTemplateExampleComponent,
   PrimengTableActionButtonsExampleComponent,
   PrimengTableBasicExampleComponent,
   PrimengTableBuilderExampleComponent,
+  PrimengTableCellTemplateExampleComponent,
   PrimengTableDataSourceObservableExampleComponent,
   PrimengTableDataSourceUrlExampleComponent,
   PrimengTableLoadingExampleComponent,
   PrimengTableRowDetailExampleComponent,
+  PrimengTableRowDoubleClickExampleComponent,
   PrimengTableSelectableExampleComponent,
   PrimengTableSortExampleComponent,
+  PrimengTableDefaultSortExampleComponent,
   PrimengTableTemplateExampleComponent,
 } from './examples';
 
@@ -96,6 +102,15 @@ export function getDocumentation(
       )
       .addSection((s) =>
         s
+          .title('Default sort')
+          .addText(
+            `A column can define a default sort state via the sortDirection ('asc' | 'desc') and sortPriority properties. It is applied on the initial render, reflected in the table state (sort icons) without any user interaction, and reflected in the data - client-side rows are sorted immediately and, for lazy/datasource-bound tables, the initial request already includes the default sort. sortPriority controls the order of columns when multiple sort defaults are combined in multi-sort mode; in single-sort mode only the column with the lowest sortPriority is applied. Whenever the columns input changes and the resulting default sort differs, the table re-applies it and emits the sortChange output. These properties can be defined either in the columns model passed to the columns input, or directly on the v-table-column directive in the template.
+          `
+          )
+          .addCodeComponent(isPrimeng ? PrimengTableDefaultSortExampleComponent : GovCzTableDefaultSortExampleComponent)
+      )
+      .addSection((s) =>
+        s
           .title('DataSource')
           .addText(
             `The Table component is bindable to data source. Data source could be url, array, paged data, observable array, observable paged data, class inherited from BaseHttpService and AllItemDataSource. Datasource is available after importing of TableDataSourceDirective.`
@@ -124,6 +139,26 @@ export function getDocumentation(
           `
           )
           .addCodeComponent(isPrimeng ? PrimengTableRowDetailExampleComponent : GovCzTableRowDetailExampleComponent)
+      )
+      .addSection((s) =>
+        s
+          .title('Row double click')
+          .addText(
+            `
+            By default a double click on a row navigates to the row detail (relative route with the row id or entityKey). Bind the rowDoubleClick output to handle the double click yourself - the default navigation is then not performed. The output emits the row data.
+          `
+          )
+          .addCodeComponent(isPrimeng ? PrimengTableRowDoubleClickExampleComponent : GovCzTableRowDoubleClickExampleComponent)
+      )
+      .addSection((s) =>
+        s
+          .title('Column cell template')
+          .addText(
+            `
+            A column can define a custom cell template using ng-template. When a template is provided, it replaces the default raw value rendering.
+          `
+          )
+          .addCodeComponent(isPrimeng ? PrimengTableCellTemplateExampleComponent : GovCzTableCellTemplateExampleComponent)
       )
       .addSection((s) =>
         s

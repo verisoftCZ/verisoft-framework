@@ -14,7 +14,7 @@ internal class LockingManager<TContext>(TContext context, IUserContext userConte
     {
         var entity = await GetEntity<TEntity>(id);
         entity.LockedAt = DateTime.Now;
-        entity.LockedBy = userContext.User.Identity.Name;
+        entity.LockedBy = userContext!.User!.Identity!.Name!;
         context.Commit();
     }
 

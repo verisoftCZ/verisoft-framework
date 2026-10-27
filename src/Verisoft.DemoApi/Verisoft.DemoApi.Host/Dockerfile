@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 
 #####################
 #PUPPETEER RECIPE based on https://github.com/hardkoded/puppeteer-sharp/issues/1180#issuecomment-1015532968
@@ -15,29 +15,16 @@ RUN apt-get update \
 ######################
 ENV PUPPETEER_EXECUTABLE_PATH "/usr/bin/google-chrome-stable"
 
-USER app
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Verisoft.DemoApi/Verisoft.DemoApi.Host/Verisoft.DemoApi.Host.csproj", "Verisoft.DemoApi/Verisoft.DemoApi.Host/"]
-COPY ["Verisoft.Core/Verisoft.Core.AspNet/Verisoft.Core.AspNet.csproj", "Verisoft.Core/Verisoft.Core.AspNet/"]
-COPY ["Verisoft.Core/Verisoft.Core.Authentication/Verisoft.Core.Authentication.csproj", "Verisoft.Core/Verisoft.Core.Authentication/"]
-COPY ["Verisoft.Core/Verisoft.Core.Common/Verisoft.Core.Common.csproj", "Verisoft.Core/Verisoft.Core.Common/"]
-COPY ["Verisoft.Core/Verisoft.Core.Contracts/Verisoft.Core.Contracts.csproj", "Verisoft.Core/Verisoft.Core.Contracts/"]
-COPY ["Verisoft.DemoApi/Verisoft.DemoApi.Application/Verisoft.DemoApi.Application.csproj", "Verisoft.DemoApi/Verisoft.DemoApi.Application/"]
-COPY ["Verisoft.Core/Verisoft.Core.TypeMapper/Verisoft.Core.TypeMapper.csproj", "Verisoft.Core/Verisoft.Core.TypeMapper/"]
-COPY ["Verisoft.DemoApi/Verisoft.DemoApi.Contracts/Verisoft.DemoApi.Contracts.csproj", "Verisoft.DemoApi/Verisoft.DemoApi.Contracts/"]
-COPY ["Verisoft.DemoApi/Verisoft.DemoApi.Common/Verisoft.DemoApi.Common.csproj", "Verisoft.DemoApi/Verisoft.DemoApi.Data/"]
-COPY ["Verisoft.Core/Verisoft.Core.Data.EF/Verisoft.Core.Data.EntityFramework.csproj", "Verisoft.Core/Verisoft.Core.Data.EF/"]
-COPY ["Verisoft.DemoApi/Verisoft.DemoApi.Data.EF/Verisoft.DemoApi.Data.EF.csproj", "Verisoft.DemoApi/Verisoft.DemoApi.Data.EF/"]
-COPY ["Verisoft.Core/Verisoft.Core.Data/Verisoft.Core.Data.csproj", "Verisoft.Core/Verisoft.Core.Data/"]
-RUN dotnet restore "./Verisoft.DemoApi/Verisoft.DemoApi.Host/./Verisoft.DemoApi.Host.csproj"
 COPY . .
 WORKDIR "/src/Verisoft.DemoApi/Verisoft.DemoApi.Host"
-RUN dotnet build "./Verisoft.DemoApi.Host.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore "./Verisoft.DemoApi.Host.csproj"
+RUN dotnet build "./Verisoft.DemoApi.Host.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

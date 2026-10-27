@@ -1,0 +1,59 @@
+v-dropdown-button {
+  display: inline-block;
+
+  gov-dropdown {
+    display: inline-block;
+  }
+
+  .v-dropdown-button__trigger {
+    display: inline-block;
+  }
+
+  .v-dropdown-button__menu {
+    outline: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    min-width: 100%;
+    width: 100%;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .v-dropdown-button__item {
+    border-bottom: 1px solid
+      var(
+        --v-dropdown-button-item-border,
+        color-mix(in srgb, currentColor 14%, transparent)
+      );
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &--focused,
+    &:hover {
+      background-color: var(
+        --v-dropdown-button-item-active-bg,
+        color-mix(
+          in srgb,
+          var(--status-focus, var(--status-info, #0066cc)) 20%,
+          transparent
+        )
+      );
+
+      > v-button.v-button--dropdown-menu-item {
+        background-color: inherit;
+      }
+    }
+
+    v-button.v-button--dropdown-menu-item[role='menuitem']:focus,
+    v-button.v-button--dropdown-menu-item[role='menuitem']:focus-visible {
+      outline: none;
+    }
+  }
+}

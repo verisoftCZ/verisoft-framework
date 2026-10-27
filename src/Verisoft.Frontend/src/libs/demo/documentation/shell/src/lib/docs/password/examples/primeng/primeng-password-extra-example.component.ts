@@ -16,10 +16,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-primeng-doc-password-extra-example',
-  imports: [PasswordComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-password-extra-example',
+    imports: [PasswordComponent],
+    template: template
 })
 export class PrimengPasswordExtraExampleComponent {
   code = new DocumentationCodeBuilder()

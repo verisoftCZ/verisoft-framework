@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ERROR_PROVIDER_TOKEN } from '@verisoft/core';
+import { of } from 'rxjs';
 import { MultiselectComponent } from './multiselect.component';
 
 describe('MultiselectComponent', () => {
@@ -8,6 +10,9 @@ describe('MultiselectComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MultiselectComponent],
+      providers: [
+        { provide: ERROR_PROVIDER_TOKEN, useValue: { mapError: () => of(null) } }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MultiselectComponent);

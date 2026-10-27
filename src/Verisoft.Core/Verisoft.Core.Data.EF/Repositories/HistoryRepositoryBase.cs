@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Verisoft.Core.Authentication;
 using Verisoft.Core.Common.Entities;
 using Verisoft.Core.Common.Store;
 using Verisoft.Core.Contracts;
@@ -12,24 +11,21 @@ using Verisoft.Core.Contracts;
 namespace Verisoft.Core.Data.EntityFramework.Repositories;
 
 public abstract class HistoryRepositoryBase<TEntity, TKey>(
-    IUnitOfWork unitOfWork,
-    IUserContext userContext)
+    IUnitOfWork unitOfWork)
     : EntityFrameworkRepositoryBase<TEntity, TKey>(
-            unitOfWork,
-            userContext),
+            unitOfWork),
         IHistoryRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
+    where TEntity : class, IBaseEntity<TKey>
 {
-    private HistoryFilters currentHistoryFilters;
+    private HistoryFilters? currentHistoryFilters;
 
-    public async Task<IEnumerable<TEntity>> GetPagedHistoryAsync<TSort>(
+    public async Task<(IEnumerable<TEntity> Items, int Count)> GetPagedHistoryAsync<TSort>(
         int offset,
         int limit,
         Expression<Func<TEntity, bool>> filter,
-        SortDefinition sort,
-        HistoryFilters historyFilters,
-        bool isAscendingSortByDefault = true)
-        where TSort : BaseSort<TEntity>
+        IEnumerable<SortDefinition>? sorts,
+        HistoryFilters historyFilters)
+        where TSort : BaseSort<TEntity>, new()
     {
         currentHistoryFilters = historyFilters;
 
@@ -37,8 +33,7 @@ public abstract class HistoryRepositoryBase<TEntity, TKey>(
             offset,
             limit,
             filter,
-            sort,
-            isAscendingSortByDefault);
+            sorts);
 
         currentHistoryFilters = null;
 
@@ -59,9 +54,9 @@ public abstract class HistoryRepositoryBase<TEntity, TKey>(
     }
 
     protected override IQueryable<TEntity> FilterData(
-        Expression<Func<TEntity, bool>> filter)
+        Expression<Func<TEntity, bool>>? filter, IQueryable<TEntity>? query = null)
     {
-        var query = ApplyTemporalFilter(GetDbSet(), currentHistoryFilters);
+        query = ApplyTemporalFilter(GetDbSet(), currentHistoryFilters);
 
         if (filter != null)
         {
@@ -73,7 +68,7 @@ public abstract class HistoryRepositoryBase<TEntity, TKey>(
 
     private static IQueryable<TEntity> ApplyTemporalFilter(
     DbSet<TEntity> dbSet,
-    HistoryFilters historyFilters)
+    HistoryFilters? historyFilters)
     {
         if (historyFilters is null)
         {

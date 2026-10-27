@@ -1,23 +1,51 @@
-<div class="v-tab-view">
-  <gov-tabs (gov-change)="handleTabClick($event)">
-    @for (item of mergedItems; track item; let index = $index) {
-      <gov-tabs-item 
-        [label]="item.title"
-        [iconStart]="item.icon"
+<div class="gov-tabs">
+  <div class="gov-tabs__tabs" role="tablist">
+    @for (item of items; track item; let index = $index) {
+    @if (useRouting) {
+      <button
+        [attr.index]="index"
+        class="gov-tabs__btn"
+        [routerLink]="item.url"
+        [routerLinkActive]="'active'"
+        #rls="routerLinkActive"
+        [attr.aria-selected]="rls.isActive"
         [disabled]="item.disabled"
-        [default]="activeIndex === index"
-        [identifier]="index"
-        [triggerIdentifier]="item.url ? item.url : undefined"
+        role="tab"
+        [attr.activeIndex]="activeIndex"
+        (click)="changeTabIndex(index)"
       >
-        @if (item.contentTemplate) {
-          <ng-container *ngTemplateOutlet="item.contentTemplate"></ng-container>
-        } @else if (item.content) {
-          {{ item.content }}
-        }
-      </gov-tabs-item>
+        {{ item.title | translate }}
+      </button>
+    } @else {
+      <button
+        [attr.index]="index"
+        class="gov-tabs__btn"
+        [attr.aria-selected]="activeIndex === index"
+        [disabled]="item.disabled"
+        role="tab"
+        [attr.activeIndex]="activeIndex"
+        (click)="changeTabIndex(index)"
+      >
+        {{ item.title | translate }}
+      </button>}
     }
-  </gov-tabs>
-  @if (useRouting) {
-    <router-outlet></router-outlet>
-  }
+  </div>
+  <div class="gov-tabs__tabs">
+    @for (item of items; track item; let index = $index) {
+      <div class="gov-tabs__tab" [class.active]="activeIndex === index" >
+        <div class="gov-tabs__list">
+          <div class="gov-tabs__content">
+            @if (item.contentTemplate) {
+              <ng-container *ngTemplateOutlet="item.contentTemplate"></ng-container>
+            } @else if (item.content) {
+              {{ item.content }}
+            }
+          </div>
+        </div>
+      </div>
+    }
+    @if (useRouting) {
+      <router-outlet class="gov-tabs__content"></router-outlet>
+    }
+  </div>
 </div>

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Verisoft.Core.BlobStorage;
 
 public interface IBlobStorageService
 {
-    Task<string> UploadFileAsync(IFormFile file);
+    Task<string> UploadFileAsync(IFormFile file, PublicAccessType publicAccessType = PublicAccessType.None);
 
     Task<(Stream? Stream, string? ContentType)> DownloadFileAsync(string fileName);
 

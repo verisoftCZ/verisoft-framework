@@ -10,10 +10,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-password-basic-example',
-  imports: [PasswordComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-password-basic-example',
+    imports: [PasswordComponent],
+    template: template
 })
 export class GovCzPasswordBasicExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -3,7 +3,7 @@ import {
   DOCS_CODE_LANG,
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
-import { TabViewModule } from '@verisoft/ui-primeng';
+import { TabViewComponent, TabViewItemComponent } from '@verisoft/ui-primeng';
 
 const template = `
     <v-tab-view>
@@ -21,9 +21,8 @@ const template = `
 
 @Component({
   selector: 'v-doc-primeng-tabview-size-example',
-  imports: [TabViewModule],
-  standalone: true,
-  template: template,
+  imports: [TabViewComponent, TabViewItemComponent],
+  template: template
 })
 export class PrimengTabViewSizeExampleComponent {
   code = new DocumentationCodeBuilder()

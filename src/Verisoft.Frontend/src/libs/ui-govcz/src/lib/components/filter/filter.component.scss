@@ -1,0 +1,32 @@
+:host {
+    display: block;
+}
+
+.v-filter {
+    background: var(--v-filter-background);
+    border-radius: 0.5rem;
+}
+
+.v-filter__header {
+    border-bottom: 1px solid var(--v-filter-border);
+    background-color: var(--v-filter-header-background);
+}
+
+.v-filter_records-text {
+    color: var(--v-filter-records-text-color);
+}
+
+.v-filter__expanded {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

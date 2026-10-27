@@ -1,17 +1,16 @@
-<div class="v-calendar w-100">
-  <ng-container *ngIf="label && !floatLabel">
+<div class="v-calendar w-100" vDateInputFilter>
+  @if (label && !floatLabel) {
     <v-form-field
       class="w-100"
       [label]="label"
-      [ngControl]="ngControl"
       [tooltip]="tooltip"
       [required]="isRequired()"
       [display]="formDisplay"
     >
-      <p-calendar
+      <p-date-picker
         appendTo="body"
-        [style]="{'width':'100%'}"
-        [inputStyle]="{'width':'100%'}" 
+        [style]="{ width: '100%' }"
+        [inputStyle]="{ width: '100%' }"
         [formControl]="formControl"
         [showClear]="clearable"
         [dataType]="'string'"
@@ -25,15 +24,17 @@
         [minDate]="minDate"
         [showIcon]="formControl && !formControl.value"
         iconDisplay="input"
+        [dateFormat]="dateFormat"
       />
     </v-form-field>
-  </ng-container>
-  <ng-container *ngIf="floatLabel">
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
+  }
+  @if (floatLabel) {
     <p-floatLabel>
-      <p-calendar
+      <p-date-picker
         appendTo="body"
-        [style]="{'width':'100%'}"
-        [inputStyle]="{'width':'100%'}" 
+        [style]="{ width: '100%' }"
+        [inputStyle]="{ width: '100%' }"
         [formControl]="formControl"
         [showClear]="clearable"
         [maxDate]="maxDate"
@@ -44,10 +45,9 @@
         [placeholder]="placeholder"
         [required]="isRequired()"
         [minDate]="minDate"
-        [showIcon]="formControl && !formControl.value"
         iconDisplay="input"
       />
       <label [for]="inputId" [innerHTML]="floatLabel"></label>
     </p-floatLabel>
-  </ng-container>
+  }
 </div>

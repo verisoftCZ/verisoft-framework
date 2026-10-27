@@ -11,10 +11,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-button-size-example',
-  imports: [ButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-button-size-example',
+    imports: [ButtonComponent],
+    template: template
 })
 export class PrimengButtonSizeExampleComponent {
   code = new DocumentationCodeBuilder()

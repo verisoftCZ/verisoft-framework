@@ -1,4 +1,4 @@
 CREATE DATABASE [VerisoftFramework];
-GO;
+GO
 
 USE [VerisoftFramework];

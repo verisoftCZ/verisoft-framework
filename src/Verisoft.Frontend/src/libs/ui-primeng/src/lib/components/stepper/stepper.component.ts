@@ -10,18 +10,17 @@ import {
   FieldSize
 } from '@verisoft/ui-core';
 import { StepperModule } from 'primeng/stepper';
-import { ButtonComponent } from '../button';
 import { Icons } from '../../icons';
+import { ButtonComponent } from '../button';
 
 @Component({
-  selector: 'v-stepper',
-  standalone: true,
-  imports: [CommonModule, ButtonComponent, StepperModule],
-  templateUrl: './stepper.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: STEPPER_COMPONENT_TOKEN, useExisting: StepperComponent },
-  ],
+    selector: 'v-stepper',
+    imports: [CommonModule, ButtonComponent, StepperModule],
+    templateUrl: './stepper.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        { provide: STEPPER_COMPONENT_TOKEN, useExisting: StepperComponent },
+    ]
 })
 export class StepperComponent 
   implements StepperCore

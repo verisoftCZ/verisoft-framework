@@ -1,15 +1,13 @@
 <div class="v-dropdown">
-  <ng-container *ngIf="label && !floatLabel">
+  @if (label && !floatLabel) {
     <v-form-field
       [label]="label"
       [tooltip]="tooltip"
       [required]="isRequired()"
-      [ngControl]="ngControl"
       [testId]="testId"
       [display]="formDisplay"
-    >
-      <p-dropdown
-        [baseZIndex]="9999"
+      >
+      <p-select
         class="w-100"
         appendTo="body"
         [formControl]="formControl"
@@ -31,13 +29,13 @@
         (showEvent)="onDropdownShow()"
         (clearEvent)="onDropdownClear()"
         (onFilter)="filterChange($event)"
-      >
-      </p-dropdown>
+        >
+      </p-select>
     </v-form-field>
-  </ng-container>
-  <ng-container *ngIf="!label && !floatLabel">
-    <p-dropdown
-      [baseZIndex]="9999"
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
+  }
+  @if (!label && !floatLabel) {
+    <p-select
       class="w-100"
       appendTo="body"
       [formControl]="formControl"
@@ -59,13 +57,12 @@
       (showEvent)="onDropdownShow()"
       (clearEvent)="onDropdownClear()"
       (onFilter)="filterChange($event)"
-    >
-    </p-dropdown>
-  </ng-container>
-  <ng-container *ngIf="floatLabel && !label">
+      >
+    </p-select>
+  }
+  @if (floatLabel && !label) {
     <p-floatLabel>
-      <p-dropdown
-        [baseZIndex]="9999"
+      <p-select
         class="w-100"
         appendTo="body"
         [formControl]="formControl"
@@ -88,9 +85,9 @@
         (clearEvent)="onDropdownClear()"
         (onFilter)="filterChange($event)"
         (lazyLoad)="onLazyLoad($any($event))"
-      >
-      </p-dropdown>
+        >
+      </p-select>
       <label [for]="inputId">{{ floatLabel }}</label>
     </p-floatLabel>
-  </ng-container>
+  }
 </div>

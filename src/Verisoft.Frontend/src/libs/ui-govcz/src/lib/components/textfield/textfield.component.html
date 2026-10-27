@@ -1,30 +1,21 @@
 <gov-form-control>
     @if (label) {
-    <gov-form-label 
-        [slot]="labelSlot"
-        [size]="size | govSize"
-    >
-        {{ label }}
+    <gov-form-label [slot]="labelSlot" [size]="size | govSize">
+        {{ label | translate }}
+        @if (tooltip) {
+        <v-tooltip [tooltipText]="tooltip | translate" />
+        }
     </gov-form-label>
     }
     <gov-form-group>
-        <gov-form-input [type]="type"
-            [formControl]="formControl"
-            [minlength]="minlength" 
-            [maxlength]="maxlength" 
-            [size]='size | govSize'  
-            [name]='name' 
-            [role]='role'
-            [required]="required"
-            [readonly]="readonly"
-            [invalid]="ngControl?.errors ? true : false"
-            [placeholder]="placeholder"
-        >
+        <gov-form-input [inputType]="type" [formControl]="formControl" [minlength]="minlength" [maxlength]="maxlength"
+            [min]="min" [max]="max" [size]='size | govSize' [name]='name' [role]='role' [required]="required"
+            [attr.disabled]="disabled ? 'true' : 'false'" [invalid]="ngControl?.errors ? true : false"
+            [placeholder]="placeholder">
             @if (icon) {
-            <gov-icon
-                [name]="icon"
-                [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
-            />
+            <gov-icon [name]="icon" [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'" />
+            } @if (clearable && formControl.value) {
+            <gov-icon [name]="icons.cross" slot="icon-end" style="cursor: pointer" (click)="formControl.reset()" />
             } @if (prefix) {
             <p slot="prefix">
                 {{ prefix }}
@@ -35,24 +26,11 @@
             </p>
             }
         </gov-form-input>
+        <v-validation-message [ngControl]="ngControl" />
+        @if (message) {
+        <gov-form-message [slot]="messageSlot" color="neutral">
+            {{ message }}
+        </gov-form-message>
+        }
     </gov-form-group>
-    @if (ngControl && ngControl.errors) {
-    <gov-form-message
-        [slot]="errorSlot"
-        color="error"
-    >
-        {{ngControl.errors | error}}
-        <gov-icon 
-            [name]="icons.warning"
-            slot="validation-icon"
-        />
-    </gov-form-message>
-    } @if (message) {
-    <gov-form-message
-        [slot]="messageSlot"
-        color="neutral"
-    >
-        {{ message }}
-    </gov-form-message>
-    }
 </gov-form-control>

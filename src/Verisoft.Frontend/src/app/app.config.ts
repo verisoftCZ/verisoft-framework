@@ -1,10 +1,9 @@
 import {
   HTTP_INTERCEPTORS,
-  HttpClient,
   provideHttpClient,
 } from '@angular/common/http';
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -13,20 +12,21 @@ import { EffectsModule } from '@ngrx/effects';
 import { provideStore, StoreModule } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import {
-  TranslateLoader,
-  TranslateModule,
+  provideTranslateService,
   TranslateService,
 } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { BASE_URL_PATH, LocalStorageService } from '@verisoft/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { BASE_URL_PATH, ERROR_PROVIDER_TOKEN, LocalizableErrorProviderService, LocalStorageService } from '@verisoft/core';
 import { SecurityModule } from '@verisoft/security-core';
 import { MenuItem, LOGO_ROUTER_ROUTE, SETTINGS_MENU } from '@verisoft/ui-core';
 import {
   SnackbarService,
   SideMenuModule,
   HttpErrorMessageInterceptor,
+  VerisoftTheme,
 } from '@verisoft/ui-primeng';
 import { MessageService } from 'primeng/api';
+import { providePrimeNG } from 'primeng/config';
 import { environment } from '../environments/environment.prod';
 import { appRoutes } from './app.routes';
 
@@ -52,6 +52,7 @@ export function getMenuItems(isPrimeng: boolean): MenuItem[] {
           url: '/' + uiLibraryPath + '/docs/confirm-dialog',
         },
         { label: 'Dropdown', url: '/' + uiLibraryPath + '/docs/dropdown' },
+        { label: 'Dropdown Button', url: '/' + uiLibraryPath + '/docs/dropdown-button' },
         { label: 'Form field', url: '/' + uiLibraryPath + '/docs/form-field' },
         {
           label: 'Feature List',
@@ -59,6 +60,7 @@ export function getMenuItems(isPrimeng: boolean): MenuItem[] {
         },
         { label: 'Filter', url: '/' + uiLibraryPath + '/docs/filter' },
         { label: 'Header', url: '/' + uiLibraryPath + '/docs/header' },
+        { label: 'Icon', url: '/' + uiLibraryPath + '/docs/icon' },
         {
           label: 'Input group',
           url: '/' + uiLibraryPath + '/docs/input-group',
@@ -85,12 +87,9 @@ export function getMenuItems(isPrimeng: boolean): MenuItem[] {
         { label: 'Switch', url: '/' + uiLibraryPath + '/docs/switch' },
         { label: 'Table', url: '/' + uiLibraryPath + '/docs/table' },
         { label: 'TabView', url: '/' + uiLibraryPath + '/docs/tabview' },
+        { label: 'Tag', url: '/' + uiLibraryPath + '/docs/tag' },
         { label: 'TextArea', url: '/' + uiLibraryPath + '/docs/text-area' },
         { label: 'TextField', url: '/' + uiLibraryPath + '/docs/text-field' },
-        {
-          label: 'Tristate checkbox',
-          url: '/' + uiLibraryPath + '/docs/tristate-checkbox',
-        },
       ],
     },
   ];
@@ -101,8 +100,31 @@ export const appConfig: ApplicationConfig = {
     provideStore(),
     provideStoreDevtools(),
     provideHttpClient(),
-    provideAnimations(),
+    {
+      provide: ERROR_PROVIDER_TOKEN,
+      useClass: LocalizableErrorProviderService
+    },
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: VerisoftTheme,
+        options: {
+          prefix: 'p',
+          darkModeSelector: 'system',
+          cssLayer: false
+        }
+      },
+      ripple: true
+    }),
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: '/assets/i18n/',
+        suffix: '.json'
+      }),
+      fallbackLang: 'cs',
+      lang: 'cs'
+    }),
     importProvidersFrom(
       SecurityModule.forRoot({
         sendTokenHeader: true,
@@ -110,15 +132,6 @@ export const appConfig: ApplicationConfig = {
       StoreModule.forRoot({}),
       SideMenuModule.forRoot(),
       EffectsModule.forRoot([]),
-      TranslateModule.forRoot({
-        useDefaultLang: true,
-        defaultLanguage: 'en',
-        loader: {
-          provide: TranslateLoader,
-          useFactory: HttpLoaderFactory,
-          deps: [HttpClient],
-        },
-      })
     ),
     MessageService,
     SnackbarService,
@@ -142,7 +155,3 @@ export const appConfig: ApplicationConfig = {
     },
   ],
 };
-
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}

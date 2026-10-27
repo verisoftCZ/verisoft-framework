@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { FieldSizeType } from "@verisoft/ui-core";
+import { FieldSize, FieldSizeType } from "@verisoft/ui-core";
 
 @Pipe({
     name: 'govSize',
@@ -7,14 +7,18 @@ import { FieldSizeType } from "@verisoft/ui-core";
 })
 export class GovSizePipe implements PipeTransform {
     transform(size: FieldSizeType | undefined): string | undefined {
-        if (size) {
-            return size.substring(0, 1);
+        switch (size) {
+            case FieldSize.small:
+                return 's';
+            case FieldSize.medium:
+            case undefined:
+                return 'm';
+            case FieldSize.large:
+                return 'l';
+            case FieldSize.xl:
+                return 'xl';
+            default:
+                return size;
         }
-
-        if (typeof(size) === 'undefined') {
-            return 'm';
-        }
-
-        return size;
     }
 }

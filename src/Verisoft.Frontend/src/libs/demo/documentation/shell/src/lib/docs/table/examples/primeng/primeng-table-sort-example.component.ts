@@ -18,10 +18,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-table-sort-example',
-  imports: [TableComponent, RadioButtonComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-sort-example',
+    imports: [TableComponent, RadioButtonComponent, FormsModule],
+    template: template
 })
 export class PrimengTableSortExampleComponent {
   code = new DocumentationCodeBuilder()

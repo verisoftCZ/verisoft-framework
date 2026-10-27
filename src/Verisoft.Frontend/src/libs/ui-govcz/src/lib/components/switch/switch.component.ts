@@ -1,33 +1,33 @@
-import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, Input, Optional, Self, ViewEncapsulation } from "@angular/core";
+
+import { ChangeDetectionStrategy, Component, Input, Optional, Self } from "@angular/core";
 import { ReactiveFormsModule, NgControl } from "@angular/forms";
 import { GovDesignSystemModule } from "@gov-design-system-ce/angular";
-import { SWITCH_COMPONENT_TOKEN, SwitchCore, ErrorPipe, BaseFormInputComponent, FieldSizeType, FieldSize, SlotPositionType, SlotPosition } from "@verisoft/ui-core";
+import { SWITCH_COMPONENT_TOKEN, SwitchCore, BaseFormInputComponent, FieldSizeType, FieldSize } from "@verisoft/ui-core";
 import { Icons } from "../../icons";
 import { GovSizePipe } from "../../pipes";
+import { ErrorComponent } from "../errors";
 
 @Component({
-  selector: "v-switch",
-  standalone: true,
-  styleUrls: [
-    "./switch.component.scss"
-  ],
-  templateUrl: './switch.component.html',
-  imports: [
-    CommonModule, GovDesignSystemModule, ErrorPipe, ReactiveFormsModule, GovSizePipe
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{
-    provide: SWITCH_COMPONENT_TOKEN,
-    useExisting: SwitchComponent,
-  }],
+    selector: "v-switch",
+    styleUrl: "./switch.component.scss",
+    templateUrl: './switch.component.html',
+    imports: [
+    GovDesignSystemModule,
+    ReactiveFormsModule,
+    GovSizePipe,
+    ErrorComponent
+],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [{
+            provide: SWITCH_COMPONENT_TOKEN,
+            useExisting: SwitchComponent,
+        }]
 })
 export class SwitchComponent
   extends BaseFormInputComponent
   implements SwitchCore
 {
   @Input() size: FieldSizeType = FieldSize.medium;
-  @Input() errorSlot: SlotPositionType = SlotPosition.bottom;;
   @Input() noLabel = false;
   @Input() name!: string;
 

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
     ChangeDetectionStrategy,
     Component,
@@ -6,23 +6,23 @@ import {
     NO_ERRORS_SCHEMA,
 } from '@angular/core';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import {
     FieldSizeType,
     FieldSize,
     SECTION_COMPONENT_TOKEN,
-    SectionCore
+    SectionCore,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
 
 @Component({
     selector: 'v-section',
-    standalone: true,
     imports: [
-        CommonModule,
-        GovDesignSystemModule,
-        GovSizePipe
-    ],
+    GovDesignSystemModule,
+    GovSizePipe,
+    TranslateModule
+],
     templateUrl: './section.component.html',
     styleUrl: './section.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +34,7 @@ import { Icons } from '../../icons';
     ],
     schemas: [
         NO_ERRORS_SCHEMA
-    ],
+    ]
 })
 export class SectionComponent
     implements SectionCore

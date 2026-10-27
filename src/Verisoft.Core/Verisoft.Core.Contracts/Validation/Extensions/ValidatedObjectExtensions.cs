@@ -1,8 +1,8 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using System.Reflection;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Reflection;
 using Verisoft.Core.Contracts.BusinessResult;
 
 namespace Verisoft.Core.Contracts.Validation.Extensions;
@@ -28,7 +28,7 @@ public static class ValidatedObjectExtensions
         });
     }
 
-    public static ValidationProblem GetHighestSeverityValidationError(this IValidatedObject validatedObject)
+    public static ValidationProblem? GetHighestSeverityValidationError(this IValidatedObject validatedObject)
     {
         var validationErrors = validatedObject.ValidationProblems?.Where(vp => vp.Severity == Severity.Error).ToList() ?? [];
         return validationErrors.OrderByDescending(x => x.Code switch

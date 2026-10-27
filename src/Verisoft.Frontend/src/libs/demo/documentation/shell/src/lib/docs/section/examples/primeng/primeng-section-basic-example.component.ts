@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-primeng-doc-section-basic-example',
-  imports: [TextfieldComponent, SectionComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-section-basic-example',
+    imports: [TextfieldComponent, SectionComponent],
+    template: template
 })
 export class PrimengSectionBasicExampleComponent {
   code = new DocumentationCodeBuilder()

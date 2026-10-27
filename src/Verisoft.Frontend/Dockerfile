@@ -4,9 +4,10 @@ ARG APP_VERSION=1.0.0
 WORKDIR /app
 ENV NX_DAEMON=false
 COPY ./package.json ./package-lock.json /app/
-ENV NODE_OPTIONS --max_old_space_size=10240
-RUN npm set progress=false && npm install
+ENV NODE_OPTIONS=--max_old_space_size=10240
+RUN npm set progress=false && npm ci
 COPY . .
+RUN rm -rf /app/.nx
 RUN npm run build -- --prod
 RUN sed -Ei -e "s/__APP_VERSION__/${APP_VERSION}/" /app/dist/app/browser/main*.js
 

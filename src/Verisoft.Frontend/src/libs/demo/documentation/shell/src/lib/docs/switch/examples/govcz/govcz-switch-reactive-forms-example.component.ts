@@ -38,10 +38,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-switch-reactive-forms-example',
-  imports: [SwitchComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-switch-reactive-forms-example',
+    imports: [SwitchComponent, ReactiveFormsModule],
+    template: template
 })
 export class GovCzSwitchReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

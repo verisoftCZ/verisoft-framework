@@ -21,6 +21,11 @@ export class ColumnConfiguration<TEntity> {
       this.column.columnClass = columnClass;
       return this;
     }
+
+    headerClass(headerClass: string): this {
+      this.column.headerClass = headerClass;
+      return this;
+    }
   
     valueFunction(value: (row: TEntity, index?: number) => string): this {
       this.column.value = value;

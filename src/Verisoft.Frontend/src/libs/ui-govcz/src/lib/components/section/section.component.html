@@ -9,7 +9,7 @@
                 [name]="icons.chevronDown"
             />
         } @if (title) {
-            <h2 slot="label">{{ title }}</h2>
+            <h2 slot="label">{{ title | translate }}</h2>
         } @if (badge) {
             <gov-badge 
                 inverse="true"
@@ -19,7 +19,7 @@
                 {{ badge }}
             </gov-badge>
         } @if (annotation) {
-            <p slot="annotation">{{ annotation }}</p>
+            <p slot="annotation">{{ annotation | translate }}</p>
         }
         <ng-content></ng-content>
     </gov-accordion-item>

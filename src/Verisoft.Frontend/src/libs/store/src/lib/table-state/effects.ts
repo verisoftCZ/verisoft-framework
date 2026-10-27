@@ -84,13 +84,12 @@ export function createRemoveRangeTableEffect<T>(
     return actions$.pipe(
       ofType(createRemoveRangeTableAction(tableRepository)),
       withLatestFrom(selectedItems),
-      switchMap(([, {selectedItems}]) => {
+      switchMap(([, { selectedItems }]) => {
         return config.service!.removeRange(selectedItems).pipe(
-          map(() => { 
-            return createGetPageTableAction(tableRepository)
-            ({ page: 0, size: DEFAULT_SEARCH_LIMIT })
+          map(() => {
+            return createGetPageTableAction(tableRepository)({ page: 0, size: DEFAULT_SEARCH_LIMIT })
           }),
-          catchError(error => { 
+          catchError(error => {
             return of(createDataLoadErrorTableAction(tableRepository)({ error }))
           })
         );

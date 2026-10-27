@@ -8,13 +8,12 @@ import {
 import { getDocumentation } from './button-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Button"
     description="Button is a customizable and reusable component that can be used to trigger actions in an Angular application."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class ButtonDocComponent {
   builder = inject(DocumentationBuilderService);

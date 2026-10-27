@@ -6,6 +6,6 @@ namespace Verisoft.Core.Contracts
     {
         public int Total { get; set; }
 
-        public IEnumerable<TEntity> Data { get; set; }
+        public IEnumerable<TEntity>? Data { get; set; }
     }
 }

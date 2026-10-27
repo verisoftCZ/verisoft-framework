@@ -1,6 +1,7 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import * as portal from '@angular/cdk/portal';
 import { Injectable, Injector } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SnackbarComponent } from '../snackbar.component';
 import { SnackbarConfig } from '../snackbar.model';
 
@@ -8,11 +9,15 @@ import { SnackbarConfig } from '../snackbar.model';
   providedIn: 'root',
 })
 export class SnackbarService {
-  constructor(private overlay: Overlay, private injector: Injector) {}
+  constructor(
+    private overlay: Overlay,
+    private translate: TranslateService,
+    private injector: Injector
+  ) {}
 
   showSuccess(message: string, icon?: string) {
     this.showToast({
-      message: message,
+      message: this.translate.instant(message),
       icon: icon,
       color: 'success',
     });
@@ -20,7 +25,7 @@ export class SnackbarService {
 
   showInfo(message: string, icon?: string) {
     this.showToast({
-      message: message,
+      message: this.translate.instant(message),
       icon: icon,
       color: 'primary',
     });
@@ -28,7 +33,7 @@ export class SnackbarService {
 
   showWarn(message: string, icon?: string) {
     this.showToast({
-      message: message,
+      message: this.translate.instant(message),
       icon: icon,
       color: 'warning',
     });
@@ -36,7 +41,7 @@ export class SnackbarService {
 
   showError(message: string, icon?: string) {
     this.showToast({
-      message: message,
+      message: this.translate.instant(message),
       icon: icon,
       color: 'error',
     });
@@ -60,7 +65,7 @@ export class SnackbarService {
   private createInjector(config: any) {
     return Injector.create({
       providers: [
-        { provide: 'TOAST_CONFIG', useValue: config },  
+        { provide: 'TOAST_CONFIG', useValue: config },
       ],
       parent: this.injector,
     });

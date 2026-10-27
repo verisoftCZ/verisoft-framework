@@ -7,6 +7,8 @@ import {
   PrimengCheckboxBasicExampleComponent,
   PrimengCheckboxReactFormsExampleComponent,
   GovCzCheckboxReactFormsExampleComponent,
+  PrimengCheckboxIndeterminateExampleComponent,
+  GovCzCheckboxIndeterminateExampleComponent,
 } from './examples';
 
 export function getDocumentation(
@@ -39,6 +41,14 @@ export function getDocumentation(
       )
       .addSection((s) =>
         s
+          .title('Indeterminate State')
+          .addText(
+            'The checkbox component supports an indeterminate state, which is useful for parent checkboxes in hierarchical structures where some (but not all) child items are selected. When indeterminate is set to true, the checkbox displays a dash or special indicator instead of a check mark, visually indicating a partially selected state.'
+          )
+          .addCodeComponent(isPrimeng ? PrimengCheckboxIndeterminateExampleComponent : GovCzCheckboxIndeterminateExampleComponent)
+      )
+      .addSection((s) =>
+        s
           .title('Style')
           .addText(
             'Following is the list of structural style classes. Use this classes for theming.'
@@ -59,7 +69,13 @@ export function getDocumentation(
               name: 'label',
               type: 'string',
               default: 'null',
-              description: 'The label of TristateCheckbox component.',
+              description: 'The label of the Checkbox component.',
+            },
+            {
+              name: 'indeterminate',
+              type: 'boolean',
+              default: 'false',
+              description: 'When present, it specifies that the checkbox displays an indeterminate state (typically showing a dash instead of a checkmark).',
             },
             {
               name: 'required',

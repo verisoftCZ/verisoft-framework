@@ -12,24 +12,22 @@ import {
   ActionButton,
   ActionButtonGroupCore,
   IconPositionType,
+  MenuItem,
   queryListChanged,
   ScreenSizeService,
   UnsubscribeComponent,
 } from '@verisoft/ui-core';
-import { MenuItem } from 'primeng/api';
-import { MenuModule } from 'primeng/menu';
 import {
   combineLatestWith,
   takeUntil,
 } from 'rxjs';
-import { ButtonComponent } from '../../button';
-import { ActionButtonComponent } from './components/action-button/action-button.component';
 import { Icons } from '../../../icons';
+import { DropdownButtonComponent } from '../../dropdown-button';
+import { ActionButtonComponent } from './components/action-button/action-button.component';
 
 @Component({
   selector: 'v-action-button-group',
-  standalone: true,
-  imports: [MenuModule, ButtonComponent, ActionButtonComponent],
+  imports: [ActionButtonComponent, DropdownButtonComponent],
   templateUrl: './action-button-group.component.html',
   styleUrl: './action-button-group.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,12 +36,11 @@ import { Icons } from '../../../icons';
       provide: ACTION_BUTTON_GROUP_COMPONENT_TOKEN,
       useExisting: ActionButtonGroupComponent,
     },
-  ],
+  ]
 })
 export class ActionButtonGroupComponent
   extends UnsubscribeComponent
-  implements AfterContentInit, ActionButtonGroupCore
-{
+  implements AfterContentInit, ActionButtonGroupCore {
   @ContentChildren(ActionButtonComponent)
   actions!: QueryList<ActionButtonComponent>;
 
@@ -58,6 +55,8 @@ export class ActionButtonGroupComponent
   @Input() menuIcon = Icons.action;
 
   @Input() label?: string;
+
+  @Input() showLabels = false;
 
   @Input() icon?: string;
 

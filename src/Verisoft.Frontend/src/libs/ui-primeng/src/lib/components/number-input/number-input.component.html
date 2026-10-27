@@ -4,7 +4,6 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="isRequired()"
-    [ngControl]="ngControl"
     [testId]="testId"
   >
     <p-inputNumber
@@ -12,11 +11,15 @@
       [formControl]="formControl"
       [showButtons]="true"
       [inputId]="inputId"
-      [mode]="mode"
+      [mode]="decimals > 0 ? 'decimal' : currency ? 'currency' : undefined"
       [min]="min"
       [max]="max"
-      [step]="step"
+      [minFractionDigits]="decimals"
+      [step]="computeStep()"
       [currency]="currency"
+      [locale]="locale"
+      [showClear]="clearable && formControl.enabled"
     />
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
   </v-form-field>
 </div>

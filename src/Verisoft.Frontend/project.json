@@ -7,7 +7,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:application",
+      "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/app",
@@ -16,6 +16,9 @@
         "polyfills": ["zone.js"],
         "tsConfig": "./tsconfig.app.json",
         "inlineStyleLanguage": "scss",
+        "stylePreprocessorOptions": {
+          "includePaths": ["node_modules"]
+        },
         "scripts": [],
         "assets": [
           {
@@ -41,12 +44,12 @@
             {
               "type": "initial",
               "maximumWarning": "1mb",
-              "maximumError": "2mb"
+              "maximumError": "4mb"
             },
             {
               "type": "anyComponentStyle",
               "maximumWarning": "2kb",
-              "maximumError": "4kb"
+              "maximumError": "1.5mb"
             }
           ],
           "outputHashing": "all",
@@ -54,14 +57,14 @@
             {
               "replace": "src/environments/environment.ts",
               "with": "src/environments/environment.prod.ts"
-            }            
+            }
           ]
         }
       },
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@angular/build:dev-server",
       "options": {
         "proxyConfig": "src/proxy.conf.json",
         "port": 4200
@@ -74,10 +77,11 @@
           "buildTarget": "Verisoft.Frontend:build:production"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "continuous": true
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "@angular/build:extract-i18n",
       "options": {
         "buildTarget": "Verisoft.Frontend:build"
       }
@@ -92,7 +96,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
-        "jestConfig": "jest.config.app.ts"
+        "jestConfig": "jest.config.app.ts",
+        "tsConfig": "tsconfig.spec.json"
       }
     },
     "serve-static": {

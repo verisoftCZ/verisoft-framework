@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +15,17 @@ namespace Verisoft.DemoApi.Host.Controllers.V2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("v{v:apiVersion}/[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Verisoft.Core.Contracts.FailureDetail))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 public class UserController(IUserService userService)
 {
     [HttpGet]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundObjectResult))]
-    public async Task<IActionResult> GetUserById(int id)
+    [ProducesResponseType<User>(StatusCodes.Status200OK)]
+    [ProducesResponseType<NotFoundObjectResult>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> GetUserById(int id)
     {
         var result = await userService.GetUserAsync(id);
         return result.ToActionResult();
@@ -34,28 +34,28 @@ public class UserController(IUserService userService)
     [HttpGet]
     [Route("list")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserListData))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    public async Task<UserListData> GetUserListAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<UserFilter> request)
+    [ProducesResponseType<UserListData>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<UserListData?> GetUserListAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<UserFilter> request)
     {
         return await userService.GetUserListAsync(request);
     }
 
     [HttpGet]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<User>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    public async Task<IEnumerable<User>> GetUsersAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<UserFilter> request)
+    [ProducesResponseType<IEnumerable<User>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IEnumerable<User>?> GetUsersAsync([FromQuery] Verisoft.Core.Contracts.FilteredRequest<UserFilter> request)
     {
         return await userService.GetUsersAsync(request);
     }
 
     [HttpPost]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(UnprocessableEntity))]
-    public async Task<IActionResult> AddUserAsync([FromBody] UserCreateModel userCreateModel)
+    [ProducesResponseType<User>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<UnprocessableEntity>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> AddUserAsync([FromBody] UserCreateModel userCreateModel)
     {
         var result = await userService.AddUserAsync(userCreateModel);
         return result.ToActionResult();
@@ -64,11 +64,11 @@ public class UserController(IUserService userService)
     [HttpPut]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoEdit},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundObjectResult))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(UnprocessableEntity))]
-    public async Task<IActionResult> UpdateUserAsync([FromBody] UserEditModel userEditModel, int id)
+    [ProducesResponseType<User>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<NotFoundObjectResult>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<UnprocessableEntity>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> UpdateUserAsync([FromBody] UserEditModel userEditModel, int id)
     {
         var result = await userService.UpdateUserAsync(userEditModel, id);
         return result.ToActionResult();
@@ -77,9 +77,9 @@ public class UserController(IUserService userService)
     [HttpDelete]
     [Route("{id}")]
     [Authorize(Roles = $"{Roles.DemoDelete},{Roles.Admin}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(User))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(NotFoundObjectResult))]
-    public async Task<IActionResult> DeleteUserAsync(int id)
+    [ProducesResponseType<User>(StatusCodes.Status200OK)]
+    [ProducesResponseType<NotFoundObjectResult>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> DeleteUserAsync(int id)
     {
         var result = await userService.RemoveUserAsync(id);
         return result.ToActionResult();

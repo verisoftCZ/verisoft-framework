@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, DocumentationPageComponent } from '@verisoft/demo-documentation-ui';
 import { getDocumentation } from './snackbar-doc.model';
@@ -9,8 +8,7 @@ import { getDocumentation } from './snackbar-doc.model';
     description="Snackbar is an extension to a prime-ng component <strong>p-toast</strong>."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent, JsonPipe],
-  standalone: true,
+  imports: [DocumentationPageComponent]
 })
 export class SnackbarDocComponent {
   builder = inject(DocumentationBuilderService);

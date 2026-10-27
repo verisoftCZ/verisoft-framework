@@ -11,15 +11,14 @@ const template = `
   userName="This is a name"
   userRole="And this is a role"
   imageUrl="assets/images/_global/logos/v-logo.webp"
-  [exampleHeader]="true"
+  [fixed]="true"
 />
 `;
 
 @Component({
-  selector: 'v-doc-primeng-header-basic-example',
-  imports: [HeaderComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-header-basic-example',
+    imports: [HeaderComponent],
+    template: template
 })
 export class PrimengHeaderBasicExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -22,8 +22,8 @@ namespace Verisoft.Core.Common.Linq.Specifications
 
         public override Expression<Func<T, bool>> SatisfiedBy()
         {
-            var left = leftSideSpecification.SatisfiedBy();
-            var right = rightSideSpecification.SatisfiedBy();
+            var left = leftSideSpecification.SatisfiedBy()!;
+            var right = rightSideSpecification.SatisfiedBy()!;
             return left.And(right);
         }
     }

@@ -38,10 +38,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-slider-reactive-forms-example',
-  imports: [ReactiveFormsModule, SliderComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-slider-reactive-forms-example',
+    imports: [ReactiveFormsModule, SliderComponent],
+    template: template
 })
 export class PrimengSliderReactiveFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

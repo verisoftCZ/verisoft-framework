@@ -21,13 +21,13 @@ steps:
 
 - task: NodeTool@0
   inputs:
-    versionSpec: '20.x'
+    versionSpec: '22.x'
   displayName: 'Install Node.js'
 
 
 - script: |
     npm install --include=optional
     npm run lint
-    npm run build -- --prod
+    npm run build
   displayName: 'Npm install and build'
   workingDirectory: $(applicationPath)

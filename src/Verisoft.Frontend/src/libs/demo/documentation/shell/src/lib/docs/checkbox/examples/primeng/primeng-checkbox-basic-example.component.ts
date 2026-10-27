@@ -24,10 +24,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-checkbox-basic-example',
-  imports: [CheckboxComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-checkbox-basic-example',
+    imports: [CheckboxComponent, FormsModule],
+    template: template
 })
 export class PrimengCheckboxBasicExampleComponent {
   value: boolean | null = null;

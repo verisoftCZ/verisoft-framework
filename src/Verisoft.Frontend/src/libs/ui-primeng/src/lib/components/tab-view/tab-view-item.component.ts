@@ -5,10 +5,10 @@ import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
   template: `<ng-template #contentTemplate>
     <ng-content></ng-content>
   </ng-template>`,
+
 })
 export class TabViewItemComponent {
-  @ViewChild('contentTemplate', { static: true })
-  contentTemplate!: TemplateRef<any>;
+  @ViewChild('contentTemplate', { static: true }) contentTemplate!: TemplateRef<any>;
 
   @Input() title!: string;
 

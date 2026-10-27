@@ -33,15 +33,14 @@ const ts =
   'imports: [TableComponent, ActionButtonGroupComponent, ActionButtonComponent, TableColumnDirective]';
 
 @Component({
-  selector: 'v-doc-govcz-table-action-buttons-example',
-  imports: [
-    TableComponent,
-    ActionButtonGroupComponent,
-    ActionButtonComponent,
-    TableColumnDirective,
-  ],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-action-buttons-example',
+    imports: [
+        TableComponent,
+        ActionButtonGroupComponent,
+        ActionButtonComponent,
+        TableColumnDirective,
+    ],
+    template: template
 })
 export class GovCzTableActionButtonsExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -44,10 +44,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-multiselect-reactive-forms-example',
-  imports: [ReactiveFormsModule, MultiselectComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-multiselect-reactive-forms-example',
+    imports: [ReactiveFormsModule, MultiselectComponent],
+    template: template
 })
 export class PrimengMultiselectReactiveFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

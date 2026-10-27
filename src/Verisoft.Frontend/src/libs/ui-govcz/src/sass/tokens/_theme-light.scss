@@ -1,0 +1,9 @@
+:root[data-theme="light"],
+:root:not([data-theme]) {
+  --v-filter-background: rgb(245, 250, 255);
+  --v-filter-header-background: var(--background-white);
+  --v-table-filter-background: rgb(245, 250, 255);
+  --v-filter-border: rgba(0, 0, 0, 0.1);
+  --v-filter-records-text-color: var(--color-neutral-600);
+}
+

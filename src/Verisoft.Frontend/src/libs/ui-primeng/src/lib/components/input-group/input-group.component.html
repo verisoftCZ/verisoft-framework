@@ -2,31 +2,33 @@
   <v-form-field
     [label]="label"
     [required]="required"
-    [tooltip]="tooltip"
-    [ngControl]="ngControl"
-  >
+    [tooltip]="tooltip"  >
     <p-inputGroup>
-      <ng-container *ngFor="let item of items">
-        <p-inputGroupAddon *ngIf="item.position === 'left'">
-          <ng-container *ngIf="item.icon">
-            <i [class]="item.icon"></i>
-          </ng-container>
-          <ng-container *ngIf="item.text">
-            {{ item.text }}
-          </ng-container>
-        </p-inputGroupAddon>
-      </ng-container>
+      @for (item of items; track item) {
+        @if (item.position === 'left') {
+          <p-inputGroupAddon>
+            @if (item.icon) {
+              <i [class]="item.icon"></i>
+            }
+            @if (item.text) {
+              {{ item.text }}
+            }
+          </p-inputGroupAddon>
+        }
+      }
       <input pInputText [formControl]="formControl" class="w-100" />
-      <ng-container *ngFor="let item of items">
-        <p-inputGroupAddon *ngIf="item.position === 'right'">
-          <ng-container *ngIf="item.icon">
-            <i [class]="item.icon"></i>
-          </ng-container>
-          <ng-container *ngIf="item.text">
-            {{ item.text }}
-          </ng-container>
-        </p-inputGroupAddon>
-      </ng-container>
+      @for (item of items; track item) {
+        @if (item.position === 'right') {
+          <p-inputGroupAddon>
+            @if (item.icon) {
+              <i [class]="item.icon"></i>
+            }
+            @if (item.text) {
+              {{ item.text }}
+            }
+          </p-inputGroupAddon>
+        }
+      }
     </p-inputGroup>
   </v-form-field>
 </div>

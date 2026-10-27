@@ -11,6 +11,7 @@ import {
 import { Store } from '@ngrx/store';
 import {
   BASE_URL_PATH,
+  BaseHttpService,
   convertDatasource,
   DataSourceFunctionType,
   DatasourceType,
@@ -23,6 +24,7 @@ import {
   BehaviorSubject,
   catchError,
   debounceTime,
+  filter,
   map,
   of,
   switchMap,
@@ -36,6 +38,7 @@ import {
   setComponentProperties,
 } from '../common';
 import {
+  getDefaultColumnSorts,
   TABLE_COMPONENT_TOKEN,
   TableCore,
   UnsubscribeComponent,
@@ -51,7 +54,7 @@ export class TableDatasourceDirective<T>
   extends UnsubscribeComponent
   implements OnInit, OnChanges
 {
-  store = inject(Store);
+  protected readonly store = inject(Store);
 
   @Input() autoBind = true;
 
@@ -60,6 +63,8 @@ export class TableDatasourceDirective<T>
   @Input() debounceTime = DEFAULT_DEBOUNCE_TIME;
 
   @Input() datasource!: DatasourceType<T>;
+
+  @Input() extraFilter!: any;
 
   @Input() transformFn?: (data: T) => unknown;
 
@@ -71,9 +76,10 @@ export class TableDatasourceDirective<T>
   private baseUrl: string = inject(BASE_URL_PATH);
 
   private dataSourceService?: DataSourceFunctionType<T>;
-  private parameters$ = new BehaviorSubject<Partial<ExtendedRequestType<T>>>(
-    {}
-  );
+  private parameters$ = new BehaviorSubject<Partial<ExtendedRequestType<T>>>({});
+
+  // Blocks the initial BehaviorSubject value from firing a fetch when autoBind is false, until reload()/lazyLoad explicitly asks for data.
+  private loadAllowed = false;
 
   params$ = this.parameters$.asObservable();
 
@@ -82,21 +88,26 @@ export class TableDatasourceDirective<T>
       throw new Error('Property tableName must be defined.');
     }
 
-    this.tableComponent.lazyLoad
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((value: LazyLoadEvent) => {
-        this.parameters$.next({
-          offset: value?.offset,
-          limit: value?.limit,
-          filter: value?.filter,
-          sort: value?.sort,
-        });
+    this.tableComponent.lazyLoad.pipe(takeUntil(this.destroyed$)).subscribe((value: LazyLoadEvent) => {
+      this.loadAllowed = true;
+      this.parameters$.next({
+        offset: value?.offset,
+        limit: value?.limit,
+        filter: { ...value?.filter, ...this.extraFilter },
+        sort: value?.sort,
       });
+    });
 
     this.parameters$
       .pipe(
         takeUntil(this.destroyed$),
-        map((request) => normalizeRequest(request)),
+        filter(() => this.loadAllowed),
+        map((request) =>
+          normalizeRequest({
+            ...request,
+            filter: { ...request.filter, ...this.extraFilter },
+          })
+        ),
         debounceTime(this.debounceTime),
         tap(() => {
           this.changeComponent(this.tableComponent, {
@@ -148,12 +159,17 @@ export class TableDatasourceDirective<T>
       );
 
       if (this.autoBind) {
-        this.parameters$.next({ offset: 0 });
+        this.loadAllowed = true;
+        this.parameters$.next({
+          offset: 0,
+          sort: getDefaultColumnSorts(this.tableComponent.columns),
+        });
       }
     }
   }
 
   reload() {
+    this.loadAllowed = true;
     this.parameters$.next({ ...this.parameters$.value });
   }
 
@@ -168,12 +184,10 @@ export class TableDatasourceDirective<T>
   private setDataToControl(request: RequestParams<T>, result: Page<T>): void {
     const data = result.data;
     const total = result.total;
-    const transferedData = this.transformFn
-      ? data.map((x) => this.transformFn?.(x))
-      : data;
+    const transferedData = this.transformFn ? data.map((x) => this.transformFn?.(x)) : data;
 
     this.changeComponent(this.tableComponent, {
-      lazy: !isFilterEmpty(request.filter) || data.length < total,
+      lazy: !isFilterEmpty(request.filter) || data?.length < total || this.datasource instanceof BaseHttpService,
       data: transferedData as T[],
       loading: false,
       total,

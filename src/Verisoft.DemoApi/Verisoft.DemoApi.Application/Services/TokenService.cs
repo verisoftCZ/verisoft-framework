@@ -1,8 +1,8 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Verisoft.Core.Authentication.Permissions;
 using Verisoft.DemoApi.Application.Services.Interfaces;
 using Verisoft.DemoApi.Contracts.Models.User;
@@ -13,23 +13,39 @@ public class TokenService(IConfiguration configuration, IPermissionService permi
     : ITokenService
 {
     private const int TokenValidityInDays = 1;
-    private readonly string secret = configuration.GetValue<string>("apiSecret");
+    private readonly byte[] signingKey = GetValidatedSigningKey(configuration);
 
     public async Task<string> Generate(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(secret);
         var claims = GetClaims(user).ToList();
         claims.AddRange(await GetPermissionClaimsAsync(user));
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(TokenValidityInDays),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(signingKey), SecurityAlgorithms.HmacSha256Signature),
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    private static byte[] GetValidatedSigningKey(IConfiguration configuration)
+    {
+        var secret = configuration.GetValue<string>("apiSecret");
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            throw new InvalidOperationException("Configuration value 'apiSecret' is missing or empty.");
+        }
+
+        var key = Encoding.UTF8.GetBytes(secret);
+        if (key.Length <= 32)
+        {
+            throw new InvalidOperationException("Configuration value 'apiSecret' must be longer than 32 bytes for HS256 signing.");
+        }
+
+        return key;
     }
 
     private async Task<IEnumerable<Claim>> GetPermissionClaimsAsync(User user)
@@ -46,9 +62,17 @@ public class TokenService(IConfiguration configuration, IPermissionService permi
 
     private IEnumerable<Claim> GetClaims(User user)
     {
-        yield return new Claim(ClaimTypes.Name, user.Surname);
+        if (user.Surname is not null)
+        {
+            yield return new Claim(ClaimTypes.Name, user.Surname);
+        }
+
         yield return new Claim(ClaimTypes.Role, "Admin");
         yield return new Claim(ClaimTypes.NameIdentifier, user.Id.ToString());
-        yield return new Claim(ClaimTypes.Email, user.Email);
+
+        if (user.Email is not null)
+        {
+            yield return new Claim(ClaimTypes.Email, user.Email);
+        }
     }
 }

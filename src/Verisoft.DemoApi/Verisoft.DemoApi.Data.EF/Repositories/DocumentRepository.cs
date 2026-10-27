@@ -6,7 +6,7 @@ using Verisoft.DemoApi.Data.EF.Context;
 
 namespace Verisoft.DemoApi.Data.EF.Repositories;
 
-public class DocumentRepository(IDemoApiDbContext unitOfWork, IUserContext userContext) : BaseRepository<DocumentEntity, int>(unitOfWork, userContext), IDocumentRepository
+public class DocumentRepository(IDemoApiDbContext unitOfWork, IUserContext userContext) : BaseRepository<DocumentEntity, int>(unitOfWork), IDocumentRepository
 {
     public Task<DocumentEntity> GetDocumentWithBlobContent(int id)
     {

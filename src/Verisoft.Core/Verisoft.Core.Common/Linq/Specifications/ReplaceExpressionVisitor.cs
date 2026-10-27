@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+#nullable disable
 
 namespace Verisoft.Core.Common.Linq.Specifications
 {

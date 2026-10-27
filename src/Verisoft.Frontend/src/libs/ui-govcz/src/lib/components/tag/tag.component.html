@@ -1,0 +1,12 @@
+<gov-tag
+  [color]="severity() | govColor"
+  [type]="variant()"
+  [size]="size() | govSize"
+>
+  @if (label()) {
+    {{ label() | translate }}
+  } @else {
+    <ng-content></ng-content>
+  }
+</gov-tag>
+

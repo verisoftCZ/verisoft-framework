@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Verisoft.Core.AspNet.Concurency.Middleware;
+using Verisoft.Core.AspNet.Concurency.Exceptions;
 using Verisoft.Core.Common.Entities;
 using Verisoft.Core.Common.Store;
 
@@ -16,6 +16,7 @@ public static class InstallExtensions
     where TDbContext : IUnitOfWork
     {
         services.AddScoped<ILockingManager, LockingManager<TDbContext>>();
+        services.AddExceptionHandler<ConcurrencyExceptionHandler>();
 
         return services;
     }
@@ -27,10 +28,19 @@ public static class InstallExtensions
         {
             app.MapPost($$"""{{entityType.Name}}/{id}/lock""", async ([FromRoute] int id, [FromServices] ILockingManager lockingManager) =>
             {
-                MethodInfo genericMethod = typeof(ILockingManager).GetMethod(nameof(lockingManager.Lock));
-                MethodInfo constructedMethod = genericMethod.MakeGenericMethod(entityType);
+                MethodInfo? genericMethod = typeof(ILockingManager).GetMethod(nameof(lockingManager.Lock));
+                if (genericMethod == null)
+                {
+                    throw new InvalidOperationException("Method 'Lock' not found on ILockingManager.");
+                }
 
-                await (Task)constructedMethod.Invoke(lockingManager, [id]);
+                MethodInfo? constructedMethod = genericMethod?.MakeGenericMethod(entityType);
+                if (constructedMethod == null)
+                {
+                    throw new InvalidOperationException($"Could not construct generic method for {entityType.Name}.");
+                }
+
+                await (Task)constructedMethod.Invoke(lockingManager, [id])!;
             }).WithTags(entityType.Name)
               .RequireAuthorization()
               .Produces(StatusCodes.Status200OK)
@@ -40,10 +50,20 @@ public static class InstallExtensions
 
             app.MapDelete($$"""{{entityType.Name}}/{id}/lock""", async ([FromRoute] int id, [FromServices] ILockingManager lockingManager) =>
             {
-                MethodInfo genericMethod = typeof(ILockingManager).GetMethod(nameof(lockingManager.Unlock));
-                MethodInfo constructedMethod = genericMethod.MakeGenericMethod(entityType);
+                MethodInfo? genericMethod = typeof(ILockingManager).GetMethod(nameof(lockingManager.Unlock));
+                if (genericMethod == null)
+                {
+                    throw new InvalidOperationException("Method 'Lock' not found on ILockingManager.");
+                }
 
-                await (Task)constructedMethod.Invoke(lockingManager, [id]);
+                MethodInfo? constructedMethod =
+                genericMethod?.MakeGenericMethod(entityType);
+                if (constructedMethod == null)
+                {
+                    throw new InvalidOperationException($"Could not construct generic method for {entityType.Name}.");
+                }
+
+                await (Task)constructedMethod.Invoke(lockingManager, [id])!;
             }).WithTags(entityType.Name)
               .RequireAuthorization()
               .Produces(StatusCodes.Status200OK)
@@ -51,8 +71,6 @@ public static class InstallExtensions
               .Produces(StatusCodes.Status422UnprocessableEntity, typeof(UnprocessableEntity))
               .Produces(StatusCodes.Status403Forbidden, typeof(ForbidResult));
         }
-
-        app.UseMiddleware<ConncurencyExceptionHandlingMiddleware>();
 
         return app;
     }

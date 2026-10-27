@@ -3,16 +3,15 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './header-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Header"
     description="Header is a custom-made angular element showcasing company's title and some user information."
     [items]="items"
     ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class HeaderDocComponent {
   builder = inject(DocumentationBuilderService);
   config = inject<DocumentationCofig>(DOCS_CONFIG);
-  items = getDocumentation(this.builder);
+  items = getDocumentation(this.builder, this.config.isPrimeng);
 }

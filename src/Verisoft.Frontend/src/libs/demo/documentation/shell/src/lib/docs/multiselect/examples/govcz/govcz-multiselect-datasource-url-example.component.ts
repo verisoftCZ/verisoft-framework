@@ -12,10 +12,9 @@ const template = `
 <v-multiselect label="User" useDatasource datasource="/v2/user/list" [transformFn]="transform" loadingText="⋘ 𝑙𝑜𝑎𝑑𝑖𝑛𝑔 𝑑𝑎𝑡𝑎... ⋙" filterField="searchField"  optionLabel="fullname" optionValue="id" [(ngModel)]="selected" />`;
 
 @Component({
-  selector: 'v-doc-govcz-multiselect-datasource-url-example',
-  imports: [MultiselectComponent, DatasourceDirective, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-multiselect-datasource-url-example',
+    imports: [MultiselectComponent, DatasourceDirective, FormsModule],
+    template: template
 })
 export class GovCzMultiSelectDatasourceUrlExampleComponent {
   code = new DocumentationCodeBuilder()

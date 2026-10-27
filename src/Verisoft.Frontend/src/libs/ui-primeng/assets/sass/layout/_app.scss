@@ -1,27 +1,37 @@
+$nav-bar-height: 6rem;
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .nav-bar {
     display: block;
-    height: 5.25rem;
+    height: $nav-bar-height;
     width: 100%;
 }
 
 .main-container {
     display: flex;
-    height: calc(100vh - 5.25rem);
+    height: calc(100vh - $nav-bar-height);
     width: 100%;
 
     &-content {
         overflow: auto;
         padding: 1.2rem;
-        height: calc(100vh - 5.85rem);
-        
+        height: calc(100vh - $nav-bar-height);
+
+    }
+
+    .v-sidebar {
+        min-width: 15rem;
+        height: 100%;
+        overflow-x: auto;
     }
 }
 
-.prime-main {
-    overflow: hidden;
-    padding: 0.3rem;
-    padding-right: 0;
-    -webkit-box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
-    -moz-box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
-    box-shadow: inset 1px 1px 5px 0px rgba(0, 0, 0, 0.1);
+.bg-primary {
+    background-color: var(--primary-color) !important;
 }

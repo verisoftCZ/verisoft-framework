@@ -35,8 +35,16 @@ function getFilter<T>(
   }
   Object.keys(requestParams?.filter).forEach((key) => {
     const value = requestParams.filter?.[key as keyof Partial<T>];
-    if (value != undefined) {
-      httpParams = httpParams.append('Filter.' + key, value);
+    if (value != undefined && !(typeof value === 'string' && value.trim() === "")) {
+      if (Array.isArray(value)) {
+        value.forEach((valueItem: any) => {
+          httpParams = httpParams.append(
+            'Filter.' + key, valueItem
+          );
+        });
+      } else {
+        httpParams = httpParams.append('Filter.' + key, value);
+      }
     }
   });
   return httpParams;
@@ -50,12 +58,10 @@ function getSort(
     return httpParams;
   }
 
-  requestParams.sort?.forEach((sort) => {
-    httpParams = httpParams
-      .append('Sort.Field', sort.field)
-      .append('Sort.Direction', sort.direction);
-  });
-  return httpParams;
+  return requestParams.sort.reduce(
+    (params, sort) => params.append('Sorts', `${sort.field},${sort.direction}`),
+    httpParams
+  );
 }
 
 export function saveFile(response: HttpResponse<Blob>) {
@@ -98,6 +104,17 @@ export interface Page<T> {
   total: number;
   limit: number;
   offset: number;
+}
+
+export interface CustomExport<T> {
+  sortDefinition?: Sort;
+  filter?: Partial<T>;
+  columnsToExport: ColumnExportSpecification[];
+}
+
+export interface ColumnExportSpecification {
+  name: string;
+  header: string;
 }
 
 export const DEFAULT_SEARCH_LIMIT = 50;

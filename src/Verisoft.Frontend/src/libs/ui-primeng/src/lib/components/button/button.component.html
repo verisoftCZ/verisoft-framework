@@ -1,4 +1,6 @@
 <div class="v-button d-inline-block" 
+[pTooltip]="tooltip"
+[tooltipPosition]="tooltipPosition ?? 'top'"
 (click)="fireClick($event)">
   <a
     [routerLink]="routerLink ? routerLink : undefined"
@@ -13,7 +15,7 @@
       [raised]="raised"
       [label]="label"
       [size]="$any(size)"
-      [severity]="severity"
+      [severity]="severity | buttonSeverity"
       [iconPos]="iconPos"
     />
   </a>

@@ -1,35 +1,91 @@
-<gov-form-control>
-  @if (label) {
-  <gov-form-label [slot]="labelSlot" [size]="size | govSize">
-    <div class="d-flex">
-      {{ label }}
-      @if (tooltip) {
-      <v-tooltip [message]="tooltip" />
+<div
+  class="v-dropdown mb-3"
+  (keydown)="onKeyDown($event)"
+>
+  <gov-form-control [disabled]="this.ngControl?.disabled">
+    @if (label && !floatLabel) {
+    <gov-form-label
+      slot="top"
+      [ngClass]="labelClasses"
+    >
+      <span [ngClass]="labelClasses">
+        {{ label | translate }}
+        @if (tooltip) {
+        <v-tooltip [message]="tooltip | translate" />
+        }
+      </span>
+    </gov-form-label>
+    }
+    <div
+      class="gov-form-input"
+      [ngStyle]="forceMinWidth ? {'min-width': '16rem'} : {}"
+      [ngClass]="inputClasses"
+    >
+      <div
+        class="element d-flex gov-form-input-child"
+        [ngClass]="labelClasses"
+        (click)="toggleDropdown()"
+      >
+        <div class="v-dropdown__value flex-grow-1 me-1">{{ selectedItem?.label ?? placeholder }}</div>
+        @if (clearable && ngControl?.enabled && selectedItem !== undefined && selectedItem !== null) {
+          <gov-icon
+            [name]="icons.cross"
+            size="m"
+            class="v-dropdown__clear me-1"
+            color="error"
+            (click)="clearSelection($event)"
+          />
+        }
+        @if (loading) {
+        <div class="v-dropdown__loader">
+          <gov-icon [name]="icons.loader" />
+        </div>
+        }
+        <div class="v-dropdown__trigger">
+          <gov-icon [name]="opened ? icons.chevronUp : icons.chevronDown" />
+        </div>
+      </div>
+    </div>
+    <div class="position-relative">
+      @if (opened) {
+      <div class="v-dropdown__container">
+        @if (showFilter) {
+        <div
+          class="v-dropdown__filter"
+          #filterTextField
+          (keydown)="onKeyDown($event)"
+        >
+          <v-textfield
+            placeholder="Search"
+            [formControl]="filterControl"
+            iconPos="right"
+            [icon]="icons.search"
+          />
+        </div>
+        }
+        @if (!dropdownOptions?.length) {
+        <div class="v-dropdown__no-item">No option was found.</div>
+        } @else {
+        <ul
+          role="listbox"
+          class="v-dropdown__list"
+        >
+          <cdk-virtual-scroll-viewport
+            [itemSize]="30"
+            class="v-dropdown__scroll"
+            (scrolledIndexChange)="onScroll($event)"
+          >
+            <v-dropdown-item
+              *cdkVirtualFor="let option of dropdownOptions;"
+              [item]="option"
+              (click)="selectItem(option, true)"
+            />
+          </cdk-virtual-scroll-viewport>
+        </ul>
+        }
+      </div>
       }
     </div>
-  </gov-form-label>
-  }
-  <gov-form-select
-    [size]="size | govSize"
-    [formControl]="formControl"
-    [required]="required"
-    [attr.invalid]="ngControl && ngControl.errors ? 'true' : 'false'"
-    [options]="options | govMultiselectOptions : optionLabel : optionValue : addEmptyOption"
-    (gov-focus)="onDropdownShow()"
-    (gov-remove)="onDropdownClear()"
-    (gov-change)="selectionChange($event)"
-    (lazyLoadEvent)="onLazyLoad($any($event))"
-  />
-  @if (ngControl && ngControl.errors) {
-    <gov-form-message
-        [slot]="errorSlot"
-        color="error"
-    >
-        {{ngControl.errors | error}}
-        <gov-icon 
-            [name]="icons.warning"
-            slot="validation-icon"
-        />
-  </gov-form-message>
-  }
-</gov-form-control>
+    <v-validation-message [ngControl]="ngControl" />
+  </gov-form-control>
+</div>

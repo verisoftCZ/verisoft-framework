@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-doc-table-row-detail-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-doc-table-row-detail-example',
+    imports: [TableComponent],
+    template: template
 })
 export class GovCzTableRowDetailExampleComponent {
   code = new DocumentationCodeBuilder()

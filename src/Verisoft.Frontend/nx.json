@@ -50,6 +50,17 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "nx-release-publish": {
+      "dependsOn": [
+        {
+          "target": "build",
+          "projects": "self"
+        }
+      ],
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
     }
   },
   "plugins": [
@@ -57,6 +68,15 @@
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/storybook/plugin",
+      "options": {
+        "serveStorybookTargetName": "storybook",
+        "buildStorybookTargetName": "build-storybook",
+        "testStorybookTargetName": "test-storybook",
+        "staticStorybookTargetName": "static-storybook"
       }
     }
   ],
@@ -77,12 +97,17 @@
   },
   "defaultProject": "Verisoft.Frontend",
   "release": {
-    "projects": ["src/libs/core", "src/libs/ui", "src/libs/store"],
+    "projects": [
+      "core",
+      "store",
+      "security-core",
+      "ui-core",
+      "ui-govcz",
+      "ui-primeng"
+    ],
     "version": {
-      "generatorOptions": {
-        "packageRoot": "src/libs/{projectName}",
-        "currentVersionResolver": "registry"
-      }
+      "currentVersionResolver": "registry",
+      "preserveLocalDependencyProtocols": false
     }
   }
 }

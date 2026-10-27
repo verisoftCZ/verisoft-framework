@@ -20,7 +20,7 @@ export class BaseHttpService<T, TKey = number | string> {
     this.basePath = basePath;
   }
 
-  private get apiPath() {
+  protected get apiPath() {
     return this.basePath ? this.basePath + this.entityName : this.entityName;
   }
 

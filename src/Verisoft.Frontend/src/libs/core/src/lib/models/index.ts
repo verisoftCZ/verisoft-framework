@@ -4,3 +4,4 @@ export * from './constants';
 export * from './base-http.models';
 export * from './all-item.datasource';
 export * from './datasource.model';
+export * from './error-provider.model';

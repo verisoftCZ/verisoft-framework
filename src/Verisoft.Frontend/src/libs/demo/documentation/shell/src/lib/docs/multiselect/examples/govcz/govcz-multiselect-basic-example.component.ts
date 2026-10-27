@@ -18,10 +18,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-multiselect-basic-example',
-  imports: [MultiselectComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-multiselect-basic-example',
+    imports: [MultiselectComponent, FormsModule],
+    template: template
 })
 export class GovCzMultiselectBasicExampleComponent {
   value = null;

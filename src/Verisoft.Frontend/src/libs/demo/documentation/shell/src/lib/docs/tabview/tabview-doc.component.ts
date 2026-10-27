@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './tabview-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="TabView"
     description="TabView is a navigation component that organizes content into multiple tabs. It provides an intuitive interface for switching between different content sections, with support for dynamic content loading, form integration, and customizable styling."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class TabViewDocComponent {
   builder = inject(DocumentationBuilderService);

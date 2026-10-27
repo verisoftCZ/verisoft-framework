@@ -1,0 +1,43 @@
+<gov-dropdown
+  vGovDropdownKeyboard
+  vMenuKeyboard
+  [menuKeyboardItems]="items() ?? []"
+  [menuKeyboardNavigation]="keyboardNavigation()"
+  [menuKeyboardDefaults]="menuKeyboardDefaults"
+  (menuKeyboardSelect)="fireClickItem($event)"
+  position="left"
+>
+  <v-button
+    vMenuKeyboardTrigger
+    class="v-dropdown-button__trigger"
+    [label]="label()"
+    [icon]="icon()"
+    [rounded]="rounded() ?? false"
+    [outlined]="outlined() ?? false"
+    [raised]="raised() ?? false"
+    [severity]="severity()"
+    [type]="type()"
+    [size]="size()"
+  />
+
+  @if (items()?.length) {
+    <ul vMenuKeyboardList slot="list" class="v-dropdown-button__menu">
+      @for (item of items(); track item.id ?? $index; let i = $index) {
+        <li class="v-dropdown-button__item" role="none">
+          <v-button
+            vMenuKeyboardItem
+            [menuKeyboardItem]="item"
+            class="w-100 v-button--dropdown-menu-item"
+            [label]="item.label"
+            [icon]="item.icon"
+            [severity]="$any('normal')"
+            [size]="'medium'"
+            [type]="type()"
+            [disabled]="item.disabled ?? false"
+            (click)="selectItem(item)"
+          />
+        </li>
+      }
+    </ul>
+  }
+</gov-dropdown>

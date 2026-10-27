@@ -1,0 +1,11 @@
+@if (ngControl && ngControl.errors) {
+<gov-form-message 
+    [slot]="errorSlot" 
+    color="error"
+>
+    {{ getErrorMessage(ngControl.errors) | async }}
+  <gov-icon 
+    [name]="icons.warning" 
+    slot="validation-icon" />
+</gov-form-message>
+}

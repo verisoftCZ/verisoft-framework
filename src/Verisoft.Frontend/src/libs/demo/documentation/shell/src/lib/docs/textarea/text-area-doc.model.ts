@@ -3,6 +3,9 @@ import {
   DocumentationItem,
 } from '@verisoft/demo-documentation-ui';
 import {
+  GovCzTextAreaBasicExampleComponent,
+  GovCzTextAreaReactFormsExampleComponent,
+  GovczTextAreaSizeExampleComponent,
   PrimengTextAreaBasicExampleComponent,
   PrimengTextAreaReactFormsExampleComponent,
   PrimengTextAreaSizeExampleComponent,
@@ -24,7 +27,7 @@ export function getDocumentation(
           .addText(
             'The TextArea angular component is a customizable text area field designed for flexible integration in both template-driven and reactive forms. The component automatically adjusts to fill 100% of the width of its parent container, ensuring responsive and seamless layout adaptability. It includes built-in validation messages, providing users with real-time feedback on their input. The text field also supports adjustable sizes (if allowed by input settings), allowing developers to fine-tune its appearance to match the design requirements. Additionally, it comes with support for testing attributes, making it easier to integrate into automated testing frameworks.'
           )
-          .addCodeComponent(PrimengTextAreaBasicExampleComponent)
+          .addCodeComponent(isPrimeng ? PrimengTextAreaBasicExampleComponent : GovCzTextAreaBasicExampleComponent)
       )
       .addSection((s) =>
         s
@@ -32,7 +35,7 @@ export function getDocumentation(
           .addText(
             'The TextArea component supports reactive forms functionality. You can use bindings with directives such as formControl, formControlName, and formGroup, as well as control validation rules through the model. Additionally, this allows for dynamic form updates, improved form validation handling, and better integration with form state management.'
           )
-          .addCodeComponent(PrimengTextAreaReactFormsExampleComponent)
+          .addCodeComponent(isPrimeng ? PrimengTextAreaReactFormsExampleComponent : GovCzTextAreaReactFormsExampleComponent)
       )
       .addSection((s) =>
         s
@@ -40,7 +43,7 @@ export function getDocumentation(
           .addText(
             'The TextArea component allows you to set different sizes by specifying the <strong>rows</strong> and <strong>cols</strong> attribute. You can customize these settings with a number value.'
           )
-          .addCodeComponent(PrimengTextAreaSizeExampleComponent)
+          .addCodeComponent(isPrimeng ? PrimengTextAreaSizeExampleComponent : GovczTextAreaSizeExampleComponent)
       )
       .addSection((s) =>
         s

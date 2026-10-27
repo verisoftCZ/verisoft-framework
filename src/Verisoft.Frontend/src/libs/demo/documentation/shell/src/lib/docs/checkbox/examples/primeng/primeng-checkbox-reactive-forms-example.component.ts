@@ -42,10 +42,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-checkbox-reactive-forms-example',
-  imports: [CheckboxComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-checkbox-reactive-forms-example',
+    imports: [CheckboxComponent, ReactiveFormsModule],
+    template: template
 })
 export class PrimengCheckboxReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

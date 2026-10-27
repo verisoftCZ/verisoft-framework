@@ -23,10 +23,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-page-header-basic-example',
-  imports: [PageHeaderComponent, ActionButtonGroupComponent, ActionButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-page-header-basic-example',
+    imports: [PageHeaderComponent, ActionButtonGroupComponent, ActionButtonComponent],
+    template: template
 })
 export class PrimengPageHeaderBasicExampleComponent {
   code = new DocumentationCodeBuilder()

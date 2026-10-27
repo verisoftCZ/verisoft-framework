@@ -6,78 +6,91 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
-using Verisoft.Core.AspNet.ApplicationInsights;
+using Verisoft.Core.ApplicationInsights;
 using Verisoft.Core.AspNet.Authorization;
-using Verisoft.Core.Contracts;
 
-namespace Verisoft.Core.AspNet.Filters
+namespace Verisoft.Core.AspNet.Filters;
+
+public class ApiHeaderAuthorizeAttribute : Attribute, IAuthorizationFilter
 {
-    public class ApiHeaderAuthorizeAttribute : Attribute, IAuthorizationFilter
+    public string[]? Roles { get; set; }
+
+    public void OnAuthorization(AuthorizationFilterContext context)
     {
-        public string[] Roles { get; set; }
-
-        public void OnAuthorization(AuthorizationFilterContext context)
+        var operationId = OperationIdProvider.GetOperationId(context.HttpContext);
+        if (!context.HttpContext.Request.Headers.TryGetValue(HeaderNames.Authorization, out var headerValue))
         {
-            var operationId = OperationIdProvider.GetOperationId(context.HttpContext);
-            if (!context.HttpContext.Request.Headers.TryGetValue(HeaderNames.Authorization, out var headerValue))
-            {
-                context.Result = MissingHeaderResult(operationId);
-                return;
-            }
-
-            var config = context.HttpContext.RequestServices.GetService(typeof(IAuthConfig)) as IAuthConfig;
-            var apps = config.Applications;
-            var matchedApp = FindApp(headerValue, apps);
-            if (matchedApp == null)
-            {
-                context.Result = UnknownAppResult(operationId);
-                return;
-            }
-
-            if (!HasRights(matchedApp))
-            {
-                context.Result = InsufficientRightsResult(operationId);
-            }
+            context.Result = MissingHeaderResult(operationId);
+            return;
         }
 
-        private bool HasRights(Application matchedApp)
+        var config = context.HttpContext.RequestServices.GetService(typeof(IAuthConfig)) as IAuthConfig;
+        var apps = config!.Applications;
+        var matchedApp = FindApp(headerValue, apps);
+        if (matchedApp == null)
         {
-            if (Roles == null || Roles.Length == 0)
-            {
-                return true;
-            }
-
-            return matchedApp.Roles.Any(x => Roles.Contains(x));
+            context.Result = UnknownAppResult(operationId);
+            return;
         }
 
-        private Application FindApp(StringValues headerValue, IEnumerable<Application> apps)
-            => apps.FirstOrDefault(x => x.Key == headerValue.ToString());
+        if (!HasRights(matchedApp))
+        {
+            context.Result = InsufficientRightsResult(operationId);
+        }
+    }
 
-        private IActionResult UnknownAppResult(string operationId) => FromError(
-            new FailureDetail
-            {
-                OperationId = operationId,
-                ErrorMessage = $"Unknown app or invalid {HeaderNames.Authorization} header.",
-            },
-            StatusCodes.Status401Unauthorized);
+    private bool HasRights(Application matchedApp)
+    {
+        if (Roles == null || Roles.Length == 0)
+        {
+            return true;
+        }
 
-        private IActionResult MissingHeaderResult(string operationId) => FromError(
-            new FailureDetail
-            {
-                OperationId = operationId,
-                ErrorMessage = $"Missing {HeaderNames.Authorization} header.",
-            },
-            StatusCodes.Status401Unauthorized);
+        return matchedApp!.Roles!.Any(x => Roles.Contains(x));
+    }
 
-        private IActionResult InsufficientRightsResult(string operationId) => FromError(
-            new FailureDetail
-            {
-                OperationId = operationId,
-                ErrorMessage = $"Insufficient rights",
-            },
-            StatusCodes.Status403Forbidden);
+    private Application? FindApp(StringValues headerValue, IEnumerable<Application> apps)
+        => apps.FirstOrDefault(x => x.Key == headerValue.ToString());
 
-        private IActionResult FromError(FailureDetail error, int statusCode) =>
-            new ObjectResult(error) { StatusCode = statusCode };
+    private IActionResult UnknownAppResult(string operationId)
+        => CreateProblemDetails(
+            statusCode: StatusCodes.Status401Unauthorized,
+            title: "Unauthorized",
+            detail: $"Unknown app or invalid {HeaderNames.Authorization} header.",
+            operationId: operationId);
+
+    private IActionResult MissingHeaderResult(string operationId)
+        => CreateProblemDetails(
+            statusCode: StatusCodes.Status401Unauthorized,
+            title: "Unauthorized",
+            detail: $"Missing {HeaderNames.Authorization} header.",
+            operationId: operationId);
+
+    private IActionResult InsufficientRightsResult(string operationId)
+        => CreateProblemDetails(
+            statusCode: StatusCodes.Status403Forbidden,
+            title: "Forbidden",
+            detail: "Insufficient rights.",
+            operationId: operationId);
+
+    private IActionResult CreateProblemDetails(
+        int statusCode,
+        string title,
+        string detail,
+        string operationId)
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Status = statusCode,
+            Title = title,
+            Detail = detail,
+        };
+
+        problemDetails.Extensions["operationId"] = operationId;
+
+        return new ObjectResult(problemDetails)
+        {
+            StatusCode = statusCode,
+        };
     }
 }

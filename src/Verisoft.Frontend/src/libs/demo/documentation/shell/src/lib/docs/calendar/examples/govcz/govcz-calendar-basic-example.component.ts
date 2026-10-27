@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-calendar-basic-example',
-  imports: [CalendarComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-calendar-basic-example',
+    imports: [CalendarComponent, FormsModule],
+    template: template
 })
 export class GovCzCalendarBasicExampleComponent {
   value = null;

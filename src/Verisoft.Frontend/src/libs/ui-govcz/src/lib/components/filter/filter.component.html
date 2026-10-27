@@ -1,0 +1,73 @@
+<div class="v-filter w-100">
+  @if (formGroup$ | async; as formGroup){
+  <form [formGroup]="formGroup">
+    <div class="v-filter__header d-flex align-items-center p-3">
+      @if (title) {
+      <div class="v-filter_title pe-4">
+        <h2 class="m-0">{{ title }}</h2>
+      </div>
+      }
+      <div class="v-filter__fulltext flex-grow-1 pe-4">
+        @if (showFulltext){
+        <v-textfield
+          placeholder="Search"
+          size="large"
+          [formControlName]="fulltextFieldName"
+          type="search"
+          [clearable]="true"
+        />
+        }
+      </div>
+      <div class="v-filter_action-buttons d-flex align-items-center gap-2">
+        @if (!autoBind) {
+        <v-button
+          useShortCut
+          [shortCutFn]="submitValue.bind(this)"
+          shortCutKey="Enter"
+          [type]="buttonType"
+          [outlined]="buttonOutlined"
+          size="small"
+          [label]="applyButtonLabel"
+          (click)="submitValue()"
+        />
+        }
+        @if (isExpanded) {
+        <v-button
+          useShortCut
+          [shortCutFn]="clear.bind(this)"
+          shortCutKey="Escape"
+          size="small"
+          [type]="buttonType"
+          [outlined]="buttonOutlined"
+          [label]="clearButtonLabel"
+          (click)="clear()"
+        />
+        }
+        @if (simpleFormFieldDefinitions$ | async; as declaration){ @if
+        (declaration.length) {
+        <v-button
+          size="small"
+          [type]="buttonType"
+          [outlined]="buttonOutlined"
+          [icon]="icons.filter"
+          [label]="$any(filledFiltersCount$ | async)"
+          (click)="toggleFilters()"
+        />
+        } }
+
+        <ng-content select="v-action-button-group"></ng-content>
+      </div>
+    </div>
+    @if (simpleFormFieldDefinitions$ | async; as declaration){ @if (isExpanded
+    && declaration.length) {
+    <div class="v-filter__expanded p-3">
+      <v-generic-form
+        [fields]="declaration"
+        [formGroup]="formGroup"
+        [columns]="2"
+      />
+    </div>
+    } }
+  </form>
+  }
+</div>

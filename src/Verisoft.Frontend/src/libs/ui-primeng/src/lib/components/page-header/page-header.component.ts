@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,20 +6,19 @@ import {
   OnInit,
 } from '@angular/core';
 import { PAGE_HEADER_COMPONENT_TOKEN, PageHeaderCore, PageHeaderCoreComponent } from '@verisoft/ui-core';
+import { Icons } from '../../icons';
 import { ButtonComponent } from '../button';
 import { ActionButtonGroupComponent } from '../shared-components';
-import { Icons } from '../../icons';
 
 @Component({
-  selector: 'v-page-header',
-  standalone: true,
-  imports: [CommonModule, ButtonComponent],
-  templateUrl: './page-header.component.html',
-  styleUrl: './page-header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: PAGE_HEADER_COMPONENT_TOKEN, useExisting: PageHeaderComponent },
-  ],
+    selector: 'v-page-header',
+    imports: [ButtonComponent],
+    templateUrl: './page-header.component.html',
+    styleUrl: './page-header.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        { provide: PAGE_HEADER_COMPONENT_TOKEN, useExisting: PageHeaderComponent },
+    ]
 })
 export class PageHeaderComponent
   extends PageHeaderCoreComponent
@@ -27,5 +26,6 @@ export class PageHeaderComponent
 {
   @ContentChild(ActionButtonGroupComponent)
   buttonGroup?: ActionButtonGroupComponent;
+  
   icons = Icons;
 }

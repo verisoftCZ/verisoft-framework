@@ -1,32 +1,27 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
-  ContentChild,
-  OnInit,
+  Input,
 } from '@angular/core';
-import { PAGE_HEADER_COMPONENT_TOKEN, PageHeaderCore, PageHeaderCoreComponent } from '@verisoft/ui-core';
-import { ButtonComponent } from '../button';
-import { ActionButtonGroupComponent } from '../shared-components';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
-import { Icons } from '../../icons';
+import { TranslateModule } from '@ngx-translate/core';
+import { PageHeaderCore } from '@verisoft/ui-core';
 
 @Component({
-  selector: 'v-page-header',
-  standalone: true,
-  imports: [CommonModule, ButtonComponent, GovDesignSystemModule],
-  templateUrl: './page-header.component.html',
-  styleUrl: './page-header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: PAGE_HEADER_COMPONENT_TOKEN, useExisting: PageHeaderComponent },
-  ],
+    selector: 'v-page-header',
+    imports: [
+    GovDesignSystemModule,
+    TranslateModule
+],
+    templateUrl: './page-header.component.html',
+    styleUrl: './page-header.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PageHeaderComponent
-  extends PageHeaderCoreComponent
-  implements OnInit, PageHeaderCore
-{
-  @ContentChild(ActionButtonGroupComponent)
-  buttonGroup?: ActionButtonGroupComponent;
-  icons = Icons;
+export class PageHeaderComponent implements PageHeaderCore {
+  @Input() title = '';
+
+  @Input() subtitle: string | undefined;
+
+  @Input() showBackButton: boolean | undefined;
 }

@@ -1,0 +1,12 @@
+<p-tag
+  [rounded]="rounded()"
+  [severity]="primeSeverity()"
+  [ngClass]="tagClasses()"
+>
+  @if (label()) {
+    {{ label() | translate }}
+  } @else {
+    <ng-content></ng-content>
+  }
+</p-tag>
+

@@ -4,7 +4,7 @@ import {
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
 import { TabViewItemCore } from '@verisoft/ui-core';
-import { TabViewModule } from '@verisoft/ui-primeng';
+import { TabViewComponent } from '@verisoft/ui-primeng';
 
 const template = `
 <div class="row">
@@ -22,9 +22,8 @@ const ts = `tabViewItems: TabViewItemCore[] = [
 
 @Component({
   selector: 'v-doc-primeng-tabview-model-example',
-  imports: [TabViewModule],
-  standalone: true,
-  template: template,
+  imports: [TabViewComponent],
+  template: template
 })
 export class PrimengTabViewModelExampleComponent {
   code = new DocumentationCodeBuilder()

@@ -38,10 +38,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-doc-govcz-calendar-reactive-forms-example',
-  imports: [ReactiveFormsModule, CalendarComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-calendar-reactive-forms-example',
+    imports: [ReactiveFormsModule, CalendarComponent],
+    template: template
 })
 export class GovCzFormFieldReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

@@ -8,13 +8,12 @@ import {
 import { getDocumentation } from './calendar-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Calendar"
     description="Calendar is an extension to the prime-ng component <strong>p-calendar</strong>."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class CalendarDocComponent {
   builder = inject(DocumentationBuilderService);

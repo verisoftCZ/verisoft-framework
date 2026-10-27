@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-text-field-basic-example',
-  imports: [TextfieldComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-text-field-basic-example',
+    imports: [TextfieldComponent, FormsModule],
+    template: template
 })
 export class PrimengTextFieldBasicExampleComponent {
   value: string | null = null;

@@ -18,10 +18,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-multiselect-basic-example',
-  imports: [MultiselectComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-multiselect-basic-example',
+    imports: [MultiselectComponent, FormsModule],
+    template: template
 })
 export class PrimengMultiselectBasicExampleComponent {
   value = null;

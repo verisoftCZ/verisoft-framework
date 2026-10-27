@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34322.80
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11430.68 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verisoft.Core.AspNet", "Verisoft.Core\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj", "{70DDDF56-CFE5-463C-8A72-B5FCAECA2763}"
 EndProject
@@ -39,13 +39,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verisoft.Core.Authenticatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Verisoft.Core.AspNet.Concurency", "Verisoft.Core\Verisoft.Core.AspNet.Concurency\Verisoft.Core.AspNet.Concurency.csproj", "{91F35A89-D4D3-4A6D-92C7-EF1CB21419A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Excel", "Verisoft.Core\Verisoft.Core.Excel\Verisoft.Core.Excel.csproj", "{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Excel.Test", "Verisoft.Core\Verisoft.Core.Excel.Test\Verisoft.Core.Excel.Test.csproj", "{E18D47DF-6C7D-4DDA-8FE4-28F53EEB9103}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.ExportStrategies", "Verisoft.Core\Verisoft.Core.ExportStrategies\Verisoft.Core.ExportStrategies.csproj", "{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Validation", "Verisoft.Core\Verisoft.Core.Validation\Verisoft.Core.Validation.csproj", "{71888B38-3C53-499D-850C-19833037AE06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.ApplicationInsights", "Verisoft.Core\Verisoft.Core.ApplicationInsights\Verisoft.Core.ApplicationInsights.csproj", "{1CD84621-196E-1596-880E-3BE4BDA83354}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Codebooks", "Verisoft.Core\Verisoft.Core.Codebooks\Verisoft.Core.Codebooks.csproj", "{8BA8A2ED-607C-4BB6-AF29-F402387334CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Codebooks.Common", "Verisoft.Core\Verisoft.Core.Codebooks.Common\Verisoft.Core.Codebooks.Common.csproj", "{A45E7C13-9450-4F39-BC79-95E649DBA524}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Codebooks.SourceGenerator", "Verisoft.Core\Verisoft.Core.Codebooks.SourceGenerator\Verisoft.Core.Codebooks.SourceGenerator.csproj", "{0610A6FC-FC10-482D-A0D0-46D2862F8DB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Export", "Verisoft.Core\Verisoft.Core.Export\Verisoft.Core.Export.csproj", "{73574710-737C-D44E-C23C-A9C08CAD3E5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Verisoft.Core.Export.Excel.Test", "Verisoft.Core\Verisoft.Core.Export.Excel.Test\Verisoft.Core.Export.Excel.Test.csproj", "{F12EB2C6-6BEA-9BDB-58B5-E4634EF1B059}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,18 +135,30 @@ Global
 		{71888B38-3C53-499D-850C-19833037AE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71888B38-3C53-499D-850C-19833037AE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71888B38-3C53-499D-850C-19833037AE06}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7877DFC-EB13-4AC1-B4D1-17A281FC45BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E18D47DF-6C7D-4DDA-8FE4-28F53EEB9103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E18D47DF-6C7D-4DDA-8FE4-28F53EEB9103}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E18D47DF-6C7D-4DDA-8FE4-28F53EEB9103}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E18D47DF-6C7D-4DDA-8FE4-28F53EEB9103}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB38BDA1-1DA9-4F01-85CB-45CBF3E5ABEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CD84621-196E-1596-880E-3BE4BDA83354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CD84621-196E-1596-880E-3BE4BDA83354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CD84621-196E-1596-880E-3BE4BDA83354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CD84621-196E-1596-880E-3BE4BDA83354}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BA8A2ED-607C-4BB6-AF29-F402387334CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA8A2ED-607C-4BB6-AF29-F402387334CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA8A2ED-607C-4BB6-AF29-F402387334CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA8A2ED-607C-4BB6-AF29-F402387334CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A45E7C13-9450-4F39-BC79-95E649DBA524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A45E7C13-9450-4F39-BC79-95E649DBA524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A45E7C13-9450-4F39-BC79-95E649DBA524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A45E7C13-9450-4F39-BC79-95E649DBA524}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0610A6FC-FC10-482D-A0D0-46D2862F8DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0610A6FC-FC10-482D-A0D0-46D2862F8DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0610A6FC-FC10-482D-A0D0-46D2862F8DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0610A6FC-FC10-482D-A0D0-46D2862F8DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73574710-737C-D44E-C23C-A9C08CAD3E5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73574710-737C-D44E-C23C-A9C08CAD3E5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73574710-737C-D44E-C23C-A9C08CAD3E5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73574710-737C-D44E-C23C-A9C08CAD3E5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F12EB2C6-6BEA-9BDB-58B5-E4634EF1B059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F12EB2C6-6BEA-9BDB-58B5-E4634EF1B059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F12EB2C6-6BEA-9BDB-58B5-E4634EF1B059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F12EB2C6-6BEA-9BDB-58B5-E4634EF1B059}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

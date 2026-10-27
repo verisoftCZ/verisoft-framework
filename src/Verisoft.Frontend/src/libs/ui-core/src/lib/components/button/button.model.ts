@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Params } from '@angular/router';
-import { ControlSeverityType, FieldSizeType, IconPositionType } from '../../common';
+import { ControlSeverityType, FieldSizeType, IconPositionType, PositionType } from '../../common';
 
 export const BUTTON_COMPONENT_TOKEN = new InjectionToken<ButtonCore>(
     'ButtonComponentToken'
@@ -18,4 +18,6 @@ export interface ButtonCore {
     routerLink: any[];
     size: FieldSizeType | undefined;
     queryParams?: Params;
+    tooltip?: string;
+    tooltipPosition?: PositionType;
 }

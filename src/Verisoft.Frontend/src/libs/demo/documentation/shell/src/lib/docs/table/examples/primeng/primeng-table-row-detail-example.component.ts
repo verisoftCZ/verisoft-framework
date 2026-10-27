@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-table-row-detail-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-row-detail-example',
+    imports: [TableComponent],
+    template: template
 })
 export class PrimengTableRowDetailExampleComponent {
   code = new DocumentationCodeBuilder()

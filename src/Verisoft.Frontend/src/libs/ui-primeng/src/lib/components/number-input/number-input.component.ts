@@ -1,9 +1,10 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   forwardRef,
+  inject,
   Input,
+  LOCALE_ID,
   Optional,
   Self,
 } from '@angular/core';
@@ -12,18 +13,23 @@ import {
   NgControl,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { BaseFormInputComponent, BaseInputControls, NUMBER_INPUT_COMPONENT_TOKEN, NumberInputCore } from '@verisoft/ui-core';
+import {
+  BaseFormInputComponent,
+  BaseInputControls,
+  NUMBER_INPUT_COMPONENT_TOKEN,
+  NumberInputCore,
+} from '@verisoft/ui-core';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
   selector: 'v-number-input',
-  standalone: true,
   imports: [
-    CommonModule,
     InputNumberModule,
     ReactiveFormsModule,
     FormFieldComponent,
+    ErrorComponent,
   ],
   templateUrl: './number-input.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -46,9 +52,19 @@ export class NumberInputComponent
     super(ngControl);
   }
 
-  @Input() mode!: string;
+  @Input() decimals = 0;
   @Input() currency!: string;
   @Input() min!: number;
   @Input() max!: number;
-  @Input() step = 1;
+  @Input() step: number | undefined;
+  @Input() errorMessage?: string = 'test';
+  @Input() locale: string = inject(LOCALE_ID);
+
+  computeStep() {
+    if (this.step !== undefined) {
+      return this.step;
+    }
+
+    return this.decimals > 0 ? Math.pow(10, -this.decimals) : 1;
+  }
 }

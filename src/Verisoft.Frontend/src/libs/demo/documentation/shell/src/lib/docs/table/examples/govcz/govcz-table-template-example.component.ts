@@ -20,10 +20,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-table-template-example',
-  imports: [TableComponent, TableColumnDirective],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-template-example',
+    imports: [TableComponent, TableColumnDirective],
+    template: template
 })
 export class GovCzTableTemplateExampleComponent {
   code = new DocumentationCodeBuilder()

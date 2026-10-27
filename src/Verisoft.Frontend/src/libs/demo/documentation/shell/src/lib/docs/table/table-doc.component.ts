@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './table-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Table"
     description="The Table component provides a powerful and flexible system for displaying data"
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class TableDocComponent {
   builder = inject(DocumentationBuilderService);

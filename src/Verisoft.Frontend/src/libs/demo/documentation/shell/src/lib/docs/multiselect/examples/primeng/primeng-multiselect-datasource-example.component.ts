@@ -38,10 +38,9 @@ interface Car {
 }
 
 @Component({
-  selector: 'v-doc-primeng-multiselect-datasource-example',
-  imports: [MultiselectComponent, DatasourceDirective, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-multiselect-datasource-example',
+    imports: [MultiselectComponent, DatasourceDirective, FormsModule],
+    template: template
 })
 export class PrimengMultiSelectDatasourceExampleComponent {
   code = new DocumentationCodeBuilder()

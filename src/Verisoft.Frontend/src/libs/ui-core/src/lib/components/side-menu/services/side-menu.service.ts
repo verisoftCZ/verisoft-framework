@@ -26,7 +26,7 @@ export class SideMenuService {
     );
 
     if (!expanded) {
-      this.stateToken.expanded?.push(item.label);
+      this.stateToken.expanded?.push(item.label!);
       localStorage.setItem(
         'SideMenuStateToken',
         JSON.stringify(this.stateToken)

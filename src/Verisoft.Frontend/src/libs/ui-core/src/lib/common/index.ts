@@ -5,5 +5,6 @@ export * from './datasource-component.model';
 export * from './filter';
 export * from './notificable-property.model';
 export * from './rxjs';
-export * from './download-file';
 export * from './icons';
+export * from './download-file';
+export * from './deactivate-guard.model'

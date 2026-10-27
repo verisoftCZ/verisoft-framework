@@ -8,7 +8,7 @@ namespace Verisoft.Core.Common.TypeMapper
 
         TTarget Map<TSource, TTarget>(TSource source, TTarget target);
 
-        TTarget Map<TTarget>(object source);
+        TTarget Map<TTarget>(object? source);
 
         IEnumerable<TTarget> Map<TTarget>(IEnumerable<object> source);
     }

@@ -38,10 +38,9 @@ items: MenuItem[] = [
 `;
 
 @Component({
-  selector: 'v-primeng-doc-side-menu-basic-example',
-  imports: [SideMenuComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-side-menu-basic-example',
+    imports: [SideMenuComponent],
+    template: template
 })
 export class PrimengSideMenuBasicExampleComponent {
   code = new DocumentationCodeBuilder()

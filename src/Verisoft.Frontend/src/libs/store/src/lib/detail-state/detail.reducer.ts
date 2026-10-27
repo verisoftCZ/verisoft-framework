@@ -1,6 +1,7 @@
 import { ActionCreator, createReducer, on, ReducerTypes } from '@ngrx/store';
 import {
   createInitDetailAction,
+  createInitNewDetailAction,
   createLoadDetailFailureAction,
   createLoadDetailSuccessAction,
   createResetStateAction,
@@ -8,6 +9,7 @@ import {
   createSaveDetailFailureAction,
   createSaveDetailSuccessAction,
   createUpdateDetailAction,
+  createUpdateDetailSetErrorsAction,
   createUpdateFormStateAction,
 } from './detail.actions';
 import {
@@ -27,6 +29,14 @@ export function createDetailReducers<
   return createReducer(
     initialState,
     on(createInitDetailAction(detailRepository), (state) => {
+      return {
+        ...state,
+        loaded: false,
+        error: null,
+      };
+    }),
+
+    on(createInitNewDetailAction(detailRepository), (state) => {
       return {
         ...state,
         loaded: false,
@@ -61,6 +71,13 @@ export function createDetailReducers<
       };
     }),
 
+    on(createUpdateDetailSetErrorsAction(detailRepository), (state, { error }) => {
+      return {
+        ...state,
+        backendValidationErrors: error
+      }
+    }),
+
     on(
       createUpdateFormStateAction(detailRepository),
       (state, { formState }) => {
@@ -80,10 +97,18 @@ export function createDetailReducers<
         },
       };
     }),
+    
     on(createResetStateAction(detailRepository), () => {
       return {
         ...(initialState as any),
       };
+    }),
+    
+    on(createSaveDetailFailureAction(detailRepository), (state, { error }) => {
+      return {
+        ...state,
+        backendValidationErrors: error.error
+      }
     }),
     ...ons
   );

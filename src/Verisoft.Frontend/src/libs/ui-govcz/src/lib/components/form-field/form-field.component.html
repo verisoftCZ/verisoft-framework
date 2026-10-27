@@ -10,23 +10,5 @@
   <gov-form-group>
     <ng-content />
   </gov-form-group>
-  @if (ngControl && ngControl.errors) {
-  <gov-form-message
-    [slot]="errorSlot"
-    color="error"
-  >
-    {{ngControl.errors | error}}
-    <gov-icon 
-      [name]="icons.warning"
-      slot="validation-icon"
-    />
-  </gov-form-message>
-  } @if (message) {
-  <gov-form-message
-    [slot]="messageSlot"
-    color="neutral"
-  >
-    {{ message }}
-  </gov-form-message>
-  }
+  <v-validation-message [ngControl]="ngControl"></v-validation-message>
 </gov-form-control>

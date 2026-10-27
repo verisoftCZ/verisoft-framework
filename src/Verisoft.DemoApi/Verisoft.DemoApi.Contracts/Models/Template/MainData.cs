@@ -2,9 +2,9 @@
 
 public class MainData
 {
-    public string Header { get; set; }
+    public string? Header { get; set; }
 
     public DateTime Date { get; set; }
 
-    public List<MainDataItem> ListData { get; set; }
+    public List<MainDataItem>? ListData { get; set; }
 }

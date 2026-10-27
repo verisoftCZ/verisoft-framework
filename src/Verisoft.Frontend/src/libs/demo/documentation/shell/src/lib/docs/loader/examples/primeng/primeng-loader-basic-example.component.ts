@@ -13,10 +13,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-loader-basic-example',
-  imports: [LoaderComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-loader-basic-example',
+    imports: [LoaderComponent],
+    template: template
 })
 export class PrimengLoaderBasicExampleComponent {
   code = new DocumentationCodeBuilder()

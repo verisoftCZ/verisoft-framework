@@ -44,10 +44,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-multiselect-reactive-forms-example',
-  imports: [ReactiveFormsModule, MultiselectComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-multiselect-reactive-forms-example',
+    imports: [ReactiveFormsModule, MultiselectComponent],
+    template: template
 })
 export class GovCzMultiselectReactiveFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

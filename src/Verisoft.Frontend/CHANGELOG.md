@@ -1,3 +1,37 @@
+## 19.0.0-2 (2025-08-01)
+
+This was a version bump only, there were no code changes.
+
+## 19.0.0-1 (2025-07-15)
+
+This was a version bump only, there were no code changes.
+
+## 19.0.1-1 (2025-07-14)
+
+This was a version bump only, there were no code changes.
+
+## 19.0.1-0 (2025-07-14)
+
+This was a version bump only, there were no code changes.
+
+### 🚀 Features
+
+- ⚠️  Changed folder structure + added build, deploy and docs folder
+- Added header component, sidemenu, added primeng, primeng icons, themes + styles: tree component in sidemenu + mainpage
+- added few components, updated headercomponent and made few changes to sidemenu menu rendering logic
+- error pipe, breadcrumb component, textfield, updated sidemenu, styling
+- 6218&6221 => Fixed dropdown list options + created Calendar component
+- Radiobutton group
+- implemented textarea, updated
+
+### ⚠️  Breaking Changes
+
+- ⚠️  Changed folder structure + added build, deploy and docs folder
+
+### ❤️ Thank You
+
+- Vít Chvoj
+
 # 18.0.0 (2024-10-20)
 
 ### 🚀 Features

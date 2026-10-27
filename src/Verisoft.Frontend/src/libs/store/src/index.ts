@@ -7,3 +7,6 @@ export * from './lib/table-state/actions';
 export * from './lib/table-state/reducers';
 export * from './lib/table-state/effects';
 export * from './lib/table-state/models';
+
+export * from './lib/binding-state/binding.actions';
+export * from './lib/binding-state/binding.effects';

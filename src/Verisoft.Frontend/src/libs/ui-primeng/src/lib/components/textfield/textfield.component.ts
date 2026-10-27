@@ -24,32 +24,33 @@ import {
 } from '@verisoft/ui-core';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { FormFieldComponent } from '../form-field/form-field.component';
 import { Icons } from '../../icons';
+import { ErrorComponent } from '../errors';
+import { FormFieldComponent } from '../form-field/form-field.component';
 
 @Component({
-  selector: 'v-textfield',
-  standalone: true,
-  imports: [
-    CommonModule,
-    InputTextModule,
-    ReactiveFormsModule,
-    FormFieldComponent,
-    FloatLabelModule,
-  ],
-  templateUrl: './textfield.component.html',
-  styleUrl: './textfield.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => TextfieldComponent),
-    },
-    {
-      provide: TEXTFIELD_COMPONENT_TOKEN,
-      useExisting: TextfieldComponent,
-    },
-  ],
+    selector: 'v-textfield',
+    imports: [
+        CommonModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        FormFieldComponent,
+        FloatLabelModule,
+        ErrorComponent
+    ],
+    templateUrl: './textfield.component.html',
+    styleUrl: './textfield.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => TextfieldComponent),
+        },
+        {
+            provide: TEXTFIELD_COMPONENT_TOKEN,
+            useExisting: TextfieldComponent,
+        },
+    ]
 })
 export class TextfieldComponent
   extends BaseFormInputComponent

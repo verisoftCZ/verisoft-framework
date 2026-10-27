@@ -1,45 +1,39 @@
 ﻿using System;
 using System.Text;
-using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
-using Verisoft.Core.AspNet.ApplicationInsights;
 using Verisoft.Core.AspNet.Authentication;
 using Verisoft.Core.AspNet.Authorization;
-using Verisoft.Core.AspNet.Hangfire;
+using Verisoft.Core.AspNet.Exceptions;
 using Verisoft.Core.AspNet.Health;
 using Verisoft.Core.Authentication;
-using Verisoft.Core.Common.Logging;
-using Verisoft.Core.ExportStrategies;
-using Verisoft.Core.ExportStrategies.Strategies;
+using Verisoft.Core.Export;
+using Verisoft.Core.Export.Strategies;
 
 namespace Verisoft.Core.AspNet;
 
 public static class InstallExtensions
 {
+    /// <summary>
+    /// Registers default exception handlers.
+    /// </summary>
+    /// <remarks>
+    /// Exception handlers execute in registration order.
+    /// <see cref="GlobalExceptionHandler"/> must be registered last because it handles all uncaught exceptions.
+    /// </remarks>
+    public static void AddVerisoftExceptionHandlers(this IServiceCollection services)
+    {
+        services.AddExceptionHandler<InvalidSortPropertyExceptionHandler>();
+        services.AddExceptionHandler<CrawlerExceptionHandler>();
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+    }
+
     public static void AddApiHeaderAuthorization(this IServiceCollection services)
     {
         services.AddSingleton<IAuthConfig, DefaultAuthConfig>();
-    }
-
-    public static void AddVerisoftApplicationInsights(this IServiceCollection services, IConfiguration configuration, AIOptions options)
-    {
-        services.AddApplicationInsightsTelemetry(configuration);
-        if (options != null && options.EnableSqlCommandTextTracking)
-        {
-            services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, o) => { module.EnableSqlCommandTextInstrumentation = true; });
-        }
-
-        if (options != null && !options.EnableHangfireTracking)
-        {
-            services.AddApplicationInsightsTelemetryProcessor<NoSqlTelemetryProcessor>();
-        }
-
-        services.AddSingleton<AIConfig>();
-        services.AddTransient<IBusinessTracker, AITracker>();
     }
 
     public static void AddVerisoftAuth(this IServiceCollection services, Action<IdentityAuthenticationOptions> options)
@@ -52,6 +46,17 @@ public static class InstallExtensions
 
     public static void AddVerisoftAuth(this IServiceCollection services, IAuthConfiguration config)
     {
+        if (string.IsNullOrWhiteSpace(config.Secret))
+        {
+            throw new InvalidOperationException("Authentication secret is missing. Configure 'apiSecret' with a strong key.");
+        }
+
+        var keyBytes = Encoding.UTF8.GetBytes(config.Secret);
+        if (keyBytes.Length < 32)
+        {
+            throw new InvalidOperationException("Authentication secret must be longer than 32 bytes for HS256.");
+        }
+
         services.AddAuthentication(o =>
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,7 +72,7 @@ public static class InstallExtensions
                     ValidateIssuerSigningKey = config.ValidateIssuerSigningKey,
                     ValidateActor = config.ValidateActor,
                     ValidateLifetime = config.ValidateLifetime,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Secret)),
+                    IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                     ClockSkew = TimeSpan.Zero,
                 };
             });
@@ -91,11 +96,31 @@ public static class InstallExtensions
     {
         var config = new HealthConfiguration();
         options?.Invoke(config);
-        return services.AddHealthChecks()
-            .AddSqlServer(
-                connectionString: config.ConnectionString,
-                name: config.DatabaseName,
-                failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
-                tags: ["db", "sql", "sqlserver"]);
+        if (string.IsNullOrEmpty(config.ConnectionString))
+        {
+            throw new ArgumentException("Connection string must be provided.", nameof(config.ConnectionString));
+        }
+
+        var builder = services.AddHealthChecks();
+
+        return config.Provider switch
+        {
+            HealthDatabaseProvider.SqlServer =>
+                builder.AddSqlServer(
+                    connectionString: config.ConnectionString,
+                    name: config.DatabaseName,
+                    failureStatus: HealthStatus.Unhealthy,
+                    tags: ["db", "sql", "sqlserver"]),
+
+            HealthDatabaseProvider.PostgreSql =>
+                builder.AddNpgSql(
+                    connectionString: config.ConnectionString,
+                    healthQuery: "SELECT 1",
+                    name: config.DatabaseName,
+                    failureStatus: HealthStatus.Unhealthy,
+                    tags: ["db", "pgsql", "postgres"]),
+
+            _ => throw new NotSupportedException($"Health provider '{config.Provider}' is not supported."),
+        };
     }
 }

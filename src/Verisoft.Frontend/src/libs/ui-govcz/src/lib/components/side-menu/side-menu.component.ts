@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+
+import { Component, EventEmitter, inject, Input, Output, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
 import {
@@ -11,17 +11,17 @@ import {
 import { Icons } from '../../icons';
 
 @Component({
-  selector: 'v-side-menu',
-  standalone: true,
-  imports: [CommonModule, RouterModule, GovDesignSystemModule],
-  templateUrl: './side-menu.component.html',
-  styleUrl: './side-menu.component.scss',
-  providers: [
-    {
-      provide: SIDE_MENU_COMPONENT_TOKEN,
-      useExisting: SideMenuComponent,
-    },
-  ],
+    selector: 'v-side-menu',
+    imports: [RouterModule, GovDesignSystemModule],
+    templateUrl: './side-menu.component.html',
+    styleUrl: './side-menu.component.scss',
+    providers: [
+        {
+            provide: SIDE_MENU_COMPONENT_TOKEN,
+            useExisting: SideMenuComponent,
+        },
+    ],
+    encapsulation: ViewEncapsulation.None,
 })
 export class SideMenuComponent implements SideMenuCore {
   menuService = inject(SideMenuService);

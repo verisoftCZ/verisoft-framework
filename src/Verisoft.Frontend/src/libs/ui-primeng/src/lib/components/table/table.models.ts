@@ -15,10 +15,13 @@ export function convertToFilter<T>(
   const filter: { [key: string]: unknown } = {};
   Object.keys(value).map((key) => {
     const filterValue = (value as { [s: string]: unknown })[key];
+    const originalFilterKey = key?.startsWith('row.')
+        ? key.slice(4)
+        : key;
     if (filterValue != undefined && typeof filterValue === 'object') {
-      filter[key] = (filterValue as FilterMetadata).value;
+      filter[originalFilterKey] = (filterValue as FilterMetadata).value;
     } else {
-      filter[key] = filterValue;
+      filter[originalFilterKey] = filterValue;
     }
   });
 

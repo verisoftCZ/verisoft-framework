@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -32,32 +32,32 @@ import { ScrollerOptions } from 'primeng/api';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ScrollerLazyLoadEvent } from 'primeng/scroller';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
-  selector: 'v-multiselect',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-multiselect',
+    imports: [
     ReactiveFormsModule,
     FloatLabelModule,
     MultiSelectModule,
-    FormFieldComponent,
-  ],
-  templateUrl: './multiselect.component.html',
-  styleUrl: './multiselect.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => MultiselectComponent),
-      multi: true,
-    },
-    {
-      provide: MULTISELECT_COMPONENT_TOKEN,
-      useExisting: MultiselectComponent,
-    },
-  ],
+    ErrorComponent,
+    FormFieldComponent
+],
+    templateUrl: './multiselect.component.html',
+    styleUrl: './multiselect.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => MultiselectComponent),
+            multi: true,
+        },
+        {
+            provide: MULTISELECT_COMPONENT_TOKEN,
+            useExisting: MultiselectComponent,
+        },
+    ]
 })
 export class MultiselectComponent<T>
   extends BaseFormInputComponent

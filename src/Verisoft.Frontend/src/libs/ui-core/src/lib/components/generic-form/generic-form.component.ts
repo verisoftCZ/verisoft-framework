@@ -1,4 +1,5 @@
 import { ValidatorFn } from '@angular/forms';
+import { DatasourceType } from '@verisoft/core';
 import { FieldSizeType } from '../../common';
 
 export interface GenericFieldDefinition {
@@ -13,11 +14,17 @@ export interface GenericFieldDefinition {
   value?: unknown;
   testId?: string;
   size?: FieldSizeType;
+  readonly?: boolean;
+  datasource?: DatasourceType<any>;
+  filterField?: string;
+  showFilter?: boolean;
+  localSearch?: boolean;
 }
 
 export enum GenericFieldType {
   'dropdown' = 'dropdown',
   'checkbox' = 'checkbox',
+  'simplecheckbox' = 'simplecheckbox',
   'calendar' = 'calendar',
   'multiselect' = 'multiselect',
   'text' = 'text',

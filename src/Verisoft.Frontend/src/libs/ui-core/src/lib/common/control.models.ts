@@ -35,10 +35,24 @@ export enum SlotPosition {
   bottom = 'bottom',
 }
 
+export enum Position{
+  top = 'top',
+  bottom = 'bottom',
+  left = 'left',
+  right = 'right',
+}
+
 export enum FieldSize {
   small = 'small',
   medium = 'medium',
   large = 'large',
+  xl = 'xl',
+}
+
+export enum FieldAlign {
+  left = 'left',
+  center = 'center',
+  right = 'right',
 }
 
 export enum FieldType {
@@ -59,6 +73,8 @@ export type GovControlSeverityType = keyof typeof GovControlSeverity;
 export type GovButtonTypeType = keyof typeof GovButtonType;
 export type IconPositionType = keyof typeof IconPosition;
 export type SlotPositionType = keyof typeof SlotPosition;
+export type PositionType = keyof typeof Position;
 export type FieldSizeType = keyof typeof FieldSize;
+export type FieldAlignType = keyof typeof FieldAlign;
 export type FieldTypeType = keyof typeof FieldType;
 export type LayoutTypeType = keyof typeof LayoutType;

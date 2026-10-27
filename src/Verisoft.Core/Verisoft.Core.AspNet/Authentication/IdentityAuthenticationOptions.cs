@@ -2,7 +2,7 @@
 {
     public class IdentityAuthenticationOptions : IAuthConfiguration
     {
-        public string Secret { get; set; }
+        public string Secret { get; set; } = string.Empty;
 
         public bool ValidateIssuer { get; set; } = true;
 

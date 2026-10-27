@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-number-input-size-example',
-  imports: [NumberInputComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-number-input-size-example',
+    imports: [NumberInputComponent],
+    template: template
 })
 export class PrimengNumberInputSizeExampleComponent {
   code = new DocumentationCodeBuilder()

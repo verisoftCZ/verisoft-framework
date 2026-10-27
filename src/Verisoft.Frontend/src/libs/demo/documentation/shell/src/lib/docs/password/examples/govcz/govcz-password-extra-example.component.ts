@@ -16,10 +16,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-password-extra-example',
-  imports: [PasswordComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-password-extra-example',
+    imports: [PasswordComponent],
+    template: template
 })
 export class GovCzPasswordExtraExampleComponent {
   code = new DocumentationCodeBuilder()

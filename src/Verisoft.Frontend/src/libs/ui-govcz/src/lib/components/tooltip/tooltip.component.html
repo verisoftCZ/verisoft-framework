@@ -1,9 +1,9 @@
 <gov-tooltip
     class="ms-2"
     [color]="color"
-    [size]="size | govSize"
-    [position]="position"
-    [message]="message"
+    [size]="size() | govSize"
+    [position]="position()"
+    [message]="tooltipText()"
 >
-    {{ label }}
+    <ng-content></ng-content>
 </gov-tooltip>

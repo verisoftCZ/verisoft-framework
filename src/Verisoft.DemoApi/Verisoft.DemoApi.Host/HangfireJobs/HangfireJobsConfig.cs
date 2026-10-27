@@ -12,8 +12,8 @@
             configuration.GetSection("HangfireJobs").Bind(this);
         }
 
-        public string JobOneSettings { get; set; }
+        public string? JobOneSettings { get; set; } = default;
 
-        public string JobTwoSettings { get; set; }
+        public string? JobTwoSettings { get; set; } = default;
     }
 }

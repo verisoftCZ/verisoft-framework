@@ -23,10 +23,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-page-header-basic-example',
-  imports: [PageHeaderComponent, ActionButtonGroupComponent, ActionButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-page-header-basic-example',
+    imports: [PageHeaderComponent, ActionButtonGroupComponent, ActionButtonComponent],
+    template: template
 })
 export class GovCzPageHeaderBasicExampleComponent {
   code = new DocumentationCodeBuilder()

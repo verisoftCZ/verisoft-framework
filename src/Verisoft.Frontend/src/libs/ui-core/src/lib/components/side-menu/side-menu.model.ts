@@ -1,4 +1,5 @@
 import { InjectionToken } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export const MENU_TOKEN = new InjectionToken<MenuItem[]>(
   'MENU'
@@ -23,17 +24,20 @@ export interface SideMenuState {
 
 export interface MenuItem {
   id?: string;
-  label: string;
+  label?: string | undefined;
   icon?: string;
   expanded?: boolean;
   data?: MenuItemData;
   tooltip?: string;
   url?: string;
-  visible?: boolean;
+  visible?: boolean | Observable<boolean>;
+  disabled?: boolean;
   type?: string;
   children?: MenuItem[];
   routerLink?: any;
   class?: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  command?: Function;
 }
 
 type ExtendableType = {

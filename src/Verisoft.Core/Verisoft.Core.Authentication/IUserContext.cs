@@ -6,6 +6,14 @@ namespace Verisoft.Core.Authentication
     {
         IPrincipal User { get; }
 
-        string GetToken();
+        string GetUserName();
+
+        string? GetToken();
+
+        void SetUser(IPrincipal user);
+
+        void SetToken(string token);
+
+        void ClearInjectedUserAndToken();
     }
 }

@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'v-doc-header',
-  standalone: true,
-  imports: [],
-  templateUrl: './documentation-header.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-doc-header',
+    imports: [],
+    templateUrl: './documentation-header.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentationHeaderComponent {
   @Input() id?: string;

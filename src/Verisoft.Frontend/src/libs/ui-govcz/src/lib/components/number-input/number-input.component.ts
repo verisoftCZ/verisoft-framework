@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,7 +17,6 @@ import {
   NUMBER_INPUT_COMPONENT_TOKEN,
   FieldType,
   BaseFormInputComponent,
-  ErrorPipe,
   FieldSizeType,
   FieldSize,
   IconPositionType,
@@ -26,38 +25,37 @@ import {
   SlotPosition,
   FieldTypeType,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 @Component({
-  selector: 'v-number-input',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-number-input',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
-    GovSizePipe
-  ],
-  templateUrl: './number-input.component.html',
-  styleUrl: './number-input.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: NUMBER_INPUT_COMPONENT_TOKEN,
-      useExisting: NumberInputComponent,
-    },
-  ],
+    GovSizePipe,
+    ErrorComponent
+],
+    templateUrl: './number-input.component.html',
+    styleUrl: './number-input.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: NUMBER_INPUT_COMPONENT_TOKEN,
+            useExisting: NumberInputComponent,
+        },
+    ]
 })
 
 export class NumberInputComponent
   extends BaseFormInputComponent
   implements ControlValueAccessor, NumberInputCore
 {  
-  @Input() mode!: string;
+  @Input() decimals = 0;
   @Input() currency!: string;
   @Input() min!: number;
   @Input() max!: number;
-  @Input() step = 1;
+  @Input() step: number | undefined;
   @Input() floatLabel!: boolean;
   @Input() type: FieldTypeType = FieldType.number;
   @Input() minlength = 0;
@@ -78,5 +76,23 @@ export class NumberInputComponent
 
   constructor(@Optional() @Self() ngControl: NgControl) {
     super(ngControl);
+  }
+
+  onGovBlur(): void {
+    const value = this.formControl?.value;
+    if (value != null) {
+      const rounded = parseFloat(parseFloat(String(value)).toFixed(this.decimals));
+      if (rounded !== value) {
+        this.formControl.setValue(rounded);
+      }
+    }
+  }
+
+  computeStep() {
+    if (this.step !== undefined) {
+      return this.step;
+    }
+
+    return this.decimals > 0 ? Math.pow(10, -this.decimals) : 1;
   }
 }

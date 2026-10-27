@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-action-button-group-basic-example',
-  imports: [ActionButtonGroupComponent, ActionButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-action-button-group-basic-example',
+    imports: [ActionButtonGroupComponent, ActionButtonComponent],
+    template: template
 })
 export class GovCzActionButtonGroupBasicExampleComponent {
   code = new DocumentationCodeBuilder()

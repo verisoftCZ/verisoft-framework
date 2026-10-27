@@ -15,10 +15,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-header-basic-example',
-  imports: [HeaderComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-header-basic-example',
+    imports: [HeaderComponent],
+    template: template
 })
 export class GovCzHeaderBasicExampleComponent {
   code = new DocumentationCodeBuilder()

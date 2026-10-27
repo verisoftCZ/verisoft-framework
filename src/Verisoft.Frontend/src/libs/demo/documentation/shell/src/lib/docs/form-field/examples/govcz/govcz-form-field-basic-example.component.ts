@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-form-field-basic-example',
-  imports: [FormFieldComponent, TextfieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-form-field-basic-example',
+    imports: [FormFieldComponent, TextfieldComponent],
+    template: template
 })
 export class GovCzFormFieldBasicExampleComponent {
   code = new DocumentationCodeBuilder()

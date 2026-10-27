@@ -5,7 +5,7 @@ namespace Verisoft.DemoApi.Common.Repositories;
 
 public interface IUserRepository : IRepository<UserEntity, int>
 {
-    Task<UserEntity> GetUserByApiKey(string apikey);
+    Task<UserEntity?> GetUserByApiKey(string apikey);
 
-    Task<UserEntity> GetUserByEmail(string email);
+    Task<UserEntity?> GetUserByEmail(string email);
 }

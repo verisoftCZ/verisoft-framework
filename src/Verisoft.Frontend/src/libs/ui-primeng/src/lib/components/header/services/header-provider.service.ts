@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { SETTINGS_MENU } from '@verisoft/ui-core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem } from '@verisoft/ui-core';
 
 @Injectable({
   providedIn: 'root',

@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   AfterContentInit,
   Component,
@@ -7,17 +8,21 @@ import {
   Output,
   QueryList,
 } from '@angular/core';
-import { TabViewCore, TabViewItemCore } from '@verisoft/ui-core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { TAB_VIEW_COMPONENT_TOKEN, TabViewCore, TabViewItemCore } from '@verisoft/ui-core';
 import { MenuItem } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
 import { TabViewItemComponent } from './tab-view-item.component';
-
 @Component({
   selector: 'v-tab-view',
   templateUrl: './tab-view.component.html',
+  imports: [RouterOutlet, RouterLink, TabsModule, NgTemplateOutlet],
+  providers: [
+    { provide: TAB_VIEW_COMPONENT_TOKEN, useExisting: TabViewComponent }],
+
 })
-export class TabViewComponent 
-  implements AfterContentInit, TabViewCore
-{
+export class TabViewComponent
+  implements AfterContentInit, TabViewCore {
   @ContentChildren(TabViewItemComponent)
   children!: QueryList<TabViewItemComponent>;
 

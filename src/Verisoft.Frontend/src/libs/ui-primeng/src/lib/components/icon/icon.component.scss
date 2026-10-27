@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+
+  .pi {
+    line-height: 1;
+  }
+
+  &.v-primeng-icon--small .pi {
+    font-size: 0.75rem;
+  }
+
+  &.v-primeng-icon--medium .pi {
+    font-size: 1rem;
+  }
+
+  &.v-primeng-icon--large .pi {
+    font-size: 1.5rem;
+  }
+
+  &.v-primeng-icon--xl .pi {
+    font-size: 2rem;
+  }
+
+  &.v-primeng-icon--primary .pi {
+    color: var(--primary-color);
+  }
+
+  &.v-primeng-icon--secondary .pi {
+    color: var(--secondary-color);
+  }
+
+  &.v-primeng-icon--success .pi {
+    color: var(--success-color);
+  }
+
+  &.v-primeng-icon--danger .pi {
+    color: var(--error-color);
+  }
+
+  &.v-primeng-icon--warning .pi {
+    color: var(--details-color);
+  }
+
+  &.v-primeng-icon--info .pi,
+  &.v-primeng-icon--help .pi,
+  &.v-primeng-icon--contrast .pi {
+    color: var(--secondary-color);
+  }
+}
+

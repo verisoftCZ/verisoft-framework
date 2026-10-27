@@ -12,9 +12,9 @@ pool:
   name: 'VerisoftHosted'
 
 variables:
-  project: '**/*.csproj'
+  project: 'src/Verisoft.DemoApi.sln'
   buildConfiguration: 'Release'
-  netCoreSdkVersion: '8.x'
+  netCoreSdkVersion: '10.x'
 
 steps:
 - task: UseDotNet@2

@@ -1,4 +1,4 @@
-import { InjectionToken, TemplateRef } from "@angular/core";
+import { EventEmitter, InjectionToken, TemplateRef } from "@angular/core";
 
 export const TAB_VIEW_COMPONENT_TOKEN = new InjectionToken<TabViewCore>(
     'TabVIewComponentToken'
@@ -10,11 +10,13 @@ export interface TabViewItemCore {
     icon?: string;
     disabled?: boolean;
     content?: string;
-    contentTemplate?: TemplateRef<unknown>
+    contentTemplate?: TemplateRef<unknown>; 
 }
 
 export interface TabViewCore {
     items: TabViewItemCore[];
     useRouting: boolean;
     activeIndex: number;
+    activeIndexChange: EventEmitter<number>;
+    url?: string;
 }

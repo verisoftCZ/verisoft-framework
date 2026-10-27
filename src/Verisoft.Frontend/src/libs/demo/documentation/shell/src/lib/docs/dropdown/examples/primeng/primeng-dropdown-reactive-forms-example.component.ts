@@ -58,10 +58,9 @@ third: string[] = ['Pellentesque metus', 'Donec finibus', 'Cras fringilla'];
 `;
 
 @Component({
-  selector: 'v-doc-primeng-dropdown-reactive-forms-example',
-  imports: [ReactiveFormsModule, DropdownComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-dropdown-reactive-forms-example',
+    imports: [ReactiveFormsModule, DropdownComponent],
+    template: template
 })
 export class PrimengDropdownReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

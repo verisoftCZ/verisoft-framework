@@ -8,20 +8,20 @@ namespace Verisoft.DemoApi.Common.Specifications;
 
 public sealed class UserSpecification : ISpecification<UserEntity>
 {
-    public string[] FirstName { get; set; }
+    public string[]? FirstName { get; set; }
 
-    public string[] Surname { get; set; }
+    public string[]? Surname { get; set; }
 
-    public string[] Email { get; set; }
+    public string[]? Email { get; set; }
 
-    public DocumentEntity[] Documents { get; set; }
+    public DocumentEntity[]? Documents { get; set; }
 
-    public string SearchField { get; set; }
+    public string? SearchField { get; set; }
 
     public Expression<Func<UserEntity, bool>> SatisfiedBy()
     {
-        Specification<UserEntity> specification = new TrueSpecification<UserEntity>();
-        if (SearchField.HasValue<string>())
+        Specification<UserEntity>? specification = new TrueSpecification<UserEntity>();
+        if (SearchField != null && SearchField.HasValue<string>())
         {
             var firstnameSpecification = new DirectSpecification<UserEntity>(c => c.FirstName.Contains(SearchField));
             var surnameSpecification = new DirectSpecification<UserEntity>(c => c.Surname.Contains(SearchField));
@@ -29,24 +29,24 @@ public sealed class UserSpecification : ISpecification<UserEntity>
             specification = SpecificationExtender.OrAll(firstnameSpecification, surnameSpecification, emailSpecification);
         }
 
-        if (FirstName.HasValue())
+        if (FirstName!.HasValue())
         {
-            specification = specification.BuildOrSpecification(FirstName, searchValue => (entity) => entity.FirstName.Contains(searchValue));
+            specification = specification.BuildOrSpecification(FirstName!, searchValue => (entity) => entity.FirstName.Contains(searchValue));
         }
 
-        if (Surname.HasValue())
+        if (Surname!.HasValue())
         {
-            specification = specification.BuildOrSpecification(Surname, searchValue => (entity) => entity.Surname.Contains(searchValue));
+            specification = specification.BuildOrSpecification(Surname!, searchValue => (entity) => entity.Surname.Contains(searchValue));
         }
 
-        if (Email.HasValue())
+        if (Email!.HasValue())
         {
-            specification = specification.BuildOrSpecification(Email, searchValue => (entity) => entity.Email.Contains(searchValue));
+            specification = specification.BuildOrSpecification(Email!, searchValue => (entity) => entity.Email.Contains(searchValue));
         }
 
-        if (Documents.HasValue())
+        if (Documents!.HasValue())
         {
-            specification = specification.BuildOrSpecification(Documents, searchValue => (entity) => entity.Documents.Contains(searchValue));
+            specification = specification.BuildOrSpecification(Documents!, searchValue => (entity) => entity.Documents.Contains(searchValue));
         }
 
         return specification.SatisfiedBy();

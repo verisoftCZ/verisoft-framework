@@ -4,7 +4,6 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="isRequired()"
-    [ngControl]="ngControl"
     [testId]="testId"
   >
     <p-slider
@@ -15,5 +14,6 @@
       [min]="min"
       [max]="max"
     />
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
   </v-form-field>
 </div>

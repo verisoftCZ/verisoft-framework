@@ -24,6 +24,18 @@
             "prefix": "v",
             "style": "kebab-case"
           }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "primeng",
+                "message": "Import PrimeNG není povolen v @verisoft/ui-govcz."
+              }
+            ],
+            "patterns": ["primeng/*", "@verisoft/ui-primeng"]
+          }
         ]
       }
     },

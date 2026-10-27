@@ -1,0 +1,25 @@
+:host {
+  display: inline-block;
+
+  &.v-button--expanded {
+    display: block;
+    width: 100%;
+  }
+}
+
+.v-button {
+  display: inline-block;
+
+  &--expanded {
+    display: block;
+    width: 100%;
+  }
+
+  &--rounded {
+    border-radius: 5rem;
+  }
+
+  gov-tooltip {
+    border-bottom: none;
+  }
+}

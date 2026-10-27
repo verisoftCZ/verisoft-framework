@@ -1,19 +1,19 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { TabViewModule } from '@verisoft/ui-govcz';
+import { TabViewComponent, TabViewItemComponent } from '@verisoft/ui-govcz';
 import { DocumentationItem, DocumentationNavigationItem } from '../../models';
 import { DocumentationNavigationComponent } from '../documentation-navigation/documentation-navigation.component';
 import { DocumentationSectionComponent } from '../documentation-section/documentation-section.component';
 
 @Component({
-  selector: 'v-doc-govcz-tabs',
-  standalone: true,
-  imports: [
-    TabViewModule,
-    DocumentationSectionComponent,
-    DocumentationNavigationComponent,
-  ],
-  templateUrl: './documentation-tabs.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-doc-govcz-tabs',
+    imports: [
+        TabViewComponent,
+        TabViewItemComponent,
+        DocumentationSectionComponent,
+        DocumentationNavigationComponent,
+    ],
+    templateUrl: './documentation-tabs.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentationGovCzTabsComponent {
   @Input() activeIndex = 0;

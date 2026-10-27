@@ -11,6 +11,7 @@
         <gov-form-input 
             [attr.input-type]="type"
             [formControl]="formControl"
+            (gov-blur)="onGovBlur()"
             [minlength]="minlength" 
             [maxlength]="maxlength" 
             [size]='size | govSize'  
@@ -19,11 +20,19 @@
             [required]="required"
             [readonly]="readonly"
             [invalid]="ngControl?.errors ? true : false"
+            [attr.step]="computeStep()"
         >
             @if (icon) {
             <gov-icon
                 [name]="icon"
                 [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
+            />
+            } @if (clearable && formControl.value && formControl.enabled) {
+            <gov-icon
+                [name]="icons.cross"
+                slot="icon-end"
+                style="cursor: pointer"
+                (click)="formControl.reset()"
             />
             } @if (prefix) {
             <p slot="prefix">
@@ -35,24 +44,14 @@
             </p>
             }
         </gov-form-input>
+        <v-validation-message [ngControl]="ngControl"></v-validation-message>
+        @if (message) {
+        <gov-form-message 
+            [slot]="messageSlot" 
+            color="neutral"
+            >
+            {{ message }}
+        </gov-form-message>
+        }
     </gov-form-group>
-    @if (ngControl && ngControl.errors) {
-    <gov-form-message
-        [slot]="errorSlot"
-        color="error"
-    >
-        {{ngControl.errors | error}}
-        <gov-icon 
-            [name]="icons.warning"
-            slot="validation-icon"
-        />
-    </gov-form-message>
-    } @if (message) {
-    <gov-form-message
-        [slot]="messageSlot"
-        color="neutral"
-    >
-        {{ message }}
-    </gov-form-message>
-    }
 </gov-form-control>

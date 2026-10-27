@@ -8,6 +8,15 @@ describe('SnackbarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SnackbarComponent],
+      providers: [
+        {
+          provide: 'TOAST_CONFIG',
+          useValue: {
+            message: 'Test Message',
+            closeLabel: 'Close',
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SnackbarComponent);
@@ -19,3 +28,4 @@ describe('SnackbarComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

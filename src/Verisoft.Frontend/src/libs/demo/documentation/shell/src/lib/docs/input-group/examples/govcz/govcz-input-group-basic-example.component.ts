@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-input-group-basic-example',
-  imports: [InputGroupComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-input-group-basic-example',
+    imports: [InputGroupComponent],
+    template: template
 })
 export class GovCzInputGroupBasicExampleComponent {
   code = new DocumentationCodeBuilder()

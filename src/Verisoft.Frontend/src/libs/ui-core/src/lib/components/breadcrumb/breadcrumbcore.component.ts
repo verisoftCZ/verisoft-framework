@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Directive, Input, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Directive,
+  Input,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, takeUntil } from 'rxjs';
 import { MenuItem } from '../side-menu';
@@ -6,7 +12,9 @@ import { UnsubscribeComponent } from '../unsubscribe.component';
 import { BreadcrumbCore } from './breadcrumb.model';
 import { BreadcrumbService } from './breadcrumb.service';
 
-@Directive({})
+@Directive({
+    
+})
 export class BreadcrumbCoreComponent
   extends UnsubscribeComponent
   implements BreadcrumbCore, OnInit
@@ -17,6 +25,8 @@ export class BreadcrumbCoreComponent
 
   static readonly ROUTE_DATA_BREADCRUMB = 'breadcrumb';
   static readonly ROUTE_DATA_BREADCRUMB_URL = 'breadcrumb_url';
+  static readonly ROUTE_DATA_NO_BREADCRUMB_ROUTE = 'breadcrumb_no_route';
+  static readonly BREADCRUMB_HIDE = 'breadcrumb_hide';
   readonly home = { icon: 'pi pi-home', routerLink: this.homeRoute };
 
   router = inject(Router);
@@ -31,7 +41,10 @@ export class BreadcrumbCoreComponent
 
   private initBreadcrumbsCreation() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this.destroyed$)
+      )
       .subscribe(
         () => (this.items = this.createBreadcrumbs(this.activatedRoute.root))
       );
@@ -39,22 +52,22 @@ export class BreadcrumbCoreComponent
 
   private initRouteChangeListen() {
     this.breadcrumbService.routeChange
-    .pipe(
-      filter((x) => x.label !== 'Undefined'),
-      takeUntil(this.destroyed$)
-    )
-    .subscribe((x) => {
-      this.items = [
-        ...this.items,
-        {
-          label: x.label,
-          routerLink: x.routerLink,
-          url: x.url,
-          class: 'breadcrumb',
-        },
-      ];
-      this.cdr.detectChanges();
-    });
+      .pipe(
+        filter((x) => x.label !== 'Undefined'),
+        takeUntil(this.destroyed$)
+      )
+      .subscribe((x) => {
+        this.items = [
+          ...this.items,
+          {
+            label: x.label,
+            routerLink: x.routerLink,
+            url: x.url,
+            class: 'breadcrumb',
+          },
+        ];
+        this.cdr.detectChanges();
+      });
   }
 
   private createBreadcrumbs(
@@ -73,19 +86,29 @@ export class BreadcrumbCoreComponent
         .map((segment) => segment.path)
         .join('/');
 
-      if (BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL !== undefined) {
-        const route =
-          child.snapshot.data[BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL];
-        routerLink += `/${route}`;
-      }
+      if (!child.snapshot.data[BreadcrumbCoreComponent.BREADCRUMB_HIDE]) {
+        if (BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL !== undefined) {
+          const route =
+            child.snapshot.data[BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL];
+          routerLink += `/${route}`;
+        }
 
-      if (!BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL && routeURL !== '') {
-        routerLink += `/${routeURL}`;
-      }
+        if (!BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB_URL && routeURL !== '') {
+          routerLink += `/${routeURL}`;
+        }
 
-      const label = child.snapshot.data[BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB];
-      if (label && child.snapshot.routeConfig?.path !== '') {
-        breadcrumbs.push({ label, routerLink: routerLink });
+        const label = child.snapshot.data[BreadcrumbCoreComponent.ROUTE_DATA_BREADCRUMB];
+        if (
+          label &&
+          BreadcrumbCoreComponent.ROUTE_DATA_NO_BREADCRUMB_ROUTE &&
+          child.snapshot.data[
+            BreadcrumbCoreComponent.ROUTE_DATA_NO_BREADCRUMB_ROUTE
+          ]
+        ) {
+          breadcrumbs.push({ label, routerLink: undefined });
+        } else if (label && child.snapshot.routeConfig?.path !== '') {
+          breadcrumbs.push({ label, routerLink: routerLink });
+        }
       }
 
       return this.createBreadcrumbs(child, routerLink, breadcrumbs);

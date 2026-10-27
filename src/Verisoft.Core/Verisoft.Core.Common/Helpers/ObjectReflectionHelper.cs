@@ -35,7 +35,7 @@ public static class ObjectReflectionHelper
                         nestedTargetProperty.SetValue(target, nestedTargetValue);
                     }
 
-                    MapProperties(nestedSourceValue, nestedTargetValue);
+                    MapProperties(nestedSourceValue, nestedTargetValue!);
                 }
             }
             else if (targetProperties.TryGetValue(sourceProperty.Name, out var targetProperty)

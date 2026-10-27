@@ -3,6 +3,7 @@ using Verisoft.DemoApi.Common.Entities;
 using Verisoft.DemoApi.Common.Specifications;
 using Verisoft.DemoApi.Contracts.Filters;
 using Verisoft.DemoApi.Contracts.Models.Client;
+using Verisoft.DemoApi.Contracts.Models.CodebookParent;
 using Verisoft.DemoApi.Contracts.Models.Document;
 using Verisoft.DemoApi.Contracts.Models.User;
 
@@ -23,6 +24,7 @@ public static class AutoMapperFactory
             MapClient(cfg);
             MapUser(cfg);
             MapDocument(cfg);
+            MapCodebookParent(cfg);
         });
     }
 
@@ -49,5 +51,12 @@ public static class AutoMapperFactory
         cfg.CreateMap<DocumentFilter, DocumentSpecification>();
         cfg.CreateMap<DocumentEntity, Document>();
         cfg.CreateMap<DocumentCreateModel, DocumentEntity>();
+    }
+
+    private static void MapCodebookParent(IMapperConfigurationExpression cfg)
+    {
+        cfg.CreateMap<CodebookParentFilter, CodebookParentSpecification>();
+        cfg.CreateMap<CodebookParentEntity, CodebookParentResponse>();
+        cfg.CreateMap<CodebookParentEditModel, CodebookParentEntity>();
     }
 }

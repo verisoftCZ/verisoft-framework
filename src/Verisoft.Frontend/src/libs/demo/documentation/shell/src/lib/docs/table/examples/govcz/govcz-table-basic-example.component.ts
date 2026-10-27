@@ -40,10 +40,9 @@ const typescript = `columns: ColumnDefinition<Car>[] = [
   ];`;
 
 @Component({
-  selector: 'v-doc-govcz-table-basic-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-basic-example',
+    imports: [TableComponent],
+    template: template
 })
 export class GovCzTableBasicExampleComponent {
   code = new DocumentationCodeBuilder()

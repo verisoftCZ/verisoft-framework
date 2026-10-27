@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-primeng-doc-calendar-extra-example',
-  imports: [CalendarComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-calendar-extra-example',
+    imports: [CalendarComponent],
+    template: template
 })
 export class PrimengFormFieldExtraExampleComponent {
   code = new DocumentationCodeBuilder()

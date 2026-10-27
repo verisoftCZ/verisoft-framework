@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.ApplicationInsights.DependencyCollector;
+﻿using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace Verisoft.Core.MassTransit
 {

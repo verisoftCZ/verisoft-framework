@@ -1,0 +1,12 @@
+﻿using Verisoft.Core.Common.Entities;
+
+namespace Verisoft.Core.Codebooks.Common.Entities;
+
+public class LanguageEntity : BaseEntity<int>
+{
+    public required string Name { get; set; }
+
+    public required string Code { get; set; }
+
+    public bool IsDefault { get; set; }
+}

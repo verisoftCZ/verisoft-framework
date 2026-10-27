@@ -14,20 +14,20 @@ import {
   UnsubscribeComponent,
 } from '@verisoft/ui-core';
 import { AvatarModule } from 'primeng/avatar';
+import { Icons } from '../../icons';
 import { ButtonComponent } from '../button';
 import { HeaderProviderService } from './services/header-provider.service';
-import { Icons } from '../../icons';
+import { UserInfoComponent } from "./user-info.component";
 
 @Component({
-  selector: 'v-header',
-  standalone: true,
-  imports: [CommonModule, AvatarModule, ButtonComponent, RouterModule],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: HEADER_COMPONENT_TOKEN, useExisting: HeaderComponent },
-  ],
+    selector: 'v-header',
+    imports: [CommonModule, AvatarModule, ButtonComponent, RouterModule, UserInfoComponent],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        { provide: HEADER_COMPONENT_TOKEN, useExisting: HeaderComponent },
+    ]
 })
 export class HeaderComponent
   extends UnsubscribeComponent
@@ -44,9 +44,10 @@ export class HeaderComponent
   @Input() title!: string;
   @Input() logoUrl!: string;
   @Input() userName!: string;
+  @Input() userAvatar!: string;
   @Input() userRole!: any | any[] | undefined;
   @Input() menuRef!: HTMLDivElement;
-  @Input() exampleHeader = false;
+  @Input() fixed = true;
 
   icons = Icons;
   protected menuVisible = false;

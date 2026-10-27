@@ -1,50 +1,60 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
+using Verisoft.Core.Common.Exceptions;
+using Verisoft.Core.Contracts;
 
 namespace Verisoft.Core.Common.Entities;
 
 public abstract class BaseSort<T>
     where T : IEntity
 {
-    private readonly bool defaultAsc;
-    private Expression<Func<T, object>> defaultSort;
-
-    public BaseSort(string propertyName, bool isAscending, bool defaultAsc)
-    {
-        PropertyName = propertyName;
-        IsAscending = isAscending;
-        this.defaultAsc = defaultAsc;
-    }
-
+    [Obsolete($"Use {nameof(DefaultSorts)} instead.")]
     public virtual Expression<Func<T, object>> DefaultSort
+        => x => x.Id;
+
+    [Obsolete($"Use {nameof(DefaultSorts)} instead.")]
+    public virtual SortDirection DefaultSortDirection
+        => SortDirection.Asc;
+
+    public virtual IReadOnlyList<SortClause<T>> DefaultSorts
+        => [
+            new(DefaultSort, DefaultSortDirection),
+        ];
+
+    public virtual Expression<Func<T, object>> GetSortingExpression(string propertyName)
     {
-        get
+        if (string.IsNullOrWhiteSpace(propertyName))
         {
-            return defaultSort ?? (x => x.Id);
+            throw new InvalidSortPropertyException(typeof(T), propertyName);
         }
-        set => defaultSort = value;
+
+        var parameter = Expression.Parameter(typeof(T), "x");
+        var propertyAccess = GetNestedPropertyAccess(parameter, propertyName)
+            ?? throw new InvalidSortPropertyException(typeof(T), propertyName);
+
+        var converted = Expression.Convert(propertyAccess, typeof(object));
+
+        return Expression.Lambda<Func<T, object>>(converted, parameter);
     }
 
-    public string PropertyName { get; set; }
-
-    public bool IsAscending { get; set; }
-
-    public virtual IQueryable<T> ApplySort(IQueryable<T> query)
+    private static MemberExpression? GetNestedPropertyAccess(ParameterExpression parameter, string propertyPath)
     {
-        if (string.IsNullOrEmpty(PropertyName))
+        Expression currentExpression = parameter;
+
+        foreach (var prop in propertyPath.Split('.'))
         {
-            return defaultAsc ? query.OrderBy(DefaultSort) : query.OrderByDescending(DefaultSort);
+            var property = currentExpression.Type.GetProperty(prop, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+            if (property == null)
+            {
+                return null;
+            }
+
+            currentExpression = Expression.Property(currentExpression, property);
         }
 
-        var sortExpression = GetSortingExpression(PropertyName);
-        if (!IsAscending)
-        {
-            return query.OrderByDescending(sortExpression);
-        }
-
-        return query.OrderBy(sortExpression);
+        return currentExpression as MemberExpression;
     }
-
-    protected abstract Expression<Func<T, object>> GetSortingExpression(string propertyName);
 }

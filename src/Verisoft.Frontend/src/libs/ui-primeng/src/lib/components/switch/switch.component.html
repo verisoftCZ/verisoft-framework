@@ -4,16 +4,15 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="isRequired()"
-    [ngControl]="ngControl"
     [testId]="testId"
     [display]="formDisplay"
   >
-    <p-inputSwitch
+    <p-toggle-switch
       [formControl]="formControl"
       [required]="isRequired()"
       [title]="label"
       [readonly]="readonly"
       [inputId]="id"
-    />
+    /><v-validation-message [ngControl]="ngControl"></v-validation-message>
   </v-form-field>
 </div>

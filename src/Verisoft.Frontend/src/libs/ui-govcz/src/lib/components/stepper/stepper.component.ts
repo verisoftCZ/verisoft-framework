@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
 import {
   StepperCore,
   STEPPER_COMPONENT_TOKEN,
@@ -9,27 +10,25 @@ import {
   LayoutType,
   LayoutTypeType,
 } from '@verisoft/ui-core';
-import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
-import { ButtonComponent } from '../button';
 import { GovSizePipe } from '../../pipes';
+import { ButtonComponent } from '../button';
 @Component({
-  selector: 'v-stepper',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ButtonComponent,
-    GovDesignSystemModule,
-    GovSizePipe,
-],
-  templateUrl: './stepper.component.html',
-  styleUrl: './stepper.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: STEPPER_COMPONENT_TOKEN, useExisting: StepperComponent },
-  ],
+    selector: 'v-stepper',
+    imports: [
+        CommonModule,
+        ButtonComponent,
+        GovDesignSystemModule,
+        GovSizePipe,
+    ],
+    templateUrl: './stepper.component.html',
+    styleUrl: './stepper.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        { provide: STEPPER_COMPONENT_TOKEN, useExisting: StepperComponent },
+    ]
 })
-export class StepperComponent 
-  implements StepperCore
+export class StepperComponent
+  implements StepperCore, OnInit
 {
   @Input() items: StepperItem[] = [];
   @Input() size: FieldSizeType | undefined = FieldSize.medium;
@@ -39,7 +38,7 @@ export class StepperComponent
   @Input() label!: string;
   @Input() layout: LayoutTypeType = LayoutType.horizontal;
   @Output() activeIndexChange = new EventEmitter<number>();
-  
+
   steps = 0;
   currentStep = 0;
 

@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
+        <Nullable>enable</Nullable>
         <CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,9 +16,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Contracts\Verisoft.Core.Contracts.csproj"/>
-        <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Template\Verisoft.Core.Template.csproj"/>
-        <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj"/>
+        <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Contracts\Verisoft.Core.Contracts.csproj" />
+        <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.MassTransit\Verisoft.Core.MassTransit.csproj" />
+        <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Template\Verisoft.Core.Template.csproj" />
+        <ProjectReference Include="..\Verisoft.DemoApi.Common\Verisoft.DemoApi.Common.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,10 +1,10 @@
-export function keyOrFn(keyOrFn: ((row: any) => string | undefined) | string, row: any){
+export function keyOrFn(keyOrFn: ((row: any) => string | undefined) | string, row: any) {
     if (keyOrFn instanceof Function) {
         return keyOrFn(row);
     }
     else if (typeof keyOrFn === 'string') {
         const value = row[keyOrFn];
-        if (value){
+        if (value) {
             return value;
         }
     }

@@ -12,7 +12,6 @@ import {
 import {
   ButtonComponent,
   Icons,
-  SnackbarComponent,
   SnackbarService,
   TextfieldComponent,
 } from '@verisoft/ui-govcz';
@@ -108,15 +107,13 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-snackbar-advanced-example',
-  imports: [
-    SnackbarComponent,
+    selector: 'v-doc-govcz-snackbar-advanced-example',
+    imports: [
     ButtonComponent,
     TextfieldComponent,
-    ReactiveFormsModule,
-  ],
-  standalone: true,
-  template: template,
+    ReactiveFormsModule
+],
+    template: template
 })
 export class GovCzSnackbarAdvancedExampleComponent implements OnInit {
   snackbar = inject(SnackbarService);

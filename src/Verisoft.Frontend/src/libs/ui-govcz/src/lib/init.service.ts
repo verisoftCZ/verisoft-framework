@@ -5,7 +5,6 @@ import { defineCustomElements } from "@gov-design-system-ce/components/loader";
     providedIn: 'root',
 })
 export class GovInitService {
-    /* the rest of settings is set in `config.d.ts` */
     constructor() {
         defineCustomElements(window);
     }

@@ -1,52 +1,64 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChildren, EventEmitter, inject, Input, Output, QueryList } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { TabViewCore, TabViewItemCore } from '@verisoft/ui-core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  AfterContentInit,
+  ChangeDetectorRef,
+  Component,
+  ContentChildren,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  QueryList,
+  ViewEncapsulation,
+} from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { TabViewItemCore } from '@verisoft/ui-core';
 import { TabViewItemComponent } from './tab-view-item.component';
 
 @Component({
-  standalone: false,
   selector: 'v-tab-view',
+  imports: [NgTemplateOutlet, RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './tab-view.component.html',
-  styleUrls: [
-    "./tab-view.component.scss"
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./tab-view.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
-export class TabViewComponent implements AfterContentInit, TabViewCore {
-  router = inject(Router);
-  private activatedRoute = inject(ActivatedRoute);
+export class TabViewComponent implements AfterContentInit {
 
-  @ContentChildren(TabViewItemComponent)
-  children!: QueryList<TabViewItemComponent>;
+  @ContentChildren(TabViewItemComponent) tabs!: QueryList<TabViewItemComponent>;
 
-  @Input() items: TabViewItemCore[] = [];
-
+  @Input() highlight = false;
   @Input() useRouting = false;
-
+  @Input() items: TabViewItemCore[] = [];
   @Input() activeIndex = 0;
 
   @Output() activeIndexChange = new EventEmitter<number>();
 
-  mergedItems: TabViewItemCore[] = [];
+  private readonly cd = inject(ChangeDetectorRef);
 
   ngAfterContentInit(): void {
-    this.mergedItems = [...this.items, ...this.children.toArray()];
+    this.initTabs();
   }
 
-  protected activeItemChanged(event: CustomEvent): void {
-    const clickedIdentifier = event.detail?.identifier;
-    this.activeIndexChange.emit(clickedIdentifier);
+  initTabs(): void {
+    this.items = [...this.tabs.toArray(), ...this.items];
+    this.cd.detectChanges();
   }
 
-  protected handleTabClick(event: CustomEvent) {
-    this.activeItemChanged(event);
-    if (this.useRouting && event.detail?.triggerIdentifier) {
-      const targetPath = event.detail.triggerIdentifier;
-      
-      this.router.navigate([targetPath], {
-        relativeTo: this.activatedRoute.parent,
-        skipLocationChange: false
-      });
+  changeTabIndex(index: number) {
+    if (this.activeIndex !== index) {
+      this.activeIndex = index;
+      this.activeIndexChange.emit(this.activeIndex);
     }
+
+    this.activeIndexChange.emit(index);
+    this.cd.detectChanges();
+  }
+
+  setTabActive(options: TabViewItemComponent[]): void {
+    options.forEach((_, index) => {
+      index === this.activeIndex;
+    });
+    this.cd.detectChanges();
   }
 }

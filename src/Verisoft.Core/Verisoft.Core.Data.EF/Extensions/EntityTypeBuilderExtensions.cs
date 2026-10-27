@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Verisoft.Core.Data.EntityFramework.Extensions;
 
@@ -49,6 +49,7 @@ public static class EntityTypeBuilderExtensions
         string tableName)
         where TEntity : class
         where TRelatedEntity : class
+
     {
         builder.HasMany(navigationExpression)
             .WithMany(inverseNavigationExpression)

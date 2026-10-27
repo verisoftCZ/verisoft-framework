@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-form-field-basic-example',
-  imports: [FormFieldComponent, TextfieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-form-field-basic-example',
+    imports: [FormFieldComponent, TextfieldComponent],
+    template: template
 })
 export class PrimengFormFieldBasicExampleComponent {
   code = new DocumentationCodeBuilder()

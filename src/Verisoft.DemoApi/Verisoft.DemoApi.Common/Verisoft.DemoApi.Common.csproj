@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
 	</PropertyGroup>
 
@@ -15,6 +15,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Codebooks.Common\Verisoft.Core.Codebooks.Common.csproj" />
+		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Codebooks.SourceGenerator\Verisoft.Core.Codebooks.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
 		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Common\Verisoft.Core.Common.csproj" />
 		<ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
 	</ItemGroup>

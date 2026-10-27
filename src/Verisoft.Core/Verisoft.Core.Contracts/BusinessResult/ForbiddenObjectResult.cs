@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Verisoft.Core.Contracts.BusinessResult;
 
-[DefaultStatusCode(403)]
-public class ForbiddenObjectResult(object value) : ObjectResult(value)
+[DefaultStatusCode(StatusCodes.Status403Forbidden)]
+public class ForbiddenObjectResult : ObjectResult
 {
+    public ForbiddenObjectResult(object value)
+        : base(value)
+    {
+        StatusCode = StatusCodes.Status403Forbidden;
+    }
 }

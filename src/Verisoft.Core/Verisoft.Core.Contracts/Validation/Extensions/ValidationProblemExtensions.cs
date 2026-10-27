@@ -2,7 +2,7 @@
 
 public static class ValidationProblemExtensions
 {
-    public static string TryGetAttemptedValueValue(this ValidationProblem validationProblem, string propertyName)
+    public static string? TryGetAttemptedValueValue(this ValidationProblem validationProblem, string propertyName)
     {
         var attemptedValue = validationProblem.AttemptedValue;
         if (attemptedValue == null)

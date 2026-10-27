@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './stepper-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Stepper"
     description="Stepper is a customizable and reusable component that can be used to step through multiple items in an Angular application."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class StepperDocComponent {
   builder = inject(DocumentationBuilderService);

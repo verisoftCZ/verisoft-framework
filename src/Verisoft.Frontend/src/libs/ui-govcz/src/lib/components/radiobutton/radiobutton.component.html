@@ -1,16 +1,4 @@
 <gov-form-control>
-  @if (ngControl && ngControl.errors) {
-    <gov-form-message
-        [slot]="errorSlot"
-        color="error"
-    >
-        {{ngControl.errors | error}}
-        <gov-icon 
-            [name]="icons.warning"
-            slot="validation-icon"
-        />
-    </gov-form-message>
-    }
   <gov-form-radio-group [formControl]="formControl">
     @if (items) { @for(item of items; track item) {
     <gov-form-radio
@@ -31,4 +19,5 @@
     </gov-form-radio>
     } }
   </gov-form-radio-group>
+  <v-validation-message [ngControl]="ngControl"></v-validation-message>
 </gov-form-control>

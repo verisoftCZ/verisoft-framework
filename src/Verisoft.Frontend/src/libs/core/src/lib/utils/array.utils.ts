@@ -1,13 +1,13 @@
-import { Sort } from '../models';
-import { getValueByPath } from './object.utils';
+import { Sort } from "../models";
+import { getValueByPath } from "./object.utils";
 
-type ArrayIntersectionType = (string | number)[];
+type ArrayIntersectionType = (string | number)[]
 
 export function isArrayIntersected(
   array1: ArrayIntersectionType,
-  array2: ArrayIntersectionType
+  array2: ArrayIntersectionType,
 ) {
-  const filteredArray = array1.filter((value) => array2.includes(value));
+  const filteredArray = array1.filter(value => array2.includes(value));
   return filteredArray.length > 0;
 }
 
@@ -20,11 +20,23 @@ export function multiSort<T>(values: T[], sorts: Sort[]): T[] {
 
       if (valueA !== valueB) {
         if (isComparable(valueA) && isComparable(valueB)) {
-          if (valueA < valueB) {
-            return direction === 'asc' ? -1 : 1;
-          }
-          if (valueA > valueB) {
-            return direction === 'asc' ? 1 : -1;
+          if (typeof valueA === 'string' && typeof valueB === 'string') {
+            const baseCompare = valueA.localeCompare(valueB, undefined, {
+              sensitivity: 'base',
+            });
+
+            if (baseCompare === 0) {
+              return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+            }
+
+            return direction === 'asc' ? baseCompare : -baseCompare;
+          } else {
+            if (valueA < valueB) {
+              return direction === 'asc' ? -1 : 1;
+            }
+            if (valueA > valueB) {
+              return direction === 'asc' ? 1 : -1;
+            }
           }
         }
       }
@@ -34,44 +46,47 @@ export function multiSort<T>(values: T[], sorts: Sort[]): T[] {
   });
 }
 
-export function applyFilter<T>(data: T[], filter: Partial<T>): T[] {
+function isComparable(value: unknown): value is string | number | Date {
+  return typeof value === 'string' || typeof value === 'number' || value instanceof Date;
+}
+
+export function applyFilter<T>(data: T[], filter: any): T[] {
   if (!filter || Object.keys(filter).length === 0) {
     return data;
   }
 
   return data.filter((item) => {
-    return Object.entries(filter).every(([filterProperty, filterPropertyValue]) => {
-      if (filterPropertyValue == undefined) {
-        return true;
+    return Object.keys(filter).every((key) => {
+      const filterValue = filter[key];
+      const itemValue = getValueByPath(item, key);
+
+      if (itemValue === undefined || itemValue === null) {
+        return false;
       }
 
-      const itemValue = getValueByPath(item, filterProperty);
-      return isSatisfiedBy(itemValue, filterPropertyValue);
+      if (Array.isArray(itemValue)) {
+        if (Array.isArray(filterValue)) {
+             return itemValue.some(iv => 
+                filterValue.some(fv => 
+                    typeof iv === 'string' && typeof fv === 'string' 
+                    ? iv.toLowerCase().includes(fv.toLowerCase())
+                    : iv === fv
+                )
+             );
+        }
+        return itemValue.includes(filterValue);
+      }
+
+      if (Array.isArray(filterValue)) {
+          return filterValue.includes(itemValue);
+      }
+
+      if (typeof filterValue === 'string' && typeof itemValue === 'string') {
+        return itemValue.toLowerCase().includes(filterValue.toLowerCase());
+      }
+
+      return itemValue == filterValue;
     });
   });
 }
 
-export function isSatisfiedBy(value: unknown, filter: unknown): boolean {
-  if (!value) {
-    return !filter;
-  }
-
-  if (typeof filter === 'string') {
-    return value?.toString().toLowerCase().includes(filter.toLowerCase());
-  } else if (Array.isArray(filter)) {
-    return filter.some((val) => isSatisfiedBy(value, val));
-  } else {
-    return filter === value;
-  }
-
-  return false;
-}
-
-function isComparable(value: unknown): value is string | number | Date {
-  return (
-    typeof value === 'string' ||
-    typeof value === 'number' ||
-    typeof value === 'boolean' ||
-    value instanceof Date
-  );
-}

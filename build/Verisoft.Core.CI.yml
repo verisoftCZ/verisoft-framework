@@ -15,13 +15,19 @@ variables:
   project: '**/Verisoft.Core.*/*.csproj'
   test: '**/Verisoft.Core.*.Test/*.csproj'
   buildConfiguration: 'Release'
-  netCoreSdkVersion: '8.x'
+  netCoreSdkVersion: '10.x'
 
 steps:
 - task: UseDotNet@2
   displayName: 'Install .NET Core SDK $(netCoreSdkVersion)'
   inputs:
     version: $(netCoreSdkVersion)
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 8 runtime for net8.0 tests'
+  inputs:
+    packageType: 'runtime'
+    version: '8.x'
 
 - task: NuGetToolInstaller@1
 

@@ -1,0 +1,8 @@
+:host {
+  --v-header-title-color: var(--p-primary-color);
+}
+
+.v-header-title {
+    color: var(--v-header-title-color);
+    font-size: 1.5rem;
+}

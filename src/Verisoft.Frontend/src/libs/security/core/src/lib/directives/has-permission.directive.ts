@@ -3,16 +3,16 @@ import {
   Input,
   TemplateRef,
   ViewContainerRef,
-  OnInit,
   OnDestroy,
 } from '@angular/core';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { AuthContextService } from '../services';
 
 @Directive({
+  standalone: true,
   selector: '[hasPermission]',
 })
-export class HasPermissionDirective<T> implements OnInit, OnDestroy {
+export class HasPermissionDirective<T> implements OnDestroy {
   private requiredPermissions: string | string[] = '';
   private sub?: Subscription;
 
@@ -28,10 +28,6 @@ export class HasPermissionDirective<T> implements OnInit, OnDestroy {
     this.updateView();
   }
 
-  ngOnInit(): void {
-    this.updateView();
-  }
-
   ngOnDestroy(): void {
     this.unregister();
   }
@@ -42,7 +38,7 @@ export class HasPermissionDirective<T> implements OnInit, OnDestroy {
 
   private updateView(): void {
     this.unregister();
-    if (!this.requiredPermissions) {
+    if (this.requiredPermissions || this.requiredPermissions.length) {
       this.sub = this.authContext
         .hasRequiredPermission(this.requiredPermissions)
         .pipe(distinctUntilChanged())

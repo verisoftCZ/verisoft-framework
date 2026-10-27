@@ -42,10 +42,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-checkbox-reactive-forms-example',
-  imports: [CheckboxComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-checkbox-reactive-forms-example',
+    imports: [CheckboxComponent, ReactiveFormsModule],
+    template: template
 })
 export class GovCzCheckboxReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

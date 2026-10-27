@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
@@ -7,37 +7,36 @@ import {
   FieldType,
   PASSWORD_COMPONENT_TOKEN,
   PasswordCore,
-  ErrorPipe,
   SlotPosition,
   SlotPositionType,
   IconPosition,
   IconPositionType,
   FieldSize,
-  FieldSizeType
+  FieldSizeType,
+  PasswordStrength,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import zxcvbn from 'zxcvbn';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: 'v-password',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-password',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
     GovSizePipe,
-  ],
-  templateUrl: './password.component.html',
-  styleUrl: './password.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: PASSWORD_COMPONENT_TOKEN,
-      useExisting: PasswordComponent
-    }
-  ],
+    ErrorComponent
+],
+    templateUrl: './password.component.html',
+    styleUrl: './password.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: PASSWORD_COMPONENT_TOKEN,
+            useExisting: PasswordComponent
+        }
+    ]
 })
 
 export class PasswordComponent 
@@ -47,16 +46,17 @@ export class PasswordComponent
   @Input() toggleMask = true;
   @Input() feedback = false;
   @Input() labelSlot: SlotPositionType = SlotPosition.top;
-  @Input() errorSlot: SlotPositionType = SlotPosition.bottom;
+  @Input() requiredStrength: PasswordStrength = PasswordStrength.None;
   @Input() message!: string;
   @Input() name! : string;
   @Input() role! : string;
   @Input() icon!: string;
   @Input() iconPos: IconPositionType = IconPosition.right;
   @Input() size: FieldSizeType | undefined = FieldSize.medium;
+  @Input() messageSlot: SlotPositionType = SlotPosition.bottom;
 
   icons = Icons;
-  passwordStrength: 0 | 1 | 2 | 3 | 4 = 0;
+  passwordStrength: PasswordStrength = PasswordStrength.None;
   type = FieldType.password;
 
   constructor(@Optional() @Self() ngControl: NgControl) {
@@ -71,5 +71,13 @@ export class PasswordComponent
 
     const result = zxcvbn(value);
     this.passwordStrength = result.score;
+
+    if (!this.formControl) {
+      return;
+    }
+
+    if (result.score < this.requiredStrength) {
+      this.formControl.setErrors({passwordLowStrength: true}, {emitEvent: false})
+    }
   }
 }

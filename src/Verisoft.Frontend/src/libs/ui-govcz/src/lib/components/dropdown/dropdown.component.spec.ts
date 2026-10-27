@@ -1,16 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DropdownComponent } from './dropdown.component';
+import { ERROR_PROVIDER_TOKEN } from '@verisoft/core';
+import { MultiselectComponent } from '../multiselect/multiselect.component';
 
-describe('DropdownComponent', () => {
-  let component: DropdownComponent<any>;
-  let fixture: ComponentFixture<DropdownComponent<any>>;
+describe('MultiselectComponent', () => {
+  let component: MultiselectComponent<any>;
+  let fixture: ComponentFixture<MultiselectComponent<any>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DropdownComponent],
+      imports: [MultiselectComponent],
+      providers: [
+        {
+          provide: ERROR_PROVIDER_TOKEN,
+          useValue: {
+            mapError: jest.fn(),
+            errors: {},
+          },
+        },
+      ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DropdownComponent);
+    fixture = TestBed.createComponent(MultiselectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -19,3 +29,4 @@ describe('DropdownComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

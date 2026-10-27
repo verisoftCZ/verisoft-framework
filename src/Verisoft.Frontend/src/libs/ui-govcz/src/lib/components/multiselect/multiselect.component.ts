@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -10,7 +10,7 @@ import {
   Self,
   SimpleChanges,
   inject,
-  ChangeDetectorRef
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -24,37 +24,35 @@ import {
 } from '@verisoft/core';
 import {
   BaseFormInputComponent,
-  ErrorPipe,
   MULTISELECT_COMPONENT_TOKEN,
   MultiselectCore,
   FieldSize,
   FieldSizeType,
+  SlotPosition,
   SlotPositionType,
-  SlotPosition
 } from '@verisoft/ui-core';
-import { GovMultiselectOptionsPipe, GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovMultiselectOptionsPipe, GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: 'v-multiselect',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-multiselect',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
     GovSizePipe,
-    GovMultiselectOptionsPipe
-  ],
-  templateUrl: './multiselect.component.html',
-  styleUrl: './multiselect.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: MULTISELECT_COMPONENT_TOKEN,
-      useExisting: MultiselectComponent,
-    },
-  ],
+    GovMultiselectOptionsPipe,
+    ErrorComponent
+],
+    templateUrl: './multiselect.component.html',
+    styleUrl: './multiselect.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: MULTISELECT_COMPONENT_TOKEN,
+            useExisting: MultiselectComponent,
+        },
+    ]
 })
 export class MultiselectComponent<T>
   extends BaseFormInputComponent
@@ -63,15 +61,15 @@ export class MultiselectComponent<T>
   constructor(@Optional() @Self() ngControl: NgControl) {
     super(ngControl);
   }
-  
+
   @Input() options: T[] | undefined = [];
-  @Input() optionLabel: string | undefined;
-  @Input() optionValue: string | undefined;
+  @Input() optionLabel!: string | undefined;
+  @Input() optionValue!: string | undefined;
   @Input() dropdownIcon: string | undefined;
   @Input() floatLabel: string | undefined;
   @Input() editable = true;
   @Input() display!: 'flex' | 'block';
-  @Input() errorSlot: SlotPositionType = SlotPosition.top;
+  @Input() errorSlot: SlotPositionType = SlotPosition.bottom;
   @Input() lazy!: boolean;
   @Input() filter!: boolean;
   @Input() loading = false;
@@ -99,8 +97,7 @@ export class MultiselectComponent<T>
   }
 
   onLazyLoad(event: any): void {
-    const optionsLength = this.options?.length ?? 0;
-    if (optionsLength - event.last <= 0) {
+    if (this.options && this.options.length - event.last <= 0) {
       this.lazyLoadOptions.offset = event.last;
       this.lazyLoad.emit(this.lazyLoadOptions);
     }

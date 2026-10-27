@@ -4,7 +4,6 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="isRequired()"
-    [ngControl]="ngControl"
     [testId]="testId"
     [display]="formDisplay"
   >
@@ -14,6 +13,8 @@
       [required]="required"
       [binary]="true"
       [readonly]="readonly"
+      [indeterminate]="indeterminate()"
     />
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
   </v-form-field>
 </div>

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,6 +7,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormGroup } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { GenericFieldDefinition } from '@verisoft/ui-core';
 import { GenericFieldComponent } from '../generic-field';
 import {
@@ -14,11 +16,15 @@ import {
 } from './generic-form.model';
 
 @Component({
-  selector: 'v-generic-form',
-  standalone: true,
-  imports: [GenericFieldComponent, ReactiveFormsModule],
-  templateUrl: './generic-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-generic-form',
+    imports: [
+        CommonModule,
+        GenericFieldComponent,
+        ReactiveFormsModule,
+        TranslateModule,
+    ],
+    templateUrl: './generic-form.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GenericFormComponent implements OnChanges {
   @Input() formGroup?: UntypedFormGroup;
@@ -26,6 +32,8 @@ export class GenericFormComponent implements OnChanges {
   @Input() fields?: GenericFieldDefinition[];
 
   @Input() columns?: number;
+
+  @Input() showAsRow!: boolean;
 
   formGroupComputed!: UntypedFormGroup;
 

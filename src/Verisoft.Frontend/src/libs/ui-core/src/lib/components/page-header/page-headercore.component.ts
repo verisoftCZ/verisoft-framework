@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Directive, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UnsubscribeComponent } from '../unsubscribe.component';
-import { FieldSize, FieldSizeType } from '../../common';
 import { takeUntil } from 'rxjs';
+import { FieldSize, FieldSizeType } from '../../common';
+import { UnsubscribeComponent } from '../unsubscribe.component';
 import { PageHeaderService } from './page-header.service';
 
-@Directive({})
+@Directive({
+    
+})
 export class PageHeaderCoreComponent
   extends UnsubscribeComponent
   implements OnInit
@@ -26,7 +28,7 @@ constructor(
   ngOnInit(): void {
     this.headerService.pageHeader
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((x) => {
+      .subscribe((x: any) => {
         this.title = x.title;
         this.subtitle = x.subtitle;
         this.showBackButton = x.showBackButton ?? false;

@@ -6,9 +6,9 @@ export const NUMBER_INPUT_COMPONENT_TOKEN = new InjectionToken<NumberInputCore>(
 );
 
 export interface NumberInputCore extends BaseFormCore {
-    mode: string;
+    decimals: number;
     currency: string;
     min: number;
     max: number;
-    step: number;
+    step: number | undefined;
 }

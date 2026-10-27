@@ -5,12 +5,12 @@ namespace Verisoft.Core.Authentication
 {
     public static class PrincipalExtensions
     {
-        public static string FirstName(this IPrincipal principal)
+        public static string? FirstName(this IPrincipal principal)
         {
             return GetClaimByName(principal, ClaimTypes.GivenName);
         }
 
-        public static string GetSurname(this IPrincipal principal)
+        public static string? GetSurname(this IPrincipal principal)
         {
             return GetClaimByName(principal, ClaimTypes.Surname);
         }
@@ -20,7 +20,7 @@ namespace Verisoft.Core.Authentication
             return GetClaimByName(principal, ClaimTypes.NameIdentifier) ?? principal?.Identity?.Name ?? string.Empty;
         }
 
-        private static string GetClaimByName(IPrincipal principal, string name)
+        private static string? GetClaimByName(IPrincipal principal, string name)
         {
             if (principal == null)
             {

@@ -28,10 +28,9 @@ formGroup = new FormGroup({
 `;
 
 @Component({
-  selector: 'v-doc-primeng-form-field-reactive-forms-example',
-  imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent, FormFieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-form-field-reactive-forms-example',
+    imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent, FormFieldComponent],
+    template: template
 })
 export class PrimengFormFieldReactiveFormsExampleComponent {
   code = new DocumentationCodeBuilder()

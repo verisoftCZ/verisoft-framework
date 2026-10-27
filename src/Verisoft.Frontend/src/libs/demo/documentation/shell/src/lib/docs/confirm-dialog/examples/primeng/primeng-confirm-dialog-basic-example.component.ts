@@ -4,11 +4,7 @@ import {
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
 import { DialogService } from '@verisoft/ui-core';
-import {
-  ButtonComponent,
-  Icons,
-  SnackbarService,
-} from '@verisoft/ui-primeng';
+import { ButtonComponent, Icons, SnackbarService } from '@verisoft/ui-primeng';
 
 const template = `
 <div class="row">
@@ -25,6 +21,12 @@ const template = `
       (click)="showSuccessDialog()"
     />
   </div>
+  <div class="col-2">
+     <v-button
+       label="Show dialog and disable button"
+       (click)="showDialogWithDisableButton()"
+     />
+   </div>
 </div>
 `;
 
@@ -55,7 +57,6 @@ showSuccessDialog() {
 @Component({
   selector: 'v-doc-primeng-confirm-dialog-basic-example',
   imports: [ButtonComponent],
-  standalone: true,
   template: template,
 })
 export class PrimengConfirmDialogBasicExampleComponent {
@@ -88,5 +89,13 @@ export class PrimengConfirmDialogBasicExampleComponent {
       confirmButtonText: 'Show a toast',
       confirmButtonFn: () => this.snackbar.showSuccess('Action successful!'),
     });
+  }
+
+  showDialogWithDisableButton() {
+    this.showDialog();
+
+    setTimeout(() => {
+      this.dialogService.updateDialog({ confirmButtonDisabled: true });
+    }, 3000);
   }
 }

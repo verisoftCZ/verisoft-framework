@@ -1,0 +1,11 @@
+@if (library() === 'native') {
+    <gov-icon 
+        [name]="name()" 
+        [size]="govSize"
+        [class]="govClasses"
+    />
+} @else if (library() === 'bootstrap') {
+    <i [class]="bootstrapClasses"></i>
+}
+
+

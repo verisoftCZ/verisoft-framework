@@ -8,6 +8,10 @@ export function createInitDetailAction(detailsRepository: string) {
   );
 }
 
+export function createInitNewDetailAction(detailsRepository: string) {
+  return createAction(`[${detailsRepository} Page] Init New`);
+}
+
 export function createLoadDetailSuccessAction<T>(detailsRepository: string) {
   return createAction(
     `[${detailsRepository}/API] Load ${detailsRepository} Success`,
@@ -27,6 +31,13 @@ export function createUpdateDetailAction<T>(detailsRepository: string) {
     `[${detailsRepository}/API] Update ${detailsRepository}`,
     props<{ item: T }>()
   );
+}
+
+export function createUpdateDetailSetErrorsAction(detailsRepository: string) {
+  return createAction(
+    `[${detailsRepository}/API] Update Validation Errors ${detailsRepository}`,
+    props<{ error: any }>()
+  )
 }
 
 export function createUpdateFormStateAction(detailsRepository: string) {
@@ -60,4 +71,19 @@ export function createUpdateSaveDetailAction(detailsRepository: string) {
 
 export function createResetStateAction(detailsRepository: string) {
   return createAction(`[${detailsRepository}/API] Reset State`);
+}
+
+export function createDeleteDetailAction(detailsRepository: string) {
+  return createAction(`[${detailsRepository}/API] Delete Detail`);
+}
+
+export function createDeleteDetailSuccessAction(detailsRepository: string) {
+  return createAction(`[${detailsRepository}/API] Delete Detail Success`);
+}
+
+export function createDeleteDetailFailureAction(detailsRepository: string) {
+  return createAction(
+    `[${detailsRepository}/API] Delete Detail Failure`,
+    props<{ error: any }>()
+  );
 }

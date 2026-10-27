@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Verisoft.Core.MassTransit
 {
@@ -11,10 +11,7 @@ namespace Verisoft.Core.MassTransit
 
         public MassTransitConfig(IConfiguration configuration)
         {
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            ArgumentNullException.ThrowIfNull(configuration);
 
             configuration.GetSection(MassTransitConfigName).Bind(this);
             if (string.IsNullOrEmpty(this.ApplicationInsights?.ConnectionString))

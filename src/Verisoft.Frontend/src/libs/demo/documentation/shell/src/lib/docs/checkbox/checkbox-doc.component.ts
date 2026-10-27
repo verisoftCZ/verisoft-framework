@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './checkbox-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Checkbox"
     description="Checkbox is an extension to a prime-ng component <strong>p-checkbox</strong>."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class CheckboxDocComponent {
   builder = inject(DocumentationBuilderService);

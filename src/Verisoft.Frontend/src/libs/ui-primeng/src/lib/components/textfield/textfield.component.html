@@ -1,18 +1,17 @@
 <div class="v-text-field">
-  <ng-container *ngIf="!floatLabel && label; else floatLabelInput">
+  @if (!floatLabel && label) {
     <v-form-field
       class="w-100"
       [label]="label"
       [tooltip]="tooltip"
       [required]="isRequired()"
-      [ngControl]="ngControl"
       [testId]="testId"
       [display]="formDisplay"
-    >
+      >
       <span
         class="w-100 flex-grow-1"
-        [ngClass]="{ 'p-input-icon-right': type === 'search' }"
-      >
+        [ngClass]="{ 'p-input-icon-right': type === 'search' || clearable }"
+        >
         <input
           pInputText
           [id]="inputId"
@@ -27,8 +26,8 @@
             'p-inputtext-sm': size === 'small',
             'p-inputtext-lg': size === 'large'
           }"
-        />
-        <ng-container *ngIf="type === 'search'">
+          />
+        @if (type === 'search') {
           <i
             class="pi ms-2 v-text-field__icon"
             [ngStyle]="{
@@ -40,16 +39,23 @@
             }"
             (click)="ngControl && ngControl.value ? ngControl.reset() : null"
           ></i>
-        </ng-container>
+        }
+        @if (clearable && type !== 'search' && formControl.value) {
+          <i
+            class="pi pi-times ms-2 v-text-field__icon"
+            style="cursor: pointer"
+            (click)="formControl.reset()"
+          ></i>
+        }
       </span>
     </v-form-field>
-  </ng-container>
-  <ng-template #floatLabelInput>
+    <v-validation-message [ngControl]="ngControl"></v-validation-message>
+  } @else {
     <span
-      class="w-100 flex-grow-1"
-      [ngClass]="{ 'p-input-icon-right': type === 'search' }"
-    >
-      <p-floatLabel>
+      class="w-100 flex-grow-1 d-flex align-items-center"
+      [ngClass]="{ 'p-input-icon-right': type === 'search' || clearable }"
+      >
+      <p-floatLabel class="flex-grow-1">
         <input
           pInputText
           type="text"
@@ -62,10 +68,10 @@
             'p-inputtext-sm': size === 'small',
             'p-inputtext-lg': size === 'large'
           }"
-        />
+          />
         <label [for]="inputId" class="v-text-field__label">{{ label }}</label>
       </p-floatLabel>
-      <ng-container *ngIf="type === 'search'">
+      @if (type === 'search') {
         <i
           class="pi ms-2 v-text-field__icon"
           [ngStyle]="{
@@ -77,7 +83,14 @@
           }"
           (click)="ngControl && ngControl.value ? ngControl.reset() : null"
         ></i>
-      </ng-container>
+      }
+      @if (clearable && type !== 'search' && formControl.value) {
+        <i
+          class="pi pi-times ms-2 v-text-field__icon"
+          style="cursor: pointer"
+          (click)="formControl.reset()"
+        ></i>
+      }
     </span>
-  </ng-template>
+  }
 </div>

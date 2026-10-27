@@ -18,11 +18,11 @@ function hasItems(
   userItems: string[] | undefined,
   neededItems: string | string[]
 ): boolean {
-  if (!neededItems) {
+  if (!neededItems || !neededItems.length) {
     return true;
   }
 
-  if (!userItems) {
+  if (!userItems || !userItems.length) {
     return false;
   }
 
@@ -51,18 +51,16 @@ export function convertJWTToUser(
     if (parts.length < 2) {
       return undefined;
     }
+    const payload = decodeJwtPayload(parts[1]);
 
-    const payloadBase64 = parts[1];
-    const payloadJson = atob(payloadBase64);
-    const payload = JSON.parse(payloadJson);
-
-    const userName = payload['sub'] ?? payload['nameid'];
+    const userName = payload['unique_name'] ?? payload['nameid'] ?? payload['sub'];
     if (!userName) {
       return undefined;
     }
 
     const user: AuthenticatedUser = {
       userName,
+      userId: payload['nameid'],
       email: payload['email'],
       displayName: payload['name'],
       roles: convertToArray(payload, 'role'),
@@ -73,6 +71,19 @@ export function convertJWTToUser(
   } catch (error) {
     return undefined;
   }
+}
+
+export function decodeJwtPayload(jwt: string): any {
+  const base64 = jwt.replace(/-/g, '+').replace(/_/g, '/');
+
+  const jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+      .join('')
+  );
+
+  return JSON.parse(jsonPayload);
 }
 
 function convertToArray(

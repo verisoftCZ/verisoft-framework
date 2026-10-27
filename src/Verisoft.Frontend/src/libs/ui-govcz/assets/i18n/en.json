@@ -1,0 +1,17 @@
+{
+    "VALIDATIONS": {
+        "REQUIRED": "This field is required",
+        "EMAIL": "Email is in a wrong format",
+        "PATTERN": "Input doesn't match the pattern",
+        "MIN_LENGTH": "Value doesn't have enough characters",
+        "MAX_LENGTH": "Value exceeds the maximum amount of characters"
+    }, "TABLES": {
+        "EMPTY": "No data to display",
+        "PAGINATION": {
+            "SHOWING": "showing",
+            "TO": "to",
+            "OF": "of",
+            "ENTRIES": "entries"
+        }
+    }
+}

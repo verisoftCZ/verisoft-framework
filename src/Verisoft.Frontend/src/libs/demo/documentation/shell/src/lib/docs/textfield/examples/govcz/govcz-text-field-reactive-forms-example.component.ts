@@ -38,10 +38,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-text-field-reactive-forms-example',
-  imports: [TextfieldComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-text-field-reactive-forms-example',
+    imports: [TextfieldComponent, ReactiveFormsModule],
+    template: template
 })
 export class GovCzTextFieldReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

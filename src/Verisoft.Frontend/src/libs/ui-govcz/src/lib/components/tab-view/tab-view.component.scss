@@ -1,0 +1,43 @@
+.gov-tabs__tabs {
+  position: relative;
+  width: 100%;
+  margin-bottom: 0%;
+  overflow-x: clip;
+}
+
+.gov-tabs__tab {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gov-tabs__tab.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gov-tabs__btn {
+  font-size: medium;
+  padding: 10px 20px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 700;
+}
+
+.gov-tabs__btn[aria-selected=true]:after {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--border-primary);
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+}
+
+.gov-tabs__content {
+  margin-top: var(--spacing-m-nudge);
+  flex-wrap: wrap;
+  width: 100%;
+}

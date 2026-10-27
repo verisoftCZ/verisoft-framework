@@ -1,4 +1,3 @@
-/* eslint-disable @angular-eslint/directive-selector */
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
@@ -51,6 +50,7 @@ import {
 
 @Directive({
   selector:
+    // eslint-disable-next-line @angular-eslint/directive-selector
     'v-dropdown[useDatasource], v-multiselect[useDatasource], v-generic-field[useDatasource]',
   standalone: true,
 })
@@ -67,6 +67,8 @@ export class DatasourceDirective<T>
   @Input() filterField: string | undefined = 'fulltext';
 
   @Input() transformFn?: (data: T) => unknown;
+
+  @Input() extraFilter!: any;
 
   get activeComponent(): DataSourceComponentModel<T> {
     return (this.dropdownComponent ??
@@ -135,6 +137,7 @@ export class DatasourceDirective<T>
             offset: 0,
             filter: {
               [property]: value.filter ? value.filter : undefined,
+              ...(this.extraFilter ?? {})
             } as Partial<T>,
             useNewData: true,
           });
@@ -209,22 +212,22 @@ export class DatasourceDirective<T>
   }
 
   private isDataForRequestLoaded(request: Partial<ExtendedRequestType<T>>) {
-    if (request.useNewData){
+    if (request.useNewData) {
       return false;
     }
 
     const offset = request.offset ?? 0;
     const limit = request.limit ?? DEFAULT_SEARCH_LIMIT;
     const options = this.activeComponent.options;
-    if (!options){
+    if (!options) {
       return false;
     }
 
     if (options.length < offset + limit) {
       return false;
     }
-    
-    const allItemsFilled = options.slice(offset, offset + limit).every(item => item !== undefined && item != this.loadingPlaceholderItem);    
+
+    const allItemsFilled = options.slice(offset, offset + limit).every(item => item !== undefined && item != this.loadingPlaceholderItem);
     return allItemsFilled;
   }
 

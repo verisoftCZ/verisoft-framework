@@ -9,9 +9,9 @@ namespace Verisoft.Core.Common.Logging
     {
         void TrackEvent(string name, IDictionary<string, string> values);
 
-        void TrackMetric(string metricName, double value, IDictionary<string, string> properties = null);
+        void TrackMetric(string metricName, double value, IDictionary<string, string>? properties = null);
 
-        void TrackException(Exception ex, string customMessage = null);
+        void TrackException(Exception ex, string? customMessage = null);
 
         Task StartSelfAvailabilityTest(CancellationToken cancellationToken);
 

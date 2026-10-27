@@ -1,14 +1,14 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verisoft.Core.AspNet.Mvc;
 using Verisoft.Core.Contracts;
 using Verisoft.Core.Contracts.BusinessResult;
-using Verisoft.Core.Contracts.Validation.Extensions;
+using Verisoft.Core.Contracts.Export;
 using Verisoft.Core.Validation.Services;
-using Verisoft.Core.ExportStrategies.Enums;
-using Verisoft.Core.ExportStrategies.ExportResult;
+using Verisoft.DemoApi.Application.Controllers;
 using Verisoft.DemoApi.Application.Services.Interfaces;
+using Verisoft.DemoApi.Common.Entities;
 using Verisoft.DemoApi.Contracts.Filters;
 using Verisoft.DemoApi.Contracts.Models.Client;
 
@@ -21,11 +21,12 @@ namespace Verisoft.DemoApi.Host.Controllers.V2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("v{v:apiVersion}/[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-public class ClientController(IClientService clientService, IValidationService validationService)
+public class ClientController(IClientService clientService, IClientExportService clientExportService, IValidationService validationService)
+    : CrudController<Client, ClientEditModel, ClientEditModel, ClientValidatedObject, ClientListItem, ClientFilter, ClientEntity, int>(clientService, clientExportService, validationService)
 {
     /// <summary>
     /// Get details of a specific client by ID.
@@ -34,13 +35,8 @@ public class ClientController(IClientService clientService, IValidationService v
     /// <returns>The client details.</returns>
     [HttpGet]
     [Route("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [AllowAnonymous]
-    public async Task<IActionResult> GetClientAsync(int id)
-    {
-        var result = await clientService.GetClientAsync(id);
-        return result.ToActionResult();
-    }
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    public async Task<IActionResult?> GetClientAsync(int id) => await GetAsync(id);
 
     /// <summary>
     /// Get a filtered list of clients.
@@ -48,81 +44,70 @@ public class ClientController(IClientService clientService, IValidationService v
     /// <param name="request">Filtering criteria.</param>
     /// <returns>A list of clients matching the criteria.</returns>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientListData))]
-    [AllowAnonymous]
-    public async Task<ClientListData> GetClientListAsync([FromQuery] FilteredRequest<ClientFilter> request)
+    [ProducesResponseType<PagedData<ClientListItem>>(StatusCodes.Status200OK)]
+    public async Task<PagedData<ClientListItem>> GetClientListAsync([FromQuery] FilteredRequest<ClientFilter> request) => await GetListAsync(request);
+
+    /// <summary>
+    /// Get projection list of clients
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns>list of projections</returns>
+    [HttpGet("GetProjectedExample")]
+    [ProducesResponseType<ClientProjectionExample>(StatusCodes.Status200OK)]
+    public async Task<PagedData<ClientProjectionExample>> GetProjectedExampleAsync([FromQuery] FilteredRequest<ClientFilter> request) => await clientService.GetClientsProjectedAsync(request);
+
+    /// <summary>
+    /// Get projection of a specific client by ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>projection of client</returns>
+    [HttpGet("GetOneProjectedExample")]
+    [ProducesResponseType<ClientProjectionExample>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetOneProjectedExampleAsync([FromQuery] int id)
     {
-        return await clientService.GetClientListAsync(request);
+        var result = await clientService.GetOneClientProjectedAsync(id);
+        return result.ToActionResult();
     }
 
     /// <summary>
     /// Add a new client.
     /// </summary>
-    /// <param name="clientEditModel">Client details.</param>
+    /// <param name="request">ExportDataRequest</param>
     /// <returns>The created client.</returns>
-    [HttpGet]
+    [HttpPost]
     [Route("export")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [AllowAnonymous]
-    public async Task<IActionResult> GetClientsAsync([FromQuery] FilteredRequest<ClientFilter> request, ExportType exportType)
-    {
-        var result = await clientService.GetClientsForExportAsync(request, exportType);
-
-        if (result.IsSuccess && result.Data is ExportFileResult fileResult)
-        {
-            return new FileStreamResult(fileResult.FileStream, fileResult.FileType)
-            {
-                FileDownloadName = fileResult.FileName,
-            };
-        }
-
-        return result.ToActionResult();
-    }
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    public async Task<IActionResult?> GetClientsAsync(ExportDataRequest<ClientFilter> request) => await ExportDataAsync(request);
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(BusinessActionErrors<ClientValidatedObject>))]
-    [AllowAnonymous]
-    public async Task<IActionResult> AddClientAsync(ClientEditModel clientEditModel)
-    {
-        var validatedObject = await validationService.ValidateAsync<ClientValidatedObject, ClientEditModel>(clientEditModel);
-        if (validatedObject.HasValidationErrors())
-        {
-            return validatedObject.ToActionResult();
-        }
-
-        var result = await clientService.AddClientAsync(clientEditModel);
-        return result.ToActionResult();
-    }
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<BusinessActionErrors<ClientValidatedObject>>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> AddClientAsync(ClientEditModel clientEditModel) => await AddAsync(clientEditModel);
 
     [HttpPut]
     [Route("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(BusinessActionErrors<ClientValidatedObject>))]
-    [AllowAnonymous]
-    public async Task<IActionResult> UpdateClientsAsync(ClientEditModel clientEditModel, int id)
-    {
-        var validatedObject = await validationService.ValidateAsync<ClientValidatedObject, ClientEditModel>(clientEditModel, id);
-        if (validatedObject.HasValidationErrors())
-        {
-            return validatedObject.ToActionResult();
-        }
-
-        var result = await clientService.UpdateClientAsync(clientEditModel, id);
-        return result.ToActionResult();
-    }
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<BusinessActionErrors<ClientValidatedObject>>(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult?> UpdateClientsAsync(ClientEditModel clientEditModel, int id) => await UpdateAsync(id, clientEditModel);
 
     [HttpDelete]
     [Route("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BusinessActionErrors))]
-    [AllowAnonymous]
-    public async Task<IActionResult> DeleteClientAsync(int id)
-    {
-        var result = await clientService.RemoveClientAsync(id);
-        return result.ToActionResult();
-    }
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> DeleteClientAsync(int id) => await DeleteAsync(id);
+
+    [HttpPost]
+    [Route("AddBulk")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> AddClientsBulkAsync(ClientEditModel[] clientEditModels) => await AddBulkAsync(clientEditModels);
+
+    [HttpPost]
+    [Route("DeleteBulk")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteClientsBulkAsync(List<int> ids) => await DeleteBulkAsync(ids);
 }

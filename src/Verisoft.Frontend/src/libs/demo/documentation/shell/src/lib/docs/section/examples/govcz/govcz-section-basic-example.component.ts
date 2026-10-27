@@ -19,10 +19,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-govcz-doc-section-basic-example',
-  imports: [TextfieldComponent, SectionComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-section-basic-example',
+    imports: [TextfieldComponent, SectionComponent],
+    template: template
 })
 export class GovCzSectionBasicExampleComponent {
   code = new DocumentationCodeBuilder()

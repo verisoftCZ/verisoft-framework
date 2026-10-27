@@ -21,6 +21,8 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [customSort]="lazy"
     [multiSortMeta]="sortMeta"
+    [sortField]="sortSignleColumn?.field"
+    [sortOrder]="sortSignleColumn?.order ?? 0"
     [resizableColumns]="true"
     columnResizeMode="expand"
     [globalFilterFields]="globalFilterFields"
@@ -28,33 +30,37 @@
     (onSort)="sortChanged($event)"
     (selectionChange)="selectionChanged($event)"
     (onLazyLoad)="fireLazyLoad($event)"
-  >
+    >
     <ng-template pTemplate="header">
       <tr>
         @if (selectionMode === 'multiple') {
-        <th>
-          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-        </th>
-        } @for (column of tableColumns; track column; let index = $index) {
-        <th
-          *ngIf="column.sortable"
-          pResizableColumn
-          [pSortableColumn]="'row.' + column.id"
-          [style.width]="column.width"
-        >
-          {{ column.headerGetter(column.id, index) }}
-          <p-sortIcon [field]="'row.' + column.id"></p-sortIcon>
-        </th>
-        <th
-          *ngIf="!column.sortable"
-          pResizableColumn
-          [class.v-auto-cell]="column.template"
-          [style.width]="column.width"
-        >
-          {{ column.headerGetter(column.id, index) }}
-        </th>
-        } @if (rowDetailTemplate){
-        <th></th>
+          <th>
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          } @for (column of tableColumns; track column; let index = $index) {
+          @if (column.sortable) {
+            <th
+              pResizableColumn
+              [pSortableColumn]="'row.' + column.id"
+              [style.width]="column.width"
+              [class]="column.headerClass ?? column.columnClass"
+              >
+              {{ column.headerGetter(column.id, index) }}
+              <p-sortIcon [field]="'row.' + column.id"></p-sortIcon>
+            </th>
+          }
+          @if (!column.sortable) {
+            <th
+              pResizableColumn
+              [class.v-auto-cell]="column.template"
+              [style.width]="column.width"
+              [class]="column.headerClass ?? column.columnClass"
+              >
+              {{ column.headerGetter(column.id, index) }}
+            </th>
+          }
+          } @if (rowDetailTemplate){
+          <th></th>
         }
       </tr>
     </ng-template>
@@ -62,47 +68,47 @@
       <tr
         [pSelectableRow]="row"
         [pSelectableRowDisabled]="selectionMode !== 'single'"
-        (dblclick)="
-          router.navigate(['./' + row.row[entityKey ?? 'id']], {
-            relativeTo: route
-          })
-        "
-      >
-        @if (selectionMode === 'multiple'){
-        <td>
-          <p-tableCheckbox [value]="row"></p-tableCheckbox>
-        </td>
-        }
-        <td
-          *ngFor="let cd of tableColumns; let index = index"
-          [class]="cd.columnClass!"
-          [class.v-auto-cell]="cd.template"
+        [ngClass]="rowClass(row)"
+        (dblclick)="onRowDoubleClick(row)"
+        (mousedown)="onRowMouseDown(row, $event)"
         >
-          <ng-container *ngIf="cd.template">
-            <ng-container
-              *ngTemplateOutlet="cd.template; context: { $implicit: row.row }"
-            ></ng-container>
-          </ng-container>
-          <span
-            *ngIf="!row.template"
-            [queryParams]="cd.queryParams ? cd.queryParams : undefined"
-            [routerLink]="cd.routerLink ? cd.routerLink(row.row) : undefined"
-            [innerHTML]="cd.valueGetter(row.row, index)"
-          ></span>
-        </td>
+        @if (selectionMode === 'multiple'){
+          <td>
+            <p-tableCheckbox [value]="row"></p-tableCheckbox>
+          </td>
+        }
+        @for (cd of tableColumns; track cd; let index = $index) {
+          <td
+            [class]="cd.columnClass!"
+            [class.v-auto-cell]="cd.template"
+            >
+            @if (cd.template) {
+              <ng-container
+                *ngTemplateOutlet="cd.template; context: { $implicit: row.row }"
+              ></ng-container>
+            }
+            @if (!cd.template) {
+              <span
+                [queryParams]="cd.queryParams ? cd.queryParams : undefined"
+                [routerLink]="cd.routerLink ? cd.routerLink(row.row) : undefined"
+                [innerHTML]="cd.valueGetter(row.row, index)"
+              ></span>
+            }
+          </td>
+        }
         @if (rowDetailTemplate){
-        <td>
-          <p-button
-            type="button"
-            pRipple
-            severity="primary"
-            [pRowToggler]="row"
-            [text]="true"
-            [rounded]="true"
-            [plain]="true"
-            [icon]="expanded ? icons.chevronDown : icons.chevronRight"
-          />
-        </td>
+          <td>
+            <p-button
+              type="button"
+              pRipple
+              severity="primary"
+              [pRowToggler]="row"
+              [text]="true"
+              [rounded]="true"
+              [plain]="true"
+              [icon]="expanded ? icons.chevronDown : icons.chevronRight"
+              />
+          </td>
         }
       </tr>
     </ng-template>

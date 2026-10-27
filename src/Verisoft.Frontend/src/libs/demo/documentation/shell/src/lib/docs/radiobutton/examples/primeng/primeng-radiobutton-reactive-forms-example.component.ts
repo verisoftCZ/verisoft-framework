@@ -43,10 +43,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-doc-primeng-radiobutton-reactive-forms-example',
-  imports: [ReactiveFormsModule, RadioButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-radiobutton-reactive-forms-example',
+    imports: [ReactiveFormsModule, RadioButtonComponent],
+    template: template
 })
 export class PrimengRadiobuttonReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

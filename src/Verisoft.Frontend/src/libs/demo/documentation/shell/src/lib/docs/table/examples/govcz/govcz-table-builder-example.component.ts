@@ -23,10 +23,9 @@ const typescript = `columns = new TableBuilder<Car>()
     .build();`
 
 @Component({
-  selector: 'v-doc-govcz-table-builder-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-builder-example',
+    imports: [TableComponent],
+    template: template
 })
 export class GovCzTableBuilderExampleComponent {
 

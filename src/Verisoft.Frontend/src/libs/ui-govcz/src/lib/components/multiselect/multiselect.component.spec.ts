@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ERROR_PROVIDER_TOKEN } from '@verisoft/core';
 import { MultiselectComponent } from './multiselect.component';
 
 describe('MultiselectComponent', () => {
@@ -8,6 +9,15 @@ describe('MultiselectComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MultiselectComponent],
+      providers: [
+        {
+          provide: ERROR_PROVIDER_TOKEN,
+          useValue: {
+            mapError: jest.fn(),
+            errors: {},
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MultiselectComponent);
@@ -19,3 +29,4 @@ describe('MultiselectComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

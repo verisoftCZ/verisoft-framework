@@ -10,4 +10,7 @@ export interface DropdownCore<T> extends DataSourceComponentModel<T>, BaseFormCo
     dropdownIcon?: string;
     floatLabel?: string;
     editable: boolean;
+    forceMinWidth: boolean;
+    showFilter: boolean;
+    localSearch: boolean;
 }

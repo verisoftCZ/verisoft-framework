@@ -24,10 +24,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-text-area-basic-example',
-  imports: [TextareaComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-text-area-basic-example',
+    imports: [TextareaComponent, FormsModule],
+    template: template
 })
 export class PrimengTextAreaBasicExampleComponent {
   value: string | null = null;

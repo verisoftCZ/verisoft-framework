@@ -1,6 +1,6 @@
-﻿using Verisoft.Core.Common.Infrastructure;
-using System;
+﻿using System;
 using System.Data.SqlClient;
+using Verisoft.Core.Common.Infrastructure;
 
 namespace Verisoft.Core.Data
 {

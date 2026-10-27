@@ -12,4 +12,5 @@ export interface ActionButtonGroupCore {
   menuIconPos: IconPositionType;
   menuIcon: string;
   label?: string;
+  showLabels: boolean;
 }

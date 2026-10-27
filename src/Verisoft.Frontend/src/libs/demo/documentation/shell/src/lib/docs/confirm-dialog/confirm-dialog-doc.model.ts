@@ -16,12 +16,15 @@ export function getDocumentation(
       )
       .addSection((s) =>
         {
-          return s
+          const section = s
             .title('Basic')
             .addText(
               'The Dialog confirm angular component is custom-made wrapper around ng-prime\'s p-dialog. It supports customization through data input in its Dialog service, which handles the initial logic via injection. It allows to add a title and an icon, the severity of the message, the body of the Dialog, which can utilize HTML markdown. Finally, it supports adding custom functions for both the accept and cancel buttons, ensuring responsive and seamless user experience.'
-            )
-         //   .addCodeComponent(isPrimeng ? PrimengConfirmDialogBasicExampleComponent : GovCzConfirmDialogBasicExampleComponent);
+            );
+
+          return isPrimeng
+            ? section.addCodeComponent(PrimengConfirmDialogBasicExampleComponent)
+            : section.addCodeComponent(GovCzConfirmDialogBasicExampleComponent);
         }
       )
       .addSection((s) =>

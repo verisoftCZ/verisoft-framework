@@ -22,6 +22,8 @@ export class TableFilterPipe<T> implements PipeTransform {
         if (filterValue) {
           if (key === 'searchField') {
             key = 'global';
+          } else{
+            key = `row.${key}`;
           }
           
           currentFilter[key] = filterValue;

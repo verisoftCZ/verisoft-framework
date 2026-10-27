@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using Verisoft.Core.Common.Configuration;
 
 namespace Verisoft.Core.Data.EntityFramework.Configuration

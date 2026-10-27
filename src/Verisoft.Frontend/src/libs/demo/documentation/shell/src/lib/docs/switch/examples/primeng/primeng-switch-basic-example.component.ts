@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-switch-basic-example',
-  imports: [SwitchComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-switch-basic-example',
+    imports: [SwitchComponent, FormsModule],
+    template: template
 })
 export class PrimengSwitchBasicExampleComponent {
   value: boolean | null = null;

@@ -28,10 +28,9 @@ items: MenuItem[] = [
 `;
 
 @Component({
-  selector: 'v-doc-primeng-breadcrumb-basic-example',
-  imports: [BreadcrumbComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-breadcrumb-basic-example',
+    imports: [BreadcrumbComponent],
+    template: template
 })
 export class PrimengBreadcrumbBasicExampleComponent {
   code = new DocumentationCodeBuilder()

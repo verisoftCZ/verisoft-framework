@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ERROR_PROVIDER_TOKEN } from '@verisoft/core';
+import { of } from 'rxjs';
 import { RadioButtonComponent } from './radiobutton.component';
 
 describe('RadioButtonComponent', () => {
@@ -8,6 +10,9 @@ describe('RadioButtonComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RadioButtonComponent],
+      providers: [
+        { provide: ERROR_PROVIDER_TOKEN, useValue: { mapError: () => of(null) } }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(RadioButtonComponent);

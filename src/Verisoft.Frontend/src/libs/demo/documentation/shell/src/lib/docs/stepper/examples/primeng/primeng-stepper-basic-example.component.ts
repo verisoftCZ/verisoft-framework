@@ -32,10 +32,9 @@ items: StepperItem[] = [
 `
 
 @Component({
-  selector: 'v-doc-primeng-stepper-basic-example',
-  imports: [StepperComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-stepper-basic-example',
+    imports: [StepperComponent],
+    template: template
 })
 export class PrimengStepperBasicExampleComponent {
   code = new DocumentationCodeBuilder()

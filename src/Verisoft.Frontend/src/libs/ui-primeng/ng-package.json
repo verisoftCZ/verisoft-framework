@@ -3,5 +3,12 @@
   "dest": "../../../dist/src/libs/ui-primeng",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "assets": [
+    "./assets/",
+    "README.md"
+  ],
+  "allowedNonPeerDependencies": [
+    "uuid"
+  ]
 }

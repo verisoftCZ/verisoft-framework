@@ -1,0 +1,71 @@
+<div class="feature-list__container full-height-container">
+  <v-filter
+    #filter
+    [title]="title"
+    [total]="tableTotal"
+    [fields]="columns | featureListColumn"
+    [filters]="filters"
+    [fulltextFieldName]="fulltextFieldName"
+    [showFulltext]="showFulltext"
+    [showFilters]="showExtendedFilter"
+    [applyButtonLabel]="applyButtonLabel"
+    [clearButtonLabel]="clearButtonLabel"
+    [filterDetailTitle]="filterDetailTitle"
+    [buttonType]="buttonType"
+    [buttonOutlined]="buttonOutlined"
+    [filterDetailShowFulltext]="filterDialogShowFulltext"
+  >
+    <v-action-button-group
+      [maxItems]="maxVisibleActions"
+      [maxItemsMobile]="maxVisibleMobileActions"
+    >
+      @if (showAdd) {
+      <v-action-button
+        [icon]="icons.add"
+        label="Add"
+        [disabled]="!canAdd"
+        (click)="addClick.emit()"
+      />
+      } @if (showDelete){
+      <v-action-button
+        [icon]="icons.delete"
+        label="Delete"
+        [disabled]="!canDelete || !selection.length"
+        (click)="startDeleteItems()"
+      />
+      } @if (showDownload){
+      <v-action-button
+        [icon]="icons.download"
+        label="Download"
+        [disabled]="!canDownload"
+        (click)="startDownload()"
+      />
+      }
+    </v-action-button-group>
+  </v-filter>
+  <div class="feature-list__table-container full-height-container">
+    <div class="full-height-container">
+      <v-table
+        #table
+        useDatasource
+        useFilter
+        [filterComponent]="filter"
+        class="full-height-container"
+        [selectionMode]="selectionMode"
+        [tableName]="tableName"
+        [autoBind]="autoBind"
+        [datasource]="datasource"
+        [columns]="columns"
+        [extraFilter]="extraFilter"
+        [maximumColumnLength]="maximumColumnLength"
+        [disableCustomClicks]="disableCustomClicks"
+        [pageSize]="pageSize"
+        [showPaginator]="showPaginator"
+        [debounceTime]="datasourceDebounceTime"
+        (selectionChange)="selectItems($event)"
+      >
+        <ng-content />
+      </v-table>
+    </div>
+  </div>
+</div>

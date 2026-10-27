@@ -3,14 +3,17 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ComponentRef,
   inject,
   Injector,
   Input,
   OnChanges,
+  OnDestroy,
   Type,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { ExtendedComponent } from '@verisoft/ui-core';
 import { DynamicComponentFactoryService } from './dynamic-component-factory.service';
 
 @Component({
@@ -19,10 +22,11 @@ import { DynamicComponentFactoryService } from './dynamic-component-factory.serv
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<ng-container #dynamicContainer></ng-container>`,
 })
-export class DynamicComponent<TComponent> implements AfterViewInit, OnChanges {
+export class DynamicComponent<TComponent>
+  implements AfterViewInit, OnChanges, OnDestroy {
   @Input() componentType!: Type<TComponent>;
 
-  @Input() data!: Partial<TComponent>;
+  @Input() data!: ExtendedComponent<TComponent>;
 
   @ViewChild('dynamicContainer', { read: ViewContainerRef, static: true })
   container!: ViewContainerRef;
@@ -33,23 +37,38 @@ export class DynamicComponent<TComponent> implements AfterViewInit, OnChanges {
 
   private injector = inject(Injector);
 
+  private componentRef?: ComponentRef<TComponent>;
+
   ngOnChanges(): void {
-    this.crateComponent();
+    this.createComponent();
   }
 
   ngAfterViewInit(): void {
-    this.crateComponent();
+    this.createComponent();
     this.changeDetectorRef.detectChanges();
   }
 
-  private crateComponent() {
+  ngOnDestroy(): void {
+    this.destroyCurrentComponent();
+  }
+
+  private createComponent() {
     if (this.container) {
-      this.factoryServices.createDynamicComponent(
+      this.destroyCurrentComponent();
+      this.componentRef = this.factoryServices.createDynamicComponent(
         this.componentType,
         this.container,
         this.data,
         this.injector
       );
+    }
+  }
+
+  private destroyCurrentComponent() {
+    if (this.componentRef) {
+      this.factoryServices.cleanupComponent(this.componentRef.instance as object);
+      this.componentRef.destroy();
+      this.componentRef = undefined;
     }
   }
 }

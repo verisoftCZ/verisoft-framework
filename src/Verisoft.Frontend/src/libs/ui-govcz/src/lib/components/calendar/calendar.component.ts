@@ -1,40 +1,42 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   BaseFormInputComponent,
-  ErrorPipe,
   CalendarCore,
   CALENDAR_COMPONENT_TOKEN,
+  DateInputFilterDirective,
   FieldType,
   FieldSizeType,
   FieldSize,
   SlotPosition,
   SlotPositionType,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: 'v-calendar',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-calendar',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
-    GovSizePipe
-  ],
-  templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: CALENDAR_COMPONENT_TOKEN,
-      useExisting: CalendarComponent
-    }
-  ],
+    GovSizePipe,
+    ErrorComponent,
+    TranslateModule,
+    DateInputFilterDirective
+],
+    templateUrl: './calendar.component.html',
+    styleUrl: './calendar.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: CALENDAR_COMPONENT_TOKEN,
+            useExisting: CalendarComponent
+        }
+    ]
 })
 
 export class CalendarComponent
@@ -42,6 +44,8 @@ export class CalendarComponent
   implements ControlValueAccessor, CalendarCore
 {
   @Input() icon!: string;
+
+  @Input() floatLabel: string | undefined;
 
   @Input() maxDate!: Date;
 
@@ -64,8 +68,6 @@ export class CalendarComponent
   @Input() message!: string;
 
   @Input() name!: string;
-  
-  @Input() floatLabel: string | undefined;
 
   type = FieldType.date;
 

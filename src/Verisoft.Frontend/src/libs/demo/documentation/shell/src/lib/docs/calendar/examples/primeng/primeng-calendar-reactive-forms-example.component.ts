@@ -38,10 +38,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-doc-calendar-reactive-forms-example',
-  imports: [ReactiveFormsModule, CalendarComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-calendar-reactive-forms-example',
+    imports: [ReactiveFormsModule, CalendarComponent],
+    template: template
 })
 export class PrimengFormFieldReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

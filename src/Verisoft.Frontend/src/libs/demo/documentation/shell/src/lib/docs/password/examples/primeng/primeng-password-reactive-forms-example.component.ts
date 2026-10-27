@@ -34,10 +34,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-doc-primeng-password-reactive-forms-example',
-  imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-password-reactive-forms-example',
+    imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent],
+    template: template
 })
 export class PrimengPasswordReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

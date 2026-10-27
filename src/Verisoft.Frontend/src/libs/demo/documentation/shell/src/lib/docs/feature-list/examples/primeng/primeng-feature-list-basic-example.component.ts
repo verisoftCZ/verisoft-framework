@@ -3,8 +3,9 @@ import {
   DOCS_CODE_LANG,
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
+import { FeatureListColumnDefinition } from '@verisoft/ui-core';
 import { FeatureListComponent } from '@verisoft/ui-primeng';
-import { carColumns, carData } from '../../../data';
+import { Car, carColumns, carData } from '../../../data';
 
 const template = `
 <div class="row" style="height: 350px">
@@ -13,16 +14,15 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-feature-list-basic-example',
-  imports: [FeatureListComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-feature-list-basic-example',
+    imports: [FeatureListComponent],
+    template: template
 })
 export class PrimengFeatureListBasicExampleComponent {
   code = new DocumentationCodeBuilder()
     .addCode(template, DOCS_CODE_LANG.HTML)
     .buildCode();
 
-  columns = carColumns;
+  columns = carColumns as FeatureListColumnDefinition<Car>[];
   data = carData;
 }

@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './radiobutton-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Radiobutton"
     description="Radiobutton is a custom angular element designed to integrate a group of ng-prime's <strong>p-radioButton</strong> elements."
     [items]="items"
     ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class RadiobuttonDocComponent {
   builder = inject(DocumentationBuilderService);

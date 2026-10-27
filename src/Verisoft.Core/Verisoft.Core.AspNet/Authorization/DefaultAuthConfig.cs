@@ -1,16 +1,12 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 using Verisoft.Core.Common.Configuration;
 
 namespace Verisoft.Core.AspNet.Authorization
 {
-    public class DefaultAuthConfig : AutoBindConfig, IAuthConfig
+    public class DefaultAuthConfig(IConfiguration configuration) : AutoBindConfig(configuration, "ApiAuthentication"), IAuthConfig
     {
-        public DefaultAuthConfig(IConfiguration configuration)
-            : base(configuration, "ApiAuthentication")
-        {
-        }
-
-        public IEnumerable<Application> Applications { get; set; }
+        public IEnumerable<Application> Applications { get; set; } = Enumerable.Empty<Application>();
     }
 }

@@ -4,11 +4,11 @@ import {
   DOCS_CODE_LANG,
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
+import { FilterFieldDirective } from '@verisoft/ui-core';
 import {
   ActionButtonComponent,
   ActionButtonGroupComponent,
   FilterComponent,
-  FilterFieldDirective,
   Icons,
 } from '@verisoft/ui-govcz';
 
@@ -28,16 +28,15 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-filter-basic-example',
-  imports: [
-    FilterComponent,
-    ActionButtonGroupComponent,
-    ActionButtonComponent,
-    FilterFieldDirective,
-    FormsModule,
-  ],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-filter-basic-example',
+    imports: [
+        FilterComponent,
+        ActionButtonGroupComponent,
+        ActionButtonComponent,
+        FilterFieldDirective,
+        FormsModule,
+    ],
+    template: template
 })
 export class GovCzFilterBasicExampleComponent {
   filter: unknown;

@@ -11,6 +11,8 @@ public class BusinessActionErrors : List<BusinessActionError>
         return [error];
     }
 
+    public static BusinessActionErrors None() => [];
+
     public static BusinessActionErrors FromList(IEnumerable<BusinessActionError> errors)
     {
         return [.. errors];

@@ -4,12 +4,12 @@ import {
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
 import { TabViewItemCore } from '@verisoft/ui-core';
-import { TabViewModule } from '@verisoft/ui-govcz';
+import { TabViewComponent } from '@verisoft/ui-govcz';
 
 const template = `
 <div class="row">
   <div class="col-12">
-    <v-tab-view [items]="tabViewItems" [activeIndex]="1">
+     <v-tab-view [items]="tabViewItems" [activeIndex]="1">
     </v-tab-view>
   </div>
 </div>
@@ -22,9 +22,8 @@ const ts = `tabViewItems: TabViewItemCore[] = [
 
 @Component({
   selector: 'v-doc-govcz-tabview-model-example',
-  imports: [TabViewModule],
-  standalone: true,
-  template: template,
+  imports: [TabViewComponent],
+  template: template
 })
 export class GovCzTabViewModelExampleComponent {
   code = new DocumentationCodeBuilder()

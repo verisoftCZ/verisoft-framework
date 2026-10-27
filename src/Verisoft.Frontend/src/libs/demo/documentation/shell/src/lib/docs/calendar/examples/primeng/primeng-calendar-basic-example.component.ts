@@ -21,10 +21,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-calendar-basic-example',
-  imports: [CalendarComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-calendar-basic-example',
+    imports: [CalendarComponent, FormsModule],
+    template: template
 })
 export class PrimengCalendarBasicExampleComponent {
   value = null;

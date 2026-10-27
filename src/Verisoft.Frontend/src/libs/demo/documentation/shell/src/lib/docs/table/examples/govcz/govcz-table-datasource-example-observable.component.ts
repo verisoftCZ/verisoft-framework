@@ -31,10 +31,9 @@ export class GovCzTableDataSourceObservableExampleComponent {
 }`;
 
 @Component({
-  selector: 'v-doc-govcz-table-datasource-observable-example',
-  imports: [TableComponent, TableDatasourceDirective],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-datasource-observable-example',
+    imports: [TableComponent, TableDatasourceDirective],
+    template: template
 })
 export class GovCzTableDataSourceObservableExampleComponent {
   code = new DocumentationCodeBuilder()

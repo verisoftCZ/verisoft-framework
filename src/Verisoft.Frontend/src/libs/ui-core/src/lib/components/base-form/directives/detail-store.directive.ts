@@ -10,9 +10,12 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { createFeatureSelector, createSelector, Store } from '@ngrx/store';
 import {
+  BackendValidationError,
   createInitDetailAction,
+  createInitNewDetailAction,
   createResetStateAction,
   createUpdateDetailAction,
+  createUpdateDetailSetErrorsAction,
   createUpdateFormStateAction,
   DetailState,
 } from '@verisoft/store';
@@ -30,17 +33,27 @@ export class DetailStoreDirective
   extends UnsubscribeComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
+  @Input({ required: true }) form!: BaseFormDirective<any>;
+
+  @Input({ required: true }) detailsRepository!: string;
+
+  @Input() autoBind = true;
+
+  @Input() detailId!: string | number | undefined;
+
+  @Input({ required: true }) ngrxFeatureKey!: string;
+
+  @Input() destroyForm = true;
+
+  @Input() readonly = false;
+
+  @Input() readonlyControlNames: string[] = [];
+
   store = inject(Store);
   cdr = inject(ChangeDetectorRef);
   route = inject(ActivatedRoute);
-  @Input({ required: true })
-  form!: BaseFormDirective<any>;
-  @Input({ required: true }) detailsRepository!: string;
-  @Input() autoBind = true;
-  @Input() detailId!: string | number | undefined;
-  @Input({ required: true }) ngrxFeatureKey!: string;
-  @Input() destroyForm = true;
 
+  private itemCache: any = null;
   private loaded!: boolean;
 
   ngOnInit(): void {
@@ -65,9 +78,22 @@ export class DetailStoreDirective
   }
 
   private initForm() {
-    this.store.dispatch(
-      createInitDetailAction(this.detailsRepository)({ obj: this.detailId })
-    );
+    if (this.detailId === 'create') {
+      this.store.dispatch(createInitNewDetailAction(this.detailsRepository)());
+    } else {
+      this.store.dispatch(
+        createInitDetailAction(this.detailsRepository)({ obj: this.detailId })
+      );
+    }
+
+    if (this.readonly) {
+      this.form.formGroup.disable();
+      return;
+    }
+
+    this.readonlyControlNames.forEach(x => {
+      this.form.formGroup.get(x)?.disable();
+    });
   }
 
   private listenFormState() {
@@ -78,29 +104,46 @@ export class DetailStoreDirective
     this.store
       .select(selectIncomeData)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(({ item, loaded } = { item: undefined, loaded: false }) => {
-        if (
-          item &&
-          (item.validationErrors || item.validationWarnings) &&
-          !this.form.formGroup.dirty
-        ) {
-          this.handleValidation(
-            'propertyName',
-            item.validationWarnings || [],
-            'validationWarning',
-            'warningMessage'
-          );
-          this.handleValidation(
-            'propertyName',
-            item.validationErrors || [],
-            'validationError',
-            'errorMessage'
-          );
-        }
+      .subscribe(
+        (
+          { item, loaded, backendValidationErrors } = {
+            item: undefined,
+            loaded: false,
+            saveItemState: { saveInProgress: false },
+            backendValidationErrors: []
+          }
+        ) => {
+          if (item
+            && ((item.validationErrors || item.validationWarnings) && !this.form.formGroup.dirty)
+            || backendValidationErrors.length
+          ) {
+            this.handleValidation(
+              'propertyName',
+              item.validationWarnings || [],
+              'validationWarning',
+              'warningMessage'
+            );
+            this.handleValidation(
+              'propertyName',
+              item.validationErrors || [],
+              'validationError',
+              'errorMessage'
+            );
 
-        this.loaded = loaded;
-        this.cdr.detectChanges();
-      });
+            if (this.itemCache && this.isStateChanged(item) && backendValidationErrors.length) {
+              backendValidationErrors = this.dispatchErrors(item, backendValidationErrors);
+            }
+
+            this.handleBackendValidation(backendValidationErrors);
+            this.cdr.markForCheck();
+          }
+
+          this.itemCache = item;
+
+          this.loaded = loaded;
+          this.cdr.detectChanges();
+        }
+      );
   }
 
   private listenFormChange() {
@@ -141,6 +184,36 @@ export class DetailStoreDirective
         control.markAsDirty();
       }
     });
-    this.cdr.markForCheck();
   };
+
+  private handleBackendValidation(errors: BackendValidationError[]) {
+    errors.forEach(({ parameters, code }: BackendValidationError) => {
+      const control = this.form.formGroup.get(this.normalizePropertyNames(parameters));
+      if (!control) return;
+
+      control[control.disabled ? "disable" : "enable"]({ emitEvent: false, onlySelf: true });
+      control.setErrors({ "validationError": code }, { emitEvent: true });
+      control.markAsDirty();
+    });
+  }
+
+  private dispatchErrors(item: any, errors: BackendValidationError[]): BackendValidationError[] {
+    const error = errors.filter((e: BackendValidationError) => {
+      return this.itemCache[this.normalizePropertyNames(e.parameters)] === item[this.normalizePropertyNames(e.parameters)];
+    });
+
+    this.store.dispatch(
+      createUpdateDetailSetErrorsAction(this.detailsRepository)({ error })
+    );
+
+    return error;
+  }
+
+  private normalizePropertyNames(input: string): string {
+    return String(input[0]).toLocaleLowerCase() + String(input).slice(1);
+  }
+
+  private isStateChanged(item: any): boolean {
+    return item !== this.itemCache;
+  }
 }

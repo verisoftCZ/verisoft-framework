@@ -1,6 +1,6 @@
-﻿using System;
+﻿using MassTransit;
+using System;
 using System.Collections.Generic;
-using MassTransit;
 
 namespace Verisoft.Core.MassTransit;
 
@@ -14,7 +14,16 @@ public class ConsumerEndpointConfiguration
         EndpointName = endpointName;
     }
 
+    internal ConsumerEndpointConfiguration(Type consumerType, Type consumerDefinitionType, string endpointName)
+    {
+        ConsumerType = consumerType;
+        ConsumerDefinitionType = consumerDefinitionType;
+        EndpointName = endpointName;
+    }
+
     public Type ConsumerType { get; }
+
+    public Type? ConsumerDefinitionType { get; }
 
     public string EndpointName { get; }
 

@@ -15,14 +15,14 @@ namespace Verisoft.Core.Authentication.MicrosoftIdentity.Extensions;
 
 public static class InstallExtension
 {
-    public static IServiceCollection AddVerisoftIdentity(this IServiceCollection services, Action<IdentityConfigurationBuilder<IdentityUser>> configuration = null)
+    public static IServiceCollection AddVerisoftIdentity(this IServiceCollection services, Action<IdentityConfigurationBuilder<IdentityUser>>? configuration = null)
     {
         AddVerisoftIdentity<IdentityUser, IdentityEntityFrameworkDbContext<IdentityUser>>(services, configuration);
 
         return services;
     }
 
-    public static IServiceCollection AddVerisoftIdentity<TUser, TIdetityDbContext>(this IServiceCollection services, Action<IdentityConfigurationBuilder<TUser>> configuration = null)
+    public static IServiceCollection AddVerisoftIdentity<TUser, TIdetityDbContext>(this IServiceCollection services, Action<IdentityConfigurationBuilder<TUser>>? configuration = null)
         where TUser : IdentityUser
         where TIdetityDbContext : IdentityDbContext<TUser>, IMigrable
     {
@@ -63,10 +63,10 @@ public static class InstallExtension
         using (var serviceScope = app.Services.CreateScope())
         {
             var migrable = serviceScope.ServiceProvider.GetService<TIdetityDbContext>();
-            migrable.Migrate();
+            migrable?.Migrate();
         }
 
-        app.MapPost(config.DefaultEndpointRoute, async ([FromBody] LoginModel model, [FromServices] ILoginService accountService) =>
+        app.MapPost(config!.DefaultEndpointRoute, async ([FromBody] LoginModel model, [FromServices] ILoginService accountService) =>
         {
             var token = await accountService.LoginAsync(model.Email, model.Password);
             if (token is not null)

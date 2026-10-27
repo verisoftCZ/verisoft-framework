@@ -18,14 +18,19 @@ namespace Verisoft.Core.Common.Linq.Specifications
             this.specification = specification;
         }
 
-        public Expression<Func<TParent, bool>> SatisfiedBy()
+        public Expression<Func<TParent, bool>>? SatisfiedBy()
         {
             var specificationExpression = specification.SatisfiedBy();
             var param = Expression.Parameter(typeof(TParent), "param");
 
-            var newFirst = new ReplaceExpressionVisitor(subExpression.Parameters.First(), param).Visit(subExpression.Body);
-            var newSecond = new ReplaceExpressionVisitor(specificationExpression.Parameters.First(), newFirst).Visit(specificationExpression.Body);
-            return Expression.Lambda<Func<TParent, bool>>(newSecond, param);
+            if (specificationExpression != null)
+            {
+                var newFirst = new ReplaceExpressionVisitor(subExpression.Parameters.First(), param).Visit(subExpression.Body);
+                var newSecond = new ReplaceExpressionVisitor(specificationExpression.Parameters.First(), newFirst).Visit(specificationExpression.Body);
+                return Expression.Lambda<Func<TParent, bool>>(newSecond, param);
+            }
+
+            return null;
         }
     }
 }

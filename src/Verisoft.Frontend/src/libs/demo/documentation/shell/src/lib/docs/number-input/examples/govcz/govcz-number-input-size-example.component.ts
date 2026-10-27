@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-number-input-size-example',
-  imports: [NumberInputComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-number-input-size-example',
+    imports: [NumberInputComponent],
+    template: template
 })
 export class GovCzNumberInputSizeExampleComponent {
   code = new DocumentationCodeBuilder()

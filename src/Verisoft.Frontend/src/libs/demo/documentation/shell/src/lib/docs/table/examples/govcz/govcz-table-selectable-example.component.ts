@@ -28,10 +28,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-table-loading-example',
-  imports: [TableComponent, RadioButtonComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-loading-example',
+    imports: [TableComponent, RadioButtonComponent, FormsModule],
+    template: template
 })
 export class GovCzTableSelectableExampleComponent {
   code = new DocumentationCodeBuilder()

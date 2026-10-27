@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,28 +25,26 @@ import { InputTextModule } from 'primeng/inputtext';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
-  selector: 'v-input-group',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-input-group',
+    imports: [
     InputGroupAddonModule,
     InputGroupModule,
     InputTextModule,
     ReactiveFormsModule,
-    FormFieldComponent,
-  ],
-  templateUrl: './input-group.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => InputGroupComponent),
-    },
-    {
-      provide: INPUT_GROUP_COMPONENT_TOKEN,
-      useExisting: InputGroupComponent,
-    },
-  ],
+    FormFieldComponent
+],
+    templateUrl: './input-group.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => InputGroupComponent),
+        },
+        {
+            provide: INPUT_GROUP_COMPONENT_TOKEN,
+            useExisting: InputGroupComponent,
+        },
+    ]
 })
 export class InputGroupComponent
   extends BaseFormInputComponent

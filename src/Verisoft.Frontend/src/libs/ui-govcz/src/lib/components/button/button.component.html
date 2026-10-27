@@ -1,25 +1,39 @@
-<div class="v-button d-inline-block">
+<div class="v-button" [class.v-button--expanded]="expanded">
+    @if (tooltip) {
+        <gov-tooltip [message]="tooltip | translate" [position]="tooltipPosition ?? 'top'">
+            <ng-container *ngTemplateOutlet="buttonTemplate" />
+        </gov-tooltip>
+    } @else {
+        <ng-container *ngTemplateOutlet="buttonTemplate" />
+    }
+</div>
+
+<ng-template #buttonTemplate>
     <a
+        tabindex="-1"
         [routerLink]="routerLink ? routerLink : undefined"
         [queryParams]="queryParams ? queryParams : undefined"
     >
         <gov-button
             [type]="outlined === true ? 'outlined' : type"
+            [class.v-button--rounded]="rounded"
             [color]="severity | govColor"
             [disabled]="disabled"
             [size]="size | govSize"
             [name]="name"
             [expanded]="expanded"
             (gov-click)="handleClick($event)"
+            (click)="handleClick($event)"
         >
-        @if (icon) {
-            <gov-icon 
-                [name]="icon"
-                [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
-            />
-        } @if (label) {
-            {{ label }}
-        }
+            @if (icon) {
+                <v-icon 
+                    [name]="icon"
+                    [library]="library"
+                    [slot]="iconPos === 'left' ? 'icon-start' : 'icon-end'"
+                />
+            } @if (label) {
+                {{ label | translate }}
+            }
         </gov-button>
     </a>
-</div>
+</ng-template>

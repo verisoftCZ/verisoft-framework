@@ -31,10 +31,9 @@ export class PrimengTableDataSourceObservableExampleComponent {
 }`;
 
 @Component({
-  selector: 'v-doc-primeng-table-datasource-observable-example',
-  imports: [TableComponent, TableDatasourceDirective],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-table-datasource-observable-example',
+    imports: [TableComponent, TableDatasourceDirective],
+    template: template
 })
 export class PrimengTableDataSourceObservableExampleComponent {
   code = new DocumentationCodeBuilder()

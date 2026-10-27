@@ -12,10 +12,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-text-field-size-example',
-  imports: [TextfieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-text-field-size-example',
+    imports: [TextfieldComponent],
+    template: template
 })
 export class GovCzTextFieldSizeExampleComponent {
   code = new DocumentationCodeBuilder()

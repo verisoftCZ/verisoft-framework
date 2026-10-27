@@ -2,5 +2,5 @@
 
 public class UserShowModel : UserEditModel
 {
-    public string Email { get; set; }
+    public string? Email { get; set; }
 }

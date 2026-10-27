@@ -8,13 +8,12 @@ import {
 import { getDocumentation } from './feature-list-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Feature List"
     description="Feature list is a custom component combining a table with bound filter component to ease usage and implementation."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class FeatureListDocComponent {
   builder = inject(DocumentationBuilderService);

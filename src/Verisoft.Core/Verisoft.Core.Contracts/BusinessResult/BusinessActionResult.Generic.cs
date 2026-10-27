@@ -34,7 +34,7 @@ public class BusinessActionResult<TResult> : BusinessActionResult
         Code = errors[0].Code;
     }
 
-    public TResult Data { get; set; }
+    public TResult? Data { get; set; }
 
     public static implicit operator BusinessActionResult<TResult>(TResult result)
     {
@@ -42,7 +42,7 @@ public class BusinessActionResult<TResult> : BusinessActionResult
         {
             var highestSeverityError = validatedObject.GetHighestSeverityValidationError();
 
-            return highestSeverityError.Code switch
+            return highestSeverityError?.Code switch
             {
                 ErrorFactory.NullInputErrorCode => new BusinessActionResult<TResult>(ErrorFactory.NullInput(highestSeverityError.PropertyName)),
                 ErrorFactory.NotFoundErrorCode => new BusinessActionResult<TResult>(ErrorFactory.NotFound(highestSeverityError.TryGetAttemptedValueValue("entityTypeName"), highestSeverityError.PropertyName, highestSeverityError.TryGetAttemptedValueValue("propertyValue"))),

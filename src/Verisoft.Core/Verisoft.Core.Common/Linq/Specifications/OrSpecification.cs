@@ -19,8 +19,8 @@ namespace Verisoft.Core.Common.Linq.Specifications
 
         public override Expression<Func<T, bool>> SatisfiedBy()
         {
-            Expression<Func<T, bool>> left = LeftSideSpecification.SatisfiedBy();
-            Expression<Func<T, bool>> right = RightSideSpecification.SatisfiedBy();
+            Expression<Func<T, bool>> left = LeftSideSpecification.SatisfiedBy()!;
+            Expression<Func<T, bool>> right = RightSideSpecification.SatisfiedBy()!;
             return left.Or(right);
         }
     }

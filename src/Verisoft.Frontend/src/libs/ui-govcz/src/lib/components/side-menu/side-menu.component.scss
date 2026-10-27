@@ -1,23 +1,17 @@
-.gov-category-list__nav-link gov-icon {
-    display: block;
-    position: absolute;
-    right: .625rem;
-    top: 1rem;
-    font-size: 1.5rem;
-    
-    &-:hover {
-        color: (--color-neutral-0);
-    }
-}
+.v-side-menu {
+    a {
+        &:hover {
+            background-color: var(--background-primary-subtle);
+            text-decoration: underline;
+        }
 
-.gov-link {
-    text-decoration: none;
-}
+        &.is-active {
+            background-color: var(--background-primary);
+            color: var(--text-white);
 
-.gov-category-list__nav-active {
-    background-color: var(--color-primary-600);
-    
-    & span {
-        color: var(--color-neutral-0);
+            & > * {
+                color: var(--text-white);
+            }
+        }
     }
 }

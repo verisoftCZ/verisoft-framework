@@ -108,15 +108,13 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-snackbar-advanced-example',
-  imports: [
-    SnackbarComponent,
-    ButtonComponent,
-    TextfieldComponent,
-    ReactiveFormsModule,
-  ],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-snackbar-advanced-example',
+    imports: [
+        ButtonComponent,
+        TextfieldComponent,
+        ReactiveFormsModule,
+    ],
+    template: template
 })
 export class PrimengSnackbarAdvancedExampleComponent implements OnInit {
   snackbar = inject(SnackbarService);

@@ -35,10 +35,9 @@ items: StepperItem[] = [
 `
 
 @Component({
-  selector: 'v-doc-govcz-stepper-basic-example',
-  imports: [StepperComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-stepper-basic-example',
+    imports: [StepperComponent],
+    template: template
 })
 export class GovCzStepperBasicExampleComponent {
   code = new DocumentationCodeBuilder()

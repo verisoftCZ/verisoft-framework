@@ -11,10 +11,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-text-area-size-example',
-  imports: [TextareaComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-text-area-size-example',
+    imports: [TextareaComponent],
+    template: template
 })
 export class PrimengTextAreaSizeExampleComponent {
   code = new DocumentationCodeBuilder()

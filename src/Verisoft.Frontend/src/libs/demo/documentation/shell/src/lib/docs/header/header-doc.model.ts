@@ -2,7 +2,12 @@ import {
   DocumentationBuilderService,
   DocumentationItem,
 } from '@verisoft/demo-documentation-ui';
-import { GovCzHeaderBasicExampleComponent, PrimengHeaderBasicExampleComponent } from './examples';
+import { 
+  GovCzHeaderBasicExampleComponent, 
+  GovCzHeaderContentProjectionExampleComponent,
+  PrimengHeaderBasicExampleComponent,
+  PrimengHeaderContentProjectionExampleComponent
+} from './examples';
 
 export function getDocumentation(
   builder: DocumentationBuilderService, isPrimeng?: boolean
@@ -21,6 +26,23 @@ export function getDocumentation(
             'The Header component is a custom-made element used for providing information about the Company (its name) and some information about the logged in user. For the user, it shows his username, user role and an avatar assigned to the account. The logo is handled by the side menu and is not meant to be used inside of the header.'
           )
           .addCodeComponent(isPrimeng ? PrimengHeaderBasicExampleComponent : GovCzHeaderBasicExampleComponent)
+      )
+      .addSection((s) =>
+        s
+          .title('Content Projection')
+          .addText(
+            'The Header component supports content projection through three distinct slots using HTML attribute selectors. This allows you to customize and extend its functionality by adding content to specific areas:'
+          )
+          .addText(
+            '* v-header-module - Displays module or context information between the title and user info. Use this attribute on a container element (e.g., <div v-header-module>) to show the current application module or section.'
+          )
+          .addText(
+            '* v-header-actions - Projects action buttons or controls. Add this attribute to a container (e.g., <div v-header-actions>) positioned near the user info section for common actions like notifications, settings, or quick actions.'
+          )
+          .addText(
+            '* v-header-info - Displays additional information or indicators. Apply this attribute to a container (e.g., <div v-header-info>) typically used for notifications, status badges, or supplementary user information.'
+          )
+          .addCodeComponent(isPrimeng ? PrimengHeaderContentProjectionExampleComponent : GovCzHeaderContentProjectionExampleComponent)
       )
       .addSection((s) =>
         s

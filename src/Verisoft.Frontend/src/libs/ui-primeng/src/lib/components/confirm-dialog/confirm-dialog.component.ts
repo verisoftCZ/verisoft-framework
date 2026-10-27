@@ -14,23 +14,22 @@ import { ButtonComponent } from '../button';
 import { DynamicComponent } from '../shared-components';
 
 @Component({
-  selector: 'v-confirm-dialog',
-  standalone: true,
-  imports: [
-    CommonModule,
-    DialogModule,
-    ButtonComponent,
-    AvatarModule,
-    DynamicComponent,
-  ],
-  templateUrl: './confirm-dialog.component.html',
-  styleUrl: './confirm-dialog.component.scss',
-  providers: [
-    {
-      provide: CONFIRM_DIALOG_COMPONENT_TOKEN,
-      useExisting: ConfirmDialogComponent,
-    },
-  ],
+    selector: 'v-confirm-dialog',
+    imports: [
+        CommonModule,
+        DialogModule,
+        ButtonComponent,
+        AvatarModule,
+        DynamicComponent,
+    ],
+    templateUrl: './confirm-dialog.component.html',
+    styleUrl: './confirm-dialog.component.scss',
+    providers: [
+        {
+            provide: CONFIRM_DIALOG_COMPONENT_TOKEN,
+            useExisting: ConfirmDialogComponent,
+        },
+    ]
 })
 export class ConfirmDialogComponent
   extends UnsubscribeComponent

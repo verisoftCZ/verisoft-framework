@@ -82,6 +82,15 @@ export const routes: Route[] = [
     import('./lib/docs/dropdown/dropdown-doc.routes').then((x) => x.routes),
   },
   {
+    path: 'dropdown-button',
+    data: {
+      breadcrumb: 'Dropdown Button',
+      breadcrumb_url: 'dropdown-button'
+    },
+    loadChildren: () => 
+    import('./lib/docs/dropdown-button/dropdown-button-doc.routes').then((x) => x.routes),
+  },
+  {
     path: 'form-field',
     data: {
       breadcrumb: 'Form Field',
@@ -98,6 +107,15 @@ export const routes: Route[] = [
     },
     loadChildren: () => 
     import('./lib/docs/header/header-doc.routes').then((x) => x.routes),
+  },
+  {
+    path: 'icon',
+    data: {
+      breadcrumb: 'Icon',
+      breadcrumb_url: 'icon'
+    },
+    loadChildren: () =>
+      import('./lib/docs/icon/icon-doc.routes').then((m) => m.routes),
   },
   {
     path: 'input-group',
@@ -239,6 +257,15 @@ export const routes: Route[] = [
       import('./lib/docs/tabview/tabview-doc.routes').then((m) => m.routes),
   },
   {
+    path: 'tag',
+    data: {
+      breadcrumb: 'Tag',
+      breadcrumb_url: 'tag'
+    },
+    loadChildren: () =>
+      import('./lib/docs/tag/tag-doc.routes').then((m) => m.routes),
+  },
+  {
     path: 'text-area',
     data: {
       breadcrumb: 'Text Area',
@@ -271,15 +298,6 @@ export const routes: Route[] = [
       tableName: 'USER_LIST',
     },
   }),
-  {
-    path: 'tristate-checkbox',
-    data: {
-      breadcrumb: 'Tristate Checkbox',
-      breadcrumb_url: 'tristate-checkbox'
-    },
-    loadChildren: () => 
-      import('./lib/docs/tristate-checkbox/tristate-checkbox-doc.routes').then((x) => x.routes),
-  },
   {
     path: '**',
     redirectTo: 'text-field',

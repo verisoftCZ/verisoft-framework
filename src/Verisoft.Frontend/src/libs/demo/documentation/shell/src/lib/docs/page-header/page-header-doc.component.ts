@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './page-header-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="Page Header"
     description="The PageHeader component provides a consistent header for pages, including a title, subtitle, and optional action buttons. It helps in maintaining a uniform look and feel across different sections of the application."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class PageHeaderDocComponent {
   builder = inject(DocumentationBuilderService);

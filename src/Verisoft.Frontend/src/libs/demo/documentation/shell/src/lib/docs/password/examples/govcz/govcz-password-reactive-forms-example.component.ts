@@ -34,10 +34,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-govcz-doc-password-reactive-forms-example',
-  imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-password-reactive-forms-example',
+    imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent],
+    template: template
 })
 export class GovCzPasswordReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

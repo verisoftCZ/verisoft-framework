@@ -43,10 +43,9 @@ ngOnInit(): void {
 `;
 
 @Component({
-  selector: 'v-doc-govcz-radiobutton-reactive-forms-example',
-  imports: [ReactiveFormsModule, RadioButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-radiobutton-reactive-forms-example',
+    imports: [ReactiveFormsModule, RadioButtonComponent],
+    template: template
 })
 export class GovCzRadiobuttonReactiveFormsExampleComponent implements OnInit {
   code = new DocumentationCodeBuilder()

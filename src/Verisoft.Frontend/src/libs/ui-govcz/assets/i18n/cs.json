@@ -1,0 +1,19 @@
+{
+    "VALIDATIONS": {
+        "REQUIRED": "Pole je povinné!",
+        "EMAIL": "Email je v chybém formátu!",
+        "PATTERN": "Input neodpovídá vzoru!",
+        "MIN_LENGTH": "Hodnota nemá dostatek znaků!",
+        "MAX_LENGTH": "Hodnota přesahuje maximum znaků!"
+    }, "TABLES": {
+        "NO_DATA": "Žádná data k zobrazení",
+        "LOADING": "Načítání dat...",
+        "ERROR": "Chyba při načítání dat",
+        "PAGINATION": {
+            "SHOWING": "Zobrazeno",
+            "TO": "až",
+            "OF": "z",
+            "ENTRIES": "záznamů"
+        }
+    }
+}

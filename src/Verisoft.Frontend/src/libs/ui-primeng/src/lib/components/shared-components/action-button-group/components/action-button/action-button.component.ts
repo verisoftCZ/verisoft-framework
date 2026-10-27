@@ -15,18 +15,16 @@ import {
   ControlSeverityType,
   FieldSizeType,
 } from '@verisoft/ui-core';
-import { TooltipModule } from 'primeng/tooltip';
 import { Observable, Subject } from 'rxjs';
-import { ButtonComponent } from '../../../../button';
 import { Icons } from '../../../../../icons';
+import { ButtonComponent } from '../../../../button';
 
 @Component({
-  selector: 'v-action-button',
-  standalone: true,
-  imports: [ButtonComponent, TooltipModule],
-  templateUrl: './action-button.component.html',
-  styleUrl: './action-button.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-action-button',
+    imports: [ButtonComponent],
+    templateUrl: './action-button.component.html',
+    styleUrl: './action-button.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionButtonComponent implements ActionButton, OnChanges {
   @Input() disabled = false;

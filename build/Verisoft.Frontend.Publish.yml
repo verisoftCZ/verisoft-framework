@@ -1,34 +1,58 @@
 pool:
   vmImage: ubuntu-latest
-  name: 'VerisoftHosted'
+  name: "VerisoftHosted"
 
-variables: 
-  applicationPath: 'src/Verisoft.Frontend'
+variables:
+  applicationPath: "src/Verisoft.Frontend"
+  nodeVersion: "20.x"
 
 trigger: none
 pr: none
 
+parameters:
+  - name: releaseType
+    displayName: "Release type (patch / minor / major)"
+    type: string
+    default: "patch"
+    values:
+      - patch
+      - minor
+      - major
+
 jobs:
-- job: Publish
-  displayName: Publish
-  timeoutInMinutes: 10
-  steps:
-  - checkout: self
-    fetchDepth: 0
+  - job: Publish
+    displayName: "Build and Publish Verisoft packages"
+    timeoutInMinutes: 20
 
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '20.x'
-      registryUrl: 'https://registry.npmjs.org/'
+    steps:
+      - checkout: self
+        fetchDepth: 0
 
-  - script: |
-      npm install --include=optional
-    displayName: 'Install dependencies'
-    workingDirectory: $(applicationPath)
+      - task: NodeTool@0
+        inputs:
+          versionSpec: "$(nodeVersion)"
+          registryUrl: "https://registry.npmjs.org/"
+        displayName: "Setup Node.js"
 
-  - script: |
-      npm run publish
-    displayName: 'Publish packages'
-    workingDirectory: $(applicationPath)
-    env:
-      NODE_AUTH_TOKEN: $(NPM_ACCESS_TOKEN)
+      - script: |
+          npm ci --include=optional
+        displayName: "Install dependencies"
+        workingDirectory: $(applicationPath)
+
+      - script: |
+          echo "Bumping version: ${{ parameters.releaseType }}"
+          npx nx release version --specifier ${{ parameters.releaseType }}
+        displayName: "Bump version"
+        workingDirectory: $(applicationPath)
+
+      - script: |
+          npx nx run-many --target=build --all --skip-nx-cache
+        displayName: "Build all packages"
+        workingDirectory: $(applicationPath)
+
+      - script: |
+          npx nx release publish --access public
+        displayName: "Publish packages to NPM"
+        workingDirectory: $(applicationPath)
+        env:
+          NODE_AUTH_TOKEN: $(NPM_ACCESS_TOKEN)

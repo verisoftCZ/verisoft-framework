@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,29 +25,27 @@ import {
   SlotPosition,
   FieldTypeType,
   FieldType,
-  ErrorPipe,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: 'v-input-group',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-input-group',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
     GovSizePipe,
-  ],
-  templateUrl: './input-group.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: INPUT_GROUP_COMPONENT_TOKEN,
-      useExisting: InputGroupComponent,
-    },
-  ],
+    ErrorComponent
+],
+    templateUrl: './input-group.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: INPUT_GROUP_COMPONENT_TOKEN,
+            useExisting: InputGroupComponent,
+        },
+    ]
 })
 export class InputGroupComponent
   extends BaseFormInputComponent
@@ -67,7 +65,6 @@ export class InputGroupComponent
   @Input() icon!: string;
   @Input() iconPos: IconPositionType = IconPosition.right;
   @Input() labelSlot: SlotPositionType = SlotPosition.top;
-  @Input() errorSlot: SlotPositionType = SlotPosition.bottom;
   @Input() messageSlot: SlotPositionType = SlotPosition.bottom;
 
   icons = Icons;

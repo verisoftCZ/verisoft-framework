@@ -41,7 +41,7 @@ public static class SpecificationExtender
             throw new ArgumentException("No specifications provided.", nameof(specifications));
         }
 
-        Specification<TEntity> combinedSpecification = null;
+        Specification<TEntity>? combinedSpecification = null;
         foreach (var spec in specifications)
         {
             if (combinedSpecification == null)
@@ -54,6 +54,6 @@ public static class SpecificationExtender
             }
         }
 
-        return combinedSpecification;
+        return combinedSpecification!;
     }
 }

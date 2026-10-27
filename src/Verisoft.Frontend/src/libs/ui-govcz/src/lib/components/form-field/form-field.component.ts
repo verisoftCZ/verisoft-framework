@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,7 +14,6 @@ import {
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
 import {
   BaseFormInputComponent,
-  ErrorPipe,
   FieldSize,
   FieldSizeType,
   FieldType,
@@ -26,28 +25,27 @@ import {
   SlotPosition,
   SlotPositionType,
 } from '@verisoft/ui-core';
-import { GovSizePipe } from '../../pipes';
 import { Icons } from '../../icons';
+import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: 'v-form-field',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-form-field',
+    imports: [
     ReactiveFormsModule,
     GovDesignSystemModule,
-    ErrorPipe,
     GovSizePipe,
-  ],
-  templateUrl: './form-field.component.html',
-  styleUrl: './form-field.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: FORM_FIELD_COMPONENT_TOKEN,
-      useExisting: FormFieldComponent,
-    },
-  ],
+    ErrorComponent
+],
+    templateUrl: './form-field.component.html',
+    styleUrl: './form-field.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: FORM_FIELD_COMPONENT_TOKEN,
+            useExisting: FormFieldComponent,
+        },
+    ]
 })
 export class FormFieldComponent
   extends BaseFormInputComponent
@@ -72,7 +70,6 @@ export class FormFieldComponent
   @Input() iconPos: IconPositionType = IconPosition.right;
   @Input() display!: 'flex' | 'block';
   @Input() labelSlot: SlotPositionType = SlotPosition.top;
-  @Input() errorSlot: SlotPositionType = SlotPosition.bottom;
   @Input() messageSlot: SlotPositionType = SlotPosition.bottom;
 
   icons = Icons;

@@ -22,16 +22,15 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-filter-basic-example',
-  imports: [
-    FilterComponent,
-    ActionButtonGroupComponent,
-    ActionButtonComponent,
-    FilterFieldDirective,
-    FormsModule,
-  ],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-filter-basic-example',
+    imports: [
+        FilterComponent,
+        ActionButtonGroupComponent,
+        ActionButtonComponent,
+        FilterFieldDirective,
+        FormsModule,
+    ],
+    template: template
 })
 export class PrimengFilterBasicExampleComponent {
   filter: unknown;

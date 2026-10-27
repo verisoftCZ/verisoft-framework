@@ -46,9 +46,8 @@ const typescript = `
 
 @Component({
   selector: 'v-doc-primeng-snackbar-basic-example',
-  imports: [SnackbarComponent, ButtonComponent],
-  standalone: true,
-  template: template,
+  imports: [ButtonComponent],
+  template: template
 })
 export class PrimengSnackbarBasicExampleComponent {
   snackbar = inject(SnackbarService);

@@ -3,16 +3,16 @@ import {
   Input,
   TemplateRef,
   ViewContainerRef,
-  OnInit,
   OnDestroy,
 } from '@angular/core';
 import { distinctUntilChanged, Subscription } from 'rxjs';
 import { AuthContextService } from '../services';
 
 @Directive({
+  standalone: true,
   selector: '[hasRole]',
 })
-export class HasRoleDirective<T> implements OnInit, OnDestroy {
+export class HasRoleDirective<T> implements OnDestroy {
   private requiredRoles: string | string[] | undefined;
   private sub?: Subscription;
 
@@ -28,10 +28,6 @@ export class HasRoleDirective<T> implements OnInit, OnDestroy {
     this.updateView();
   }
 
-  ngOnInit(): void {
-    this.updateView();
-  }
-
   ngOnDestroy(): void {
     this.unregister();
   }
@@ -42,7 +38,7 @@ export class HasRoleDirective<T> implements OnInit, OnDestroy {
 
   private updateView(): void {
     this.unregister();
-    if (this.requiredRoles) {
+    if (this.requiredRoles || this.requiredRoles?.length) {
       this.sub = this.authContext
         .hasRequiredRole(this.requiredRoles)
         .pipe(distinctUntilChanged())

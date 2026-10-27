@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,33 +12,33 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { BaseFormInputComponent, BaseInputControls, SWITCH_COMPONENT_TOKEN, SwitchCore } from '@verisoft/ui-core';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { v4 as uuidv4 } from 'uuid';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
-  selector: 'v-switch',
-  standalone: true,
-  imports: [
-    CommonModule,
-    InputSwitchModule,
+    selector: 'v-switch',
+    imports: [
+    ToggleSwitch,
     ReactiveFormsModule,
     FormFieldComponent,
-  ],
-  templateUrl: './switch.component.html',
-  styleUrl: './switch.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => SwitchComponent),
-      multi: true,
-    },
-    {
-      provide: SWITCH_COMPONENT_TOKEN,
-      useExisting: SwitchComponent,
-    },
-  ],
+    ErrorComponent
+],
+    templateUrl: './switch.component.html',
+    styleUrl: './switch.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => SwitchComponent),
+            multi: true,
+        },
+        {
+            provide: SWITCH_COMPONENT_TOKEN,
+            useExisting: SwitchComponent,
+        },
+    ]
 })
 export class SwitchComponent
   extends BaseFormInputComponent

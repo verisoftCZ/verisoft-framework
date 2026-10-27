@@ -30,10 +30,9 @@ formGroup = new FormGroup({
 `;
 
 @Component({
-  selector: 'v-doc-govcz-form-field-reactive-forms-example',
-  imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent, FormFieldComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-form-field-reactive-forms-example',
+    imports: [ReactiveFormsModule, TextfieldComponent, PasswordComponent, FormFieldComponent],
+    template: template
 })
 export class GovCzFormFieldReactiveFormsExampleComponent {
   code = new DocumentationCodeBuilder()

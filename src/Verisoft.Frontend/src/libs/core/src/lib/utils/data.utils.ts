@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export function transformData(data: any){
+export function transformData(data: any) {
   if (data) {
     if (moment.isMoment(data)) {
       return moment(data)
@@ -14,7 +14,7 @@ export function transformData(data: any){
   return data;
 }
 
-export function convertToDate(data: any){
+export function convertToDate(data: any) {
   if (data) {
     if (!isNaN(Date.parse(data))) {
       return new Date(data);
@@ -23,7 +23,7 @@ export function convertToDate(data: any){
   return data;
 }
 
-export function convertToDateTime(data: any){
+export function convertToDateTime(data: any) {
   if (data) {
     if (!isNaN(Date.parse(data))) {
       const date = new Date(data);

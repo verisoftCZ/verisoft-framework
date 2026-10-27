@@ -42,10 +42,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-text-area-reactive-forms-example',
-  imports: [TextareaComponent, ReactiveFormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-text-area-reactive-forms-example',
+    imports: [TextareaComponent, ReactiveFormsModule],
+    template: template
 })
 export class PrimengTextAreaReactFormsExampleComponent implements OnInit {
   formGroup = new FormGroup({

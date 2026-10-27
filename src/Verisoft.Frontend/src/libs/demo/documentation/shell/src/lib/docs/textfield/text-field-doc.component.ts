@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './text-field-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="TextField"
     description="TextField is an extension to standard input element with validation messages and label."
     [items]="items"
   ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class TextFieldDocComponent {
   builder = inject(DocumentationBuilderService);

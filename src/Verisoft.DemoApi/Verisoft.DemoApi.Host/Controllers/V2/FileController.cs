@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verisoft.Core.AspNet.Mvc;
@@ -10,9 +10,9 @@ namespace Verisoft.DemoApi.Host.Controllers.V2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("v{v:apiVersion}/[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 public class FileController : ControllerBase
 {
@@ -36,12 +36,17 @@ public class FileController : ControllerBase
     }
 
     [HttpGet("{fileName}")]
-    public async Task<IActionResult> DownloadFileAsync(string fileName)
+    public async Task<IActionResult?> DownloadFileAsync(string fileName)
     {
         try
         {
             var (stream, contentType) = await fileService.DownloadFileAsync(fileName);
-            return File(stream, contentType, fileName, enableRangeProcessing: true);
+            if (contentType != null && stream != null)
+            {
+                return File(stream, contentType, fileName, enableRangeProcessing: true);
+            }
+
+            return null;
         }
         catch (FileNotFoundException)
         {

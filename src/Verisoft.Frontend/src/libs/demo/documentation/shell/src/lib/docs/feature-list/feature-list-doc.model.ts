@@ -2,7 +2,7 @@ import {
   DocumentationBuilderService,
   DocumentationItem,
 } from '@verisoft/demo-documentation-ui';
-import { GovCzFeatureListBasicExampleComponent, GovCzFeatureListTemplateExampleComponent, PrimengFeatureListBasicExampleComponent, PrimengFeatureListTemplateExampleComponent } from './examples';
+import { GovCzFeatureListAutobindExampleComponent, GovCzFeatureListBasicExampleComponent, GovCzFeatureListServerExampleComponent, GovCzFeatureListTemplateExampleComponent, PrimengFeatureListAutobindExampleComponent, PrimengFeatureListBasicExampleComponent, PrimengFeatureListServerExampleComponent, PrimengFeatureListTemplateExampleComponent } from './examples';
 
 export function getDocumentation(
   builder: DocumentationBuilderService, isPrimeng?: boolean
@@ -29,6 +29,20 @@ export function getDocumentation(
             'The Feature List component allows you to configure its behavior and display by specifying various attributes in the template. You can customize the table to include features such as filtering, adding, downloading, and deleting by setting the corresponding properties.'
           )
           .addCodeComponent(isPrimeng ? PrimengFeatureListTemplateExampleComponent : GovCzFeatureListTemplateExampleComponent)
+      )
+      .addSection((s) =>
+          s.title('Server data source')
+          .addText(
+            `The datasource can also point directly to a backend endpoint by name - the FeatureList then fetches, filters and paginates the data itself. This example uses the demo API endpoint GET v2/User/list (see Verisoft.DemoApi.Host/Controllers/V2/UserController.cs), which returns a paged list (UserListData: data + total) mapped from UserListItem (firstName, surname, email). Note that this endpoint requires the DemoEdit or Admin role, so the demo user must be logged in for data to load.`
+          )
+          .addCodeComponent(isPrimeng ? PrimengFeatureListServerExampleComponent : GovCzFeatureListServerExampleComponent)
+      )
+      .addSection((s) =>
+          s.title('Manual load (autoBind)')
+          .addText(
+            `The FeatureList (and the underlying v-table) supports [autoBind]="false" to skip the automatic data fetch on init - data is only loaded once you explicitly call reload() on the FeatureList (e.g. from a template reference, as in this example) or once the user interacts with paging/sorting/filtering.`
+          )
+          .addCodeComponent(isPrimeng ? PrimengFeatureListAutobindExampleComponent : GovCzFeatureListAutobindExampleComponent)
       )
       .addSection((s) =>
         s

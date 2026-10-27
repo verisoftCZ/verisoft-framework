@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verisoft.DemoApi.Application.Services.Interfaces;
 using Verisoft.DemoApi.Contracts.Models.Auth;
@@ -7,9 +7,9 @@ namespace Verisoft.DemoApi.Host.Controllers.V1;
 
 [ApiController]
 [Route("[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status500InternalServerError, Type = typeof(Verisoft.Core.Contracts.FailureDetail))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError)]
 public class AuthController(ITokenService tokenService, IUserService personService, ILogger<AuthController> logger) : ControllerBase
 {
     private readonly ITokenService tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
@@ -17,8 +17,8 @@ public class AuthController(ITokenService tokenService, IUserService personServi
     private readonly ILogger<AuthController> logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [HttpGet("token")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticatedResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
+    [ProducesResponseType<AuthenticatedResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Token([FromQuery] string email)
     {
         var user = await userService.GetUserByEmailAsync(email);
@@ -37,8 +37,8 @@ public class AuthController(ITokenService tokenService, IUserService personServi
     }
 
     [HttpGet("apikeytoken")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AuthenticatedResponse))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
+    [ProducesResponseType<AuthenticatedResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ApiKeyToken([FromQuery] string apikey)
     {
         try

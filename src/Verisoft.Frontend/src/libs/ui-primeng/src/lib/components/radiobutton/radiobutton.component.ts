@@ -20,31 +20,32 @@ import {
   RadioButtonItem,
 } from '@verisoft/ui-core';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field/form-field.component';
 
 @Component({
-  selector: 'v-radiobutton',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormFieldComponent,
-    RadioButtonModule,
-    ReactiveFormsModule,
-  ],
-  templateUrl: './radiobutton.component.html',
-  styleUrl: './radiobutton.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: RadioButtonComponent,
-    },
-    {
-      provide: RADIOBUTTON_COMPONENT_TOKEN,
-      useExisting: RadioButtonComponent,
-    },
-  ],
+    selector: 'v-radiobutton',
+    imports: [
+        CommonModule,
+        FormFieldComponent,
+        RadioButtonModule,
+        ReactiveFormsModule,
+        ErrorComponent
+    ],
+    templateUrl: './radiobutton.component.html',
+    styleUrl: './radiobutton.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: RadioButtonComponent,
+        },
+        {
+            provide: RADIOBUTTON_COMPONENT_TOKEN,
+            useExisting: RadioButtonComponent,
+        },
+    ]
 })
 export class RadioButtonComponent<T>
   extends BaseFormInputComponent

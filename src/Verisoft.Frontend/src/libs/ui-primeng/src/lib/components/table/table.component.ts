@@ -29,6 +29,10 @@ import {
   ColumnDefinition,
   ColumnModel,
   ColumnProvider,
+  createRowDetailUrl,
+  hasRowDetailRoute,
+  navigateToRowDetail,
+  openRowDetailInNewWindow,
   RowModel,
   TABLE_COLUMN_PROVIDER,
   TABLE_COMPONENT_TOKEN,
@@ -39,31 +43,30 @@ import { SortMeta } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { Table, TableLazyLoadEvent, TableModule, TablePageEvent } from 'primeng/table';
+import { Icons } from '../../icons';
 import { TableFilterPipe } from './table-filter.pipe';
 import { convertToFilter } from './table.models';
-import { Icons } from '../../icons';
 
 @Component({
-  selector: 'v-table',
-  standalone: true,
-  imports: [
-    CommonModule,
-    TableModule,
-    RouterModule,
-    ButtonModule,
-    RippleModule,
-    TableFilterPipe,
-  ],
-  providers: [
-    {
-      provide: TABLE_COMPONENT_TOKEN,
-      useExisting: TableComponent,
-    },
-  ],
-  templateUrl: './table.component.html',
-  styleUrl: './table.component.scss',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-table',
+    imports: [
+        CommonModule,
+        TableModule,
+        RouterModule,
+        ButtonModule,
+        RippleModule,
+        TableFilterPipe,
+    ],
+    providers: [
+        {
+            provide: TABLE_COMPONENT_TOKEN,
+            useExisting: TableComponent,
+        },
+    ],
+    templateUrl: './table.component.html',
+    styleUrl: './table.component.scss',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent<T>
   implements AfterViewInit, OnChanges, TableCore<T>
@@ -118,6 +121,12 @@ export class TableComponent<T>
   entityKey: string | undefined;
 
   @Input()
+  maximumColumnLength = 0;
+
+  @Input()
+  disableCustomClicks = false;
+
+  @Input()
   set columns(value: ColumnDefinition<T>[]) {
     this._columns = value;
     this.tableColumns = (value ?? []).map((x) => new ColumnModel(x));
@@ -128,6 +137,8 @@ export class TableComponent<T>
   }
 
   @Input() selection: T[] = [];
+
+  @Input() rowClass: (data: RowModel<T>) => string = () => '';
 
   @Output()
   pageSizeChange = new EventEmitter<number>();
@@ -143,6 +154,9 @@ export class TableComponent<T>
 
   @Output()
   lazyLoad = new EventEmitter<LazyLoadEvent>();
+
+  @Output()
+  rowDoubleClick = new EventEmitter<T>();
 
   sorted!: boolean;
 
@@ -172,6 +186,32 @@ export class TableComponent<T>
 
   private _columns!: ColumnDefinition<T>[];
 
+  onRowDoubleClick(row: RowModel<T>): void {
+    if (this.disableCustomClicks) {
+      return;
+    }
+
+    if (this.rowDoubleClick.observed) {
+      this.rowDoubleClick.emit(row.row);
+      return;
+    }
+
+    if (!hasRowDetailRoute(this.route, createRowDetailUrl(row, this.entityKey))) {
+      return;
+    }
+
+    navigateToRowDetail(this.router, this.route, row, this.entityKey);
+  }
+
+  onRowMouseDown(row: RowModel<T>, event: MouseEvent): void {
+    if (this.disableCustomClicks || event.button !== 1) {
+      return;
+    }
+
+    event.preventDefault();
+    openRowDetailInNewWindow(this.router, this.route, row, this.entityKey);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
       this.updateRowModels();
@@ -189,6 +229,10 @@ export class TableComponent<T>
           this.table?._filter();
         }, 0);
     }
+
+    if (changes['columns']) {
+      this.applyColumnSorts();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -197,6 +241,7 @@ export class TableComponent<T>
         .toArray()
         .map((provider) => new ColumnModel(provider.getDefinition()));
       this.tableColumns = [...this.tableColumns, ...templateColumnModel];
+      this.applyColumnSorts();
     }
 
     this.expansionTemplate = {
@@ -279,5 +324,43 @@ export class TableComponent<T>
           direction: this.convertToSortDirection(x.order),
         }))
       : undefined;
+  }
+
+  private applyColumnSorts(): void {
+    const sorts = this.tableColumns
+      .filter((x) => x.sortable && x.sortDirection)
+      .sort((a, b) => (a.sortPriority ?? Number.MAX_SAFE_INTEGER) - (b.sortPriority ?? Number.MAX_SAFE_INTEGER))
+      .map((x) => ({
+        field: x.id,
+        direction: <SortDirectionType>x.sortDirection,
+      }));
+
+    if (!sorts.length) {
+      return;
+    }
+
+    const toSortMeta = (sort: Sort): SortMeta => ({
+      field: 'row.' + sort.field,
+      order: sort.direction === SortDirection.asc ? 1 : -1,
+    });
+
+    if (this.sortMultiple) {
+      this.sortMeta = sorts.map(toSortMeta);
+      this.sortSignleColumn = undefined;
+    } else {
+      this.sortSignleColumn = toSortMeta(sorts[0]);
+      this.sortMeta = undefined;
+    }
+
+    this.sortChange.emit(sorts);
+
+    if (this.lazy) {
+      this.fireLazyLoad({
+        first: (this.currentPage - 1) * this.pageSize,
+        rows: this.pageSize,
+      } as TableLazyLoadEvent);
+    }
+
+    this.cdRef.markForCheck();
   }
 }

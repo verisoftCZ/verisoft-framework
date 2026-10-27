@@ -38,10 +38,9 @@ items: MenuItem[] = [
 `;
 
 @Component({
-  selector: 'v-doc-govcz-side-menu-basic-example',
-  imports: [SideMenuComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-side-menu-basic-example',
+    imports: [SideMenuComponent],
+    template: template
 })
 export class GovCzSideMenuBasicExampleComponent {
   code = new DocumentationCodeBuilder()

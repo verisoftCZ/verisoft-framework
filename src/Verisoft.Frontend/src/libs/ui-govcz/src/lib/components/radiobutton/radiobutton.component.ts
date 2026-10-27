@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,7 +15,6 @@ import { RouterModule } from '@angular/router';
 import { GovDesignSystemModule } from '@gov-design-system-ce/angular';
 import {
   BaseFormInputComponent,
-  ErrorPipe,
   FieldSize,
   FieldSizeType,
   RADIOBUTTON_COMPONENT_TOKEN,
@@ -24,24 +23,26 @@ import {
 } from '@verisoft/ui-core';
 import { Icons } from '../../icons';
 import { GovSizePipe } from '../../pipes';
+import { ErrorComponent } from '../errors';
 
 @Component({
-  selector: "v-radiobutton",
-  standalone: true,
-  styleUrls: [
-    "./radiobutton.component.scss"
-  ],
-  templateUrl: './radiobutton.component.html',
-  imports: [
-    CommonModule, GovDesignSystemModule, RouterModule, ReactiveFormsModule, ErrorPipe, GovSizePipe
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: RADIOBUTTON_COMPONENT_TOKEN,
-      useExisting: RadioButtonComponent,
-    },
-  ],
+    selector: "v-radiobutton",
+    styleUrl: "./radiobutton.component.scss",
+    templateUrl: './radiobutton.component.html',
+    imports: [
+    GovDesignSystemModule,
+    RouterModule,
+    ReactiveFormsModule,
+    GovSizePipe,
+    ErrorComponent
+],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [
+        {
+            provide: RADIOBUTTON_COMPONENT_TOKEN,
+            useExisting: RadioButtonComponent,
+        },
+    ]
 })
 
 export class RadioButtonComponent<T>
@@ -51,8 +52,6 @@ export class RadioButtonComponent<T>
   @Input() radioGroupName = Math.random().toString();
   @Input() items: RadioButtonItem<T>[] = [];
   @Input() size: FieldSizeType = FieldSize.medium;
-  @Input() errorSlot: 'top' | 'bottom' = 'bottom';
-  @Input() disabled = false;
 
   icons = Icons;
 

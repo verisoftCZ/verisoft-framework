@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -27,44 +27,41 @@ import {
   DropdownCore
 } from '@verisoft/ui-core';
 import { ScrollerOptions } from 'primeng/api';
-import {
-  DropdownFilterEvent,
-  DropdownModule,
-} from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { MessageModule } from 'primeng/message';
 import { ScrollerLazyLoadEvent } from 'primeng/scroller';
+import { SelectModule, SelectFilterEvent } from 'primeng/select';
 import { TooltipModule } from 'primeng/tooltip';
 import { Subject } from 'rxjs';
+import { ErrorComponent } from '../errors';
 import { FormFieldComponent } from '../form-field';
 
 @Component({
-  selector: 'v-dropdown',
-  standalone: true,
-  imports: [
-    CommonModule,
+    selector: 'v-dropdown',
+    imports: [
     ReactiveFormsModule,
-    DropdownModule,
+    SelectModule,
     TooltipModule,
     FormFieldComponent,
     MessageModule,
     FloatLabelModule,
-  ],
-  templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: BaseInputControls,
-      useExisting: forwardRef(() => DropdownComponent),
-      multi: true,
-    },
-    {
-      provide: DROPDOWN_COMPONENT_TOKEN,
-      useExisting: DropdownComponent,
-    },
-  ],
+    ErrorComponent
+],
+    templateUrl: './dropdown.component.html',
+    styleUrls: ['./dropdown.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    providers: [
+        {
+            provide: BaseInputControls,
+            useExisting: forwardRef(() => DropdownComponent),
+            multi: true,
+        },
+        {
+            provide: DROPDOWN_COMPONENT_TOKEN,
+            useExisting: DropdownComponent,
+        },
+    ]
 })
 export class DropdownComponent<T>
   extends BaseFormInputComponent
@@ -88,6 +85,9 @@ export class DropdownComponent<T>
   @Input() loading = false;
   @Input() lazy = false;
   @Input() filter = true;
+  @Input() forceMinWidth = false;
+  @Input() showFilter = false;
+  @Input() localSearch = false;
 
   @Output() showed = new EventEmitter<any>();
   @Output() cleared = new EventEmitter<any>();
@@ -123,7 +123,7 @@ export class DropdownComponent<T>
     });
   }
 
-  filterChange(event: DropdownFilterEvent): void {
+  filterChange(event: SelectFilterEvent): void {
     this.filtered.emit({
       filter: event.filter,
     });

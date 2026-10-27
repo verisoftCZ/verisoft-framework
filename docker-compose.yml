@@ -1,37 +1,143 @@
-version: '3.4'
-
 services:
   api:
-    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/demoapi
+    image: ${DOCKER_REGISTRY:-}verisoft/verisoft_framework/demoapi
     build:
       context: ./src
       dockerfile: Verisoft.DemoApi/Verisoft.DemoApi.Host/Dockerfile
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keyvault-seed:
+        condition: service_completed_successfully
+      azurite:
+        condition: service_started
     environment:
       - ASPNETCORE_ENVIRONMENT=DevelopmentDocker
-      - ConnectionStrings__DefaultConnection=Server=db;Database=VerisoftFramework;User Id=sa;Password=your.password!;MultiSubnetFailover=True;TrustServerCertificate=True;Encrypt=False;Persist Security Info=True;
-      - RabbitMQ__Host=rabbitmq
+      - KeyVault__Uri=https://keyvault:4997
+      - KeyVault__AllowInsecureTls=true
+      - AzureAd__TenantId=common
+      - AzureAd__ClientId=demo-client
+      - AzureAd__ClientSecret=demo-secret
+      - AzureAd__AuthorityHost=https://keyvault:4997
+      - SeedData__Enabled=true
+      - MassTransit__Server__Url=rabbitmq://rabbitmq
+      - MassTransit__Server__UserName=user
+      - MassTransit__Server__Password=password
 
-  # frontend:
-  #    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/app
-  #    build:
-  #      context: ./src/Verisoft.Frontend
-  #      dockerfile: Dockerfile
-  #    depends_on:
-  #      - api
+  codebookapi:
+    image: ${DOCKER_REGISTRY:-}verisoft/verisoft_framework/codebookapi
+    build:
+      context: ./src
+      dockerfile: Verisoft.DemoApi/Verisoft.CodebookApi.Host/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keyvault-seed:
+        condition: service_completed_successfully
+    environment:
+      - ASPNETCORE_ENVIRONMENT=DevelopmentDocker
+      - KeyVault__Uri=https://keyvault:4997
+      - KeyVault__AllowInsecureTls=true
+      - AzureAd__TenantId=common
+      - AzureAd__ClientId=demo-client
+      - AzureAd__ClientSecret=demo-secret
+      - AzureAd__AuthorityHost=https://keyvault:4997
+      - MassTransit__Server__Url=rabbitmq://rabbitmq
+      - MassTransit__Server__UserName=user
+      - MassTransit__Server__Password=password
+
+  keyvault-cert-init:
+    image: alpine:3.20
+    command:
+      - /bin/sh
+      - -ec
+      - apk add --no-cache openssl >/dev/null; mkdir -p /certs; openssl req -x509 -nodes -newkey rsa:2048 -keyout /certs/emulator.key -out /certs/emulator.crt -days 365 -subj '/CN=keyvault'; openssl pkcs12 -export -out /certs/emulator.pfx -inkey /certs/emulator.key -in /certs/emulator.crt -passout pass:emulator
+    volumes:
+      - keyvault-certs:/certs
+    restart: "no"
+
+  keyvault:
+    image: jamesgoulddev/azure-keyvault-emulator:latest
+    depends_on:
+      keyvault-cert-init:
+        condition: service_completed_successfully
+    volumes:
+      - keyvault-certs:/certs
+    ports:
+      - 4997:4997
+    healthcheck:
+      test: ["CMD-SHELL", "echo | openssl s_client -connect localhost:4997 -servername keyvault >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  keyvault-seed:
+    image: curlimages/curl:8.10.1
+    depends_on:
+      keyvault:
+        condition: service_healthy
+    command: >
+      sh -ec '
+      until TOKEN=$$(curl -sk -X POST "https://keyvault:4997/common/oauth2/v2.0/token" -d "client_id=demo-client" -d "client_secret=demo-secret" -d "scope=https://vault.azure.net/.default" -d "grant_type=client_credentials" | sed -n "s/.*\"access_token\":\"\([^\"]*\)\".*/\1/p"); do sleep 2; done;
+      [ -n "$$TOKEN" ];
+      set_secret() {
+        name="$$1";
+        value="$$2";
+        escaped=$$(printf "%s" "$$value" | sed "s/\\\\/\\\\\\\\/g; s/\"/\\\\\"/g");
+        body="{\"value\":\"$$escaped\"}";
+        curl -skf -X PUT "https://keyvault:4997/secrets/$$name?api-version=7.4" -H "Authorization: Bearer $$TOKEN" -H "Content-Type: application/json" --data-binary "$$body" >/dev/null;
+      };
+      set_secret "apiSecret" "docker-dev-api-secret-2026-super-long-key-for-hs256-signing-min-33-bytes";
+      set_secret "ApplicationInsights--ConnectionString" "InstrumentationKey=guid-key;IngestionEndpoint=https://local.applicationinsights.invalid/";
+      set_secret "AzureAd--ClientId" "demo-client";
+      set_secret "AzureAd--TenantId" "common";
+      set_secret "ConnectionStrings--AzureBlobStorage" "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;";
+      set_secret "Database--ConnectionString" "Server=db;Initial Catalog=VerisoftFramework;Persist Security Info=False;User ID=sa;Password=${MSSQL_PASSWORD:-P@ssw0rd};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=180;";
+      echo "Key Vault secrets seeded";
+      '
+    restart: "no"
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite --blobHost 0.0.0.0 --blobPort 10000 --location /data --debug /data/debug.log
+    ports:
+      - 10000:10000
+    volumes:
+      - azurite-data:/data
+
+  frontend:
+     image: ${DOCKER_REGISTRY:-}verisoft/verisoft_framework/app
+     build:
+       context: ./src/Verisoft.Frontend
+       dockerfile: Dockerfile
+     depends_on:
+       - api
 
   db:
-    image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/db
+    image: ${DOCKER_REGISTRY:-}verisoft/verisoft_framework/db
     build:
       context: ./deploy/db
       dockerfile: Dockerfile
+      args:
+        MSSQL_PASSWORD: ${MSSQL_PASSWORD:-P@ssw0rd}
+    environment:
+      - MSSQL_PASSWORD=${MSSQL_PASSWORD:-P@ssw0rd}
     ports:
       - 1433:1433
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "${MSSQL_PASSWORD:-P@ssw0rd}", "-Q", "SELECT 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
 
   router:
-     image: ${DOCKER_REGISTRY}verisoft/verisoft_framework/router
+     image: ${DOCKER_REGISTRY:-}verisoft/verisoft_framework/router
      build:
        context: ./deploy/router
        dockerfile: Dockerfile
@@ -39,6 +145,7 @@ services:
        - 80:80
      depends_on:
        - api
+       - codebookapi
        - frontend
 
   rabbitmq:
@@ -50,3 +157,12 @@ services:
       environment:
         RABBITMQ_DEFAULT_USER: user
         RABBITMQ_DEFAULT_PASS: password
+      healthcheck:
+        test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
+        interval: 10s
+        timeout: 5s
+        retries: 10
+
+volumes:
+  keyvault-certs:
+  azurite-data:

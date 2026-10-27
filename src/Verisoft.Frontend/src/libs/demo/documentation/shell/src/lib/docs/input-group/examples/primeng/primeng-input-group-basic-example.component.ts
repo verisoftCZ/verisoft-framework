@@ -30,10 +30,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-input-group-basic-example',
-  imports: [InputGroupComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-input-group-basic-example',
+    imports: [InputGroupComponent],
+    template: template
 })
 export class PrimengInputGroupBasicExampleComponent {
   code = new DocumentationCodeBuilder()

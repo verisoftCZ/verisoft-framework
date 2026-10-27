@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,21 +16,23 @@ import {
   BaseInputControls,
   CALENDAR_COMPONENT_TOKEN,
   CalendarCore,
+  DateInputFilterDirective,
 } from '@verisoft/ui-core';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePicker } from 'primeng/datepicker';
 import { FloatLabelModule } from 'primeng/floatlabel';
-import { FormFieldComponent } from '../form-field';
 import { Icons } from '../../icons';
+import { ErrorComponent } from '../errors';
+import { FormFieldComponent } from '../form-field';
 
 @Component({
   selector: 'v-calendar',
-  standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    CalendarModule,
+    DatePicker,
     FormFieldComponent,
     FloatLabelModule,
+    ErrorComponent,
+    DateInputFilterDirective,
   ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
@@ -63,8 +64,9 @@ export class CalendarComponent
   @Input() floatLabel: string | undefined;
   @Input() selectionMode: 'single' | 'multiple' | 'range' | undefined =
     'single';
+  @Input() dateFormat?: string;
 
-    icons = Icons;
+  icons = Icons;
 
-  override formDisplay: "flex" | "block" = "block";
+  override formDisplay: 'flex' | 'block' = 'block';
 }

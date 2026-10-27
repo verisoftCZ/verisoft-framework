@@ -1,17 +1,12 @@
-﻿using Verisoft.Core.Authentication;
+﻿using Verisoft.Core.AspNet.Services;
 using Verisoft.Core.Common.TypeMapper;
 using Verisoft.Core.Contracts;
 using Verisoft.Core.Contracts.BusinessResult;
-using Verisoft.Core.ExportStrategies;
-using Verisoft.Core.ExportStrategies.Enums;
-using Verisoft.Core.ExportStrategies.ExportResult;
 using Verisoft.DemoApi.Application.Services.Interfaces;
 using Verisoft.DemoApi.Common.Entities;
-using Verisoft.DemoApi.Common.Enums;
 using Verisoft.DemoApi.Common.Repositories;
 using Verisoft.DemoApi.Common.Sorts;
 using Verisoft.DemoApi.Common.Specifications;
-using Verisoft.DemoApi.Contracts;
 using Verisoft.DemoApi.Contracts.Filters;
 using Verisoft.DemoApi.Contracts.Models.Client;
 
@@ -19,87 +14,33 @@ namespace Verisoft.DemoApi.Application.Services;
 
 public class ClientService(
     IClientRepository clientRepository,
-    ExportStrategyResolver<Client> exportStrategyResolver,
-    IUserContext httpUserContext,
     ITypeMapper typeMapper)
-: IClientService
+    : CrudService<Client, ClientEditModel, ClientEditModel, ClientListItem, ClientFilter, ClientSpecification, ClientSort, ClientEntity, int>(typeMapper, clientRepository), IClientService
 {
-    private const int MaxNumberOfRecords = 10_000;
+    public async Task<BusinessActionResult<Client>> AddClientAsync(ClientEditModel clientEditModel) => await AddAsync(clientEditModel);
 
-    public async Task<BusinessActionResult<Client>> AddClientAsync(ClientEditModel clientEditModel)
-    {
-        if (clientEditModel is null)
-        {
-            return ErrorFactory.NullInput(nameof(clientEditModel));
-        }
+    public async Task<BusinessActionResult<Client>> GetClientAsync(int id) => await GetAsync(id);
 
-        var clientEntity = typeMapper.Map<ClientEntity>(clientEditModel);
-        if (clientEditModel.ParentClientId.HasValue)
-        {
-            var clientParentEntityExists = await clientRepository.ExistsAsync(clientEditModel.ParentClientId.Value);
-            if (!clientParentEntityExists)
-            {
-                return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), clientEditModel.ParentClientId.Value);
-            }
-        }
-
-        await clientRepository.AddAsync(clientEntity);
-
-        clientRepository.UnitOfWork.Commit();
-
-        return typeMapper.Map<Client>(clientEntity);
-    }
-
-    public async Task<BusinessActionResult<Client>> GetClientAsync(int id)
-    {
-        var clientEntity = await clientRepository.GetAsync(id);
-        if (clientEntity is null)
-        {
-            return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), id);
-        }
-
-        return typeMapper.Map<Client>(clientEntity);
-    }
-
-    public async Task<ClientListData> GetClientListAsync(FilteredRequest<ClientFilter> request)
-    {
-        var clientSpecification = typeMapper.Map<ClientSpecification>(request.Filter);
-        var filter = clientSpecification?.SatisfiedBy();
-        var totalItems = await clientRepository.GetCountAsync(filter);
-        var items = await clientRepository.GetPagedSortAsync<ClientSort>(
-            request.Offset,
-            request.Limit,
-            filter,
-            request.Sort);
-        var mappedClientData = typeMapper.Map<ClientListItem>(items);
-
-        return new ClientListData
-        {
-            Total = totalItems,
-            Data = mappedClientData,
-        };
-    }
+    public async Task<PagedData<ClientListItem>> GetClientListAsync(FilteredRequest<ClientFilter> request) => await GetListAsync(request);
 
     public async Task<BusinessActionResult<ClientListData>> GetClientHistoryListAsync(FilteredRequest<ClientHistoryFilter> request)
     {
-        var clientSpecification = typeMapper.Map<ClientSpecification>(request.Filter);
-        var filter = clientSpecification?.SatisfiedBy();
-        var historyFilters = new HistoryFilters(request.Filter.HistoryQueryType, request.Filter?.PeriodStart, request.Filter?.PeriodEnd);
+        var clientSpecification = TypeMapper.Map<ClientSpecification>(request.Filter!);
+        var filter = clientSpecification.SatisfiedBy();
+        var historyFilters = new HistoryFilters(request.Filter!.HistoryQueryType, request.Filter?.PeriodStart, request.Filter?.PeriodEnd);
         try
         {
-            var totalItems = await clientRepository.GetHistoryCountAsync(filter, historyFilters);
             var items = await clientRepository.GetPagedHistoryAsync<ClientSort>(
                 request.Offset,
                 request.Limit,
                 filter,
-                request.Sort,
+                request.ParsedSorts,
                 historyFilters);
-
-            var mappedClientData = typeMapper.Map<ClientListItem>(items);
+            var mappedClientData = TypeMapper.Map<ClientListItem>(items.Items);
 
             return new ClientListData
             {
-                Total = totalItems,
+                Total = items.Count,
                 Data = mappedClientData,
             };
         }
@@ -109,71 +50,45 @@ public class ClientService(
         }
     }
 
-    public async Task<BusinessActionResult<ExportResult>> GetClientsForExportAsync(FilteredRequest<ClientFilter> request, ExportType exportType)
-    {
-        var clientSpecification = typeMapper.Map<ClientSpecification>(request.Filter);
-        var filter = clientSpecification?.SatisfiedBy();
-        var items = await clientRepository.GetPagedSortAsync<ClientSort>(0, GetLimit(), filter, request.Sort);
+    public async Task<BusinessActionResult> RemoveClientAsync(int id) => await RemoveAsync(id);
 
-        var clients = typeMapper.Map<Client>(items).ToList();
+    public async Task<BusinessActionResult<Client>> UpdateClientAsync(ClientEditModel clientEditModel, int id) => await UpdateAsync(id, clientEditModel);
 
-        try
-        {
-            var strategy = exportStrategyResolver.Resolve(exportType);
-            var result = await strategy.ExportAsync(clients);
-            return new BusinessActionResult<ExportResult>(result);
-        }
-        catch (NotSupportedException)
-        {
-            return ActionResultFactory.UnsupportedMediaType(exportType.ToString());
-        }
-    }
-
-    public async Task<BusinessActionResult<Client>> RemoveClientAsync(int id)
-    {
-        var clientEntity = await clientRepository.GetAsync(id);
-
-        if (clientEntity is null)
-        {
-            return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), id);
-        }
-
-        clientRepository.Remove(clientEntity);
-        clientRepository.UnitOfWork.Commit();
-
-        return typeMapper.Map<Client>(clientEntity);
-    }
-
-    public async Task<BusinessActionResult<Client>> UpdateClientAsync(ClientEditModel clientEditModel, int id)
-    {
-        if (clientEditModel is null)
-        {
-            return ErrorFactory.NullInput(nameof(clientEditModel));
-        }
-
-        var clientEntity = await clientRepository.GetAsync(id);
-        if (clientEditModel.ParentClientId.HasValue)
-        {
-            var clientParentEntityExists = await clientRepository.ExistsAsync(clientEditModel.ParentClientId.Value);
-            if (!clientParentEntityExists)
+    public Task<PagedData<ClientProjectionExample>> GetClientsProjectedAsync(FilteredRequest<ClientFilter> request) => GetProjectedListAsync(
+            request,
+            x => new ClientProjectionExample
             {
-                return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), clientEditModel.ParentClientId.Value);
-            }
-        }
+                ClientName = x.Name!,
+                DocumentNames = x.Documents.Select(d => d.Name).ToList(),
+            });
 
-        if (clientEntity is null)
+    public async Task<BusinessActionResult<ClientProjectionExample>> GetOneClientProjectedAsync(int id)
+    {
+        return await GetProjectedAsync(id, x => new ClientProjectionExample
         {
-            return ErrorFactory.NotFound<ClientEntity>(nameof(ClientEntity.Id), id);
-        }
-
-        clientEntity = typeMapper.Map(clientEditModel, clientEntity);
-        clientRepository.Update(clientEntity);
-        clientRepository.UnitOfWork.Commit();
-
-        return typeMapper.Map<Client>(clientEntity);
+            ClientName = x.Name!,
+            DocumentNames = x.Documents.Select(d => d.Name).ToList(),
+        });
     }
 
-    private int GetLimit() => httpUserContext.User.IsInRole(DemoApiPermissions.ExportAllClients.ToString())
-        ? int.MaxValue
-        : MaxNumberOfRecords;
+    protected override async Task<ClientEntity> AddMapAsync(ClientEditModel? createModel)
+    {
+        // Example of custom mapping logic during creation, if needed. Otherwise, the base mapping will be used.
+        await Task.Yield(); // Simulate async work before mapping if necessary
+        var mapped = await base.AddMapAsync(createModel);
+        await Task.Yield(); // Simulate async after mapping if necessary
+        return mapped;
+    }
+
+    // Example of custom validation logic during creation, if needed. Otherwise, the base validation will be used.
+    protected override async Task<BusinessActionErrors> GetAddValidationErrorsAsync(ClientEditModel createModel)
+    {
+        if (string.IsNullOrEmpty(createModel.Name) || createModel.Name.Length < 10)
+        {
+            return ErrorFactory.UnprocessableEntity("Clients must have really long names of at least 10 characters", new { createModel.Name });
+        }
+
+        return await base.GetAddValidationErrorsAsync(createModel);
+    }
+
 }

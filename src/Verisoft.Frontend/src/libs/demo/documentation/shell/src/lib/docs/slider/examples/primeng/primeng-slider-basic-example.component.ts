@@ -18,10 +18,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-slider-basic-example',
-  imports: [SliderComponent, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-primeng-slider-basic-example',
+    imports: [SliderComponent, FormsModule],
+    template: template
 })
 export class PrimengSliderBasicExampleComponent {
   value: number | null = null;

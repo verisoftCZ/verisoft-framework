@@ -3,13 +3,12 @@ import { DOCS_CONFIG, DocumentationBuilderService, DocumentationCofig, Documenta
 import { getDocumentation } from './form-field-doc.model';
 
 @Component({
-  template: `<v-doc-page
+    template: `<v-doc-page
     title="FormField"
     description="Formfield is custom wrapper around input elements designed to be always the same style and appearance."
     [items]="items"
     ></v-doc-page>`,
-  imports: [DocumentationPageComponent],
-  standalone: true,
+    imports: [DocumentationPageComponent]
 })
 export class FormFieldDocComponent {
   builder = inject(DocumentationBuilderService);

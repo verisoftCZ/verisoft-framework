@@ -9,12 +9,11 @@ import { sortBy } from '@verisoft/core';
 import { DocumentationTable, DocumentationTableItem } from '../../models';
 
 @Component({
-  selector: 'v-doc-table',
-  standalone: true,
-  imports: [],
-  templateUrl: './documentation-table.component.html',
-  styleUrl: './documentation-table.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'v-doc-table',
+    imports: [],
+    templateUrl: './documentation-table.component.html',
+    styleUrl: './documentation-table.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentationTableComponent implements OnChanges {
   @Input() table?: DocumentationTable;

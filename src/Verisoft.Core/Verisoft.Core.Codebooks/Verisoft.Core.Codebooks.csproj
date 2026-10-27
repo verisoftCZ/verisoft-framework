@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+	  <ProjectReference Include="..\Verisoft.Core.Codebooks.Common\Verisoft.Core.Codebooks.Common.csproj" />
+	  <ProjectReference Include="..\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
+	  <ProjectReference Include="..\Verisoft.Core.Validation\Verisoft.Core.Validation.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<CodeAnalysisRuleSet>../../.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+</Project>

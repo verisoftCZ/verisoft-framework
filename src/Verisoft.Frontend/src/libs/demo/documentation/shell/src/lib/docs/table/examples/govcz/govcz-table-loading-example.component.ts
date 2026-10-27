@@ -14,10 +14,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-table-loading-example',
-  imports: [TableComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-table-loading-example',
+    imports: [TableComponent],
+    template: template
 })
 export class GovCzTableLoadingExampleComponent {
   code = new DocumentationCodeBuilder()

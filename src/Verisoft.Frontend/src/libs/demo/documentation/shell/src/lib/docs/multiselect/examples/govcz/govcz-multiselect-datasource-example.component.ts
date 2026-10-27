@@ -38,10 +38,9 @@ interface Car {
 }
 
 @Component({
-  selector: 'v-doc-govcz-multiselect-datasource-example',
-  imports: [MultiselectComponent, DatasourceDirective, FormsModule],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-multiselect-datasource-example',
+    imports: [MultiselectComponent, DatasourceDirective, FormsModule],
+    template: template
 })
 export class GovCzMultiSelectDatasourceExampleComponent {
   code = new DocumentationCodeBuilder()

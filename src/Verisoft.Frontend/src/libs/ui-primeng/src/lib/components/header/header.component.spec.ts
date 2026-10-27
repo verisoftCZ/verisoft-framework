@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SETTINGS_MENU } from '@verisoft/ui-core';
 import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
@@ -8,6 +9,9 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
+      providers: [
+        { provide: SETTINGS_MENU, useValue: [] }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);

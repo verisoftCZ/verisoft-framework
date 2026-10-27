@@ -22,8 +22,17 @@ export function generateFormGroup(
         field.name,
         new UntypedFormControl(field.value, field.validator)
       );
+    } else if (control && control.value !== field.value) {
+      if ('value' in field) {
+        control.setValue(field.value);
+      }
+      control.setValidators(field.validator ?? null);
     } else {
       control.setValidators(field.validator ?? null);
+    }
+
+    if (field.readonly && (control || formGroup.get(field.name))) {
+      formGroup.get(field.name)?.disable();
     }
   });
   if (!inputGroupChanged) {
@@ -55,6 +64,6 @@ export function getColumnClass(value?: number): string | undefined {
     case 6:
       return 'col-12 col-md-2';
   }
-  
+
   return 'col-12 col-md-1';
 }

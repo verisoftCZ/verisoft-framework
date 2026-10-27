@@ -1,12 +1,13 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Verisoft.Core.AspNet.Mvc;
 using Verisoft.Core.Authentication.Permissions;
 using Verisoft.Core.Contracts;
 using Verisoft.Core.Contracts.BusinessResult;
-using Verisoft.Core.ExportStrategies.Enums;
-using Verisoft.Core.ExportStrategies.ExportResult;
+using Verisoft.Core.Contracts.Export;
+using Verisoft.Core.Export.Enums;
+using Verisoft.Core.Export.ExportResult;
 using Verisoft.DemoApi.Application.Services.Interfaces;
 using Verisoft.DemoApi.Common.Enums;
 using Verisoft.DemoApi.Contracts.Filters;
@@ -18,18 +19,18 @@ namespace Verisoft.DemoApi.Host.Controllers.V1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("v{v:apiVersion}/[controller]")]
-[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(UnauthorizedResult))]
-[ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(AuthorizationResult))]
-[ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BadRequestResponse))]
+[ProducesResponseType<UnauthorizedResult>(StatusCodes.Status401Unauthorized)]
+[ProducesResponseType<AuthorizationResult>(StatusCodes.Status403Forbidden)]
+[ProducesResponseType<BadRequestResponse>(StatusCodes.Status400BadRequest)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-public class ClientController(IClientService clientService)
+public class ClientController(IClientService clientService, IClientExportService clientExportService)
 {
     [HttpGet]
     [Route("{id}")]
     [HasPermission(DemoApiPermissions.ReadClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BusinessActionErrors))]
-    public async Task<IActionResult> GetClientAsync(int id)
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> GetClientAsync(int id)
     {
         var result = await clientService.GetClientAsync(id);
         return result.ToActionResult();
@@ -37,8 +38,8 @@ public class ClientController(IClientService clientService)
 
     [HttpGet]
     [HasPermission(DemoApiPermissions.ReadClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientListData))]
-    public async Task<ClientListData> GetClientListAsync([FromQuery] FilteredRequest<ClientFilter> request)
+    [ProducesResponseType<PagedData<ClientListItem>>(StatusCodes.Status200OK)]
+    public async Task<PagedData<ClientListItem>> GetClientListAsync([FromQuery] FilteredRequest<ClientFilter> request)
     {
         return await clientService.GetClientListAsync(request);
     }
@@ -46,8 +47,8 @@ public class ClientController(IClientService clientService)
     [HttpGet]
     [Route("history")]
     [HasPermission(DemoApiPermissions.ReadClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClientListData))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionResult<ClientListData>))]
+    [ProducesResponseType<ClientListData>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionResult<ClientListData>>(StatusCodes.Status400BadRequest)]
     public async Task<BusinessActionResult<ClientListData>> GetClientHistoryListAsync([FromQuery] FilteredRequest<ClientHistoryFilter> request)
     {
         return await clientService.GetClientHistoryListAsync(request);
@@ -56,16 +57,16 @@ public class ClientController(IClientService clientService)
     [HttpGet]
     [Route("export")]
     [HasPermission(DemoApiPermissions.ReadClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileStreamResult))]
-    [ProducesResponseType(StatusCodes.Status301MovedPermanently, Type = typeof(RedirectResult))]
-    [ProducesResponseType(StatusCodes.Status415UnsupportedMediaType, Type = typeof(JsonResult))]
-    public async Task<IActionResult> GetClientsAsync([FromQuery] FilteredRequest<ClientFilter> request, [FromQuery] ExportType exportType)
+    [ProducesResponseType<FileStreamResult>(StatusCodes.Status200OK)]
+    [ProducesResponseType<RedirectResult>(StatusCodes.Status301MovedPermanently)]
+    [ProducesResponseType<JsonResult>(StatusCodes.Status415UnsupportedMediaType)]
+    public async Task<IActionResult?> GetClientsAsync([FromQuery] ExportDataRequest<ClientFilter> request)
     {
-        var result = await clientService.GetClientsForExportAsync(request, exportType);
+        var result = await clientExportService.GetClientsForExportAsync(request);
 
         if (result.IsSuccess && result.Data is ExportFileResult fileResult)
         {
-            return new FileStreamResult(fileResult.FileStream, fileResult.FileType)
+            return new FileStreamResult(fileResult.FileStream!, fileResult.FileType!)
             {
                 FileDownloadName = fileResult.FileName,
             };
@@ -91,10 +92,10 @@ public class ClientController(IClientService clientService)
 
     [HttpPost]
     [HasPermission(DemoApiPermissions.UpdateClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(BusinessActionErrors<Client>))] // metoda zatim toto nevraci
-    public async Task<IActionResult> AddClientAsync(ClientEditModel clientEditModel)
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<BusinessActionErrors<Client>>(StatusCodes.Status422UnprocessableEntity)] // metoda zatim toto nevraci
+    public async Task<IActionResult?> AddClientAsync(ClientEditModel clientEditModel)
     {
         var result = await clientService.AddClientAsync(clientEditModel);
         return result.ToActionResult();
@@ -103,11 +104,11 @@ public class ClientController(IClientService clientService)
     [HttpPut]
     [Route("{id}")]
     [HasPermission(DemoApiPermissions.UpdateClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BusinessActionErrors))]
-    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity, Type = typeof(BusinessActionErrors<Client>))] // metoda zatim toto nevraci
-    public async Task<IActionResult> UpdateClientsAsync(ClientEditModel clientEditModel, int id)
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<BusinessActionErrors<Client>>(StatusCodes.Status422UnprocessableEntity)] // metoda zatim toto nevraci
+    public async Task<IActionResult?> UpdateClientsAsync(ClientEditModel clientEditModel, int id)
     {
         var result = await clientService.UpdateClientAsync(clientEditModel, id);
         return result.ToActionResult();
@@ -116,9 +117,9 @@ public class ClientController(IClientService clientService)
     [HttpDelete]
     [Route("{id}")]
     [HasPermission(DemoApiPermissions.DeleteClient)]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Client))]
-    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BusinessActionErrors))]
-    public async Task<IActionResult> DeleteClientAsync(int id)
+    [ProducesResponseType<Client>(StatusCodes.Status200OK)]
+    [ProducesResponseType<BusinessActionErrors>(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult?> DeleteClientAsync(int id)
     {
         var result = await clientService.RemoveClientAsync(id);
         return result.ToActionResult();

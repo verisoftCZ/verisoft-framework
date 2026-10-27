@@ -5,24 +5,7 @@
   flex-direction: column;
 }
 
-.v-table__loader-wrapper {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(59, 59, 59, 0.5);
-}
-
-.v-table__scroll-wrapper {
-  overflow: auto;
-}
-
 .v-table__sortable {
-  color: var(--text-primary-color);
-  text-decoration: underline;
   transition: color 0.15s ease-in-out;
   cursor: pointer;
 
@@ -47,34 +30,163 @@
 }
 
 .v-table__header {
-  background-color: var(--background-page);
+  background-color: var(--background-block-primary);
   position: sticky;
   top: 0;
   z-index: 2;
-
-  th {
-    font-size: 0.9rem;
-    font-weight: normal;
-    text-align: left;
-  }
-}
-
-.v-table__row {
-  line-height: 2.5rem;
-
-  &:hover {
-    background-color: var(--background-primary-subtle);
-  }
-
-  &.v-table__row--selected {
-    background-color: var(--background-primary);
-
-    td {
-      color: var(--text-white);
-    }
-  }
 }
 
 .v-table__table {
   width: 100%;
 }
+
+.v-table__paginator {
+  background-color: var(--background-neutral-white);
+  justify-content: end;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+}
+
+.gov-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.gov-table table {
+  table-layout: auto;
+  min-width: 100%;
+  border-collapse: collapse
+}
+
+.gov-table table tr.gov-table--highlight td {
+  background-color: var(--background-primary-subtle)
+}
+.gov-table table th,
+
+.gov-table table td {
+  border-bottom: 1px solid var(--border-subtlest);
+  text-align: left
+}
+
+.gov-table table th.gov-table--align-right,
+.gov-table table td.gov-table--align-right {
+  text-align: right
+}
+
+.gov-table table th.gov-table--vertical-align-top,
+.gov-table table td.gov-table--vertical-align-top {
+  vertical-align: top
+}
+
+.gov-table table th.gov-table--border-right,
+.gov-table table td.gov-table--border-right {
+  border-right: 1px solid var(--border-subtlest)
+}
+
+.gov-table table th.gov-table--border-left,
+.gov-table table td.gov-table--border-left {
+  border-left: 1px solid var(--border-subtlest)
+}
+
+.gov-table table th.gov-table--border-bottom-none,
+.gov-table table td.gov-table--border-bottom-none {
+  border-bottom: none
+}
+
+.gov-table table th.gov-table--nowrap,
+.gov-table table td.gov-table--nowrap {
+  white-space: nowrap
+}
+
+.gov-table table th.gov-table--fit-width,
+.gov-table table td.gov-table--fit-width {
+  width: 1px
+}
+
+.gov-table table th {
+  color: var(--text-primary);
+  background-color: var(--background-neutral-subtlest);
+}
+
+.gov-table table td {
+  background-color: var(--background-neutral-white)
+}
+
+.gov-table table tr.open td {
+  padding: var(--spacing-s) var(--spacing-m)
+}
+
+.gov-table summary::-webkit-details-marker {
+  display: none
+}
+
+.gov-table[size=s] table {
+  border-bottom-left-radius: var(--corner-radius-s);
+  border-bottom-right-radius: var(--corner-radius-s)
+}
+
+.gov-table[size=s] table th,
+.gov-table[size=s] table td {
+  height: var(--height-2xl);
+  padding: 0 var(--spacing-s);
+  font-size: var(--font-size-body-s);
+  line-height: 150%;
+  font-weight: 400
+}
+
+.gov-table[size=s] table th {
+  font-weight: 700
+}
+
+.gov-table[size=m] table {
+  border-bottom-left-radius: var(--corner-radius-m);
+  border-bottom-right-radius: var(--corner-radius-m)
+}
+
+.gov-table[size=m] table th,
+.gov-table[size=m] table td {
+  height: var(--height-3xl);
+  padding: 0 var(--spacing-m);
+  font-size: var(--font-size-body-m);
+  line-height: 150%;
+  font-weight: 400
+}
+
+.gov-table[size=m] table th {
+  font-weight: 700
+}
+
+.gov-table[size=l] table {
+  border-bottom-left-radius: var(--corner-radius-l);
+  border-bottom-right-radius: var(--corner-radius-l)
+}
+
+.gov-table[size=l] table th,
+.gov-table[size=l] table td {
+  height: var(--height-4xl);
+  padding: 0 var(--spacing-l);
+  font-size: var(--font-size-body-l);
+  line-height: 150%;
+  font-weight: 400
+}
+
+.gov-table[size=l] table th {
+  font-weight: 700
+}
+
+.gov-table-complex__name,
+.gov-table-complex__description {
+  margin:0;
+  color:var(--text-primary)
+}
+.gov-table-complex__actions {
+  color:var(--text-white-fixed);
+  background-color:var(--background-primary);
+  padding:var(--spacing-xs) var(--spacing-s)
+}
+.gov-table-complex__per-page {
+  width:185px;
+  white-space:nowrap
+}
+

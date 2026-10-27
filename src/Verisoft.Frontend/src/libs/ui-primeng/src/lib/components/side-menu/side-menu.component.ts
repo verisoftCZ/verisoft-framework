@@ -1,4 +1,4 @@
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass } from '@angular/common';
 import {
   AfterContentInit,
   ChangeDetectionStrategy,
@@ -15,25 +15,23 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MenuItem, ScreenSizeService, SideMenuCore, SideMenuService, UnsubscribeComponent } from '@verisoft/ui-core';
 import { AvatarModule } from 'primeng/avatar';
 import { TreeModule, TreeNodeSelectEvent } from 'primeng/tree';
-import { ButtonComponent } from '../button';
 import { Icons } from '../../icons';
+import { ButtonComponent } from '../button';
 
 @Component({
-  selector: 'v-side-menu',
-  standalone: true,
-  imports: [
+    selector: 'v-side-menu',
+    imports: [
     NgClass,
     AsyncPipe,
-    NgIf,
     TreeModule,
     ButtonComponent,
     TranslateModule,
     AvatarModule,
-    RouterModule,
-  ],
-  templateUrl: './side-menu.component.html',
-  styleUrl: './side-menu.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    RouterModule
+],
+    templateUrl: './side-menu.component.html',
+    styleUrl: './side-menu.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SideMenuComponent
   extends UnsubscribeComponent

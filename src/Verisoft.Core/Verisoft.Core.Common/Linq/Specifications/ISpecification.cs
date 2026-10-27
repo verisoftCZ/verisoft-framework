@@ -6,6 +6,6 @@ namespace Verisoft.Core.Common.Linq.Specifications
     public interface ISpecification<TEntity>
         where TEntity : class
     {
-        Expression<Func<TEntity, bool>> SatisfiedBy();
+        Expression<Func<TEntity, bool>>? SatisfiedBy();
     }
 }

@@ -1,24 +1,21 @@
-<div class="gov-sidemenu-inner">
+<div class="v-side-menu">
     <div class="gov-category-list__col gov-category-list__categories">
         <div class="gov-category-list__col-inner">
-            <ul class="gov-list--plain gov-category-list__nav">
-            @for (item of items; track item) {
+            <ul class="main-nav  gov-list--plain gov-category-list__nav">
+                @for (item of items; track item) {
                 @for (child of item.children; track child) {
-                    <li class="gov-category-list__nav-item">
-                        <a 
-                            class="gov-category-list__nav-link"
-                            [routerLink]="child.url"
-                            routerLinkActive="gov-category-list__nav-active"
-                            title="{{child.label}}"
-                        >
-                            <span class="gov-link gov-link--standalone">{{child.label}}</span>
+                <li class="gov-category-list__nav">
+                    <a class="gov-category-list__nav-link p-2 d-flex align-items-center" [routerLink]="child.url"
+                        routerLinkActive="is-active" title="{{child.label}}">
+                        <p class="gov-text--body-s">{{child.label}}
                             @if (child.children) {
                             <gov-icon [name]="icons.chevronDown" />
                             }
-                        </a>
-                    </li>
+                        </p>
+                    </a>
+                </li>
                 }
-            }
+                }
             </ul>
         </div>
     </div>

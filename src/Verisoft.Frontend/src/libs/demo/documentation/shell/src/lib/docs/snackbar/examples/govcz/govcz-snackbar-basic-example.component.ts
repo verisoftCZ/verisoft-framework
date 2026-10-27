@@ -5,7 +5,6 @@ import {
 } from '@verisoft/demo-documentation-ui';
 import {
   ButtonComponent,
-  SnackbarComponent,
   SnackbarService,
 } from '@verisoft/ui-govcz';
 
@@ -45,10 +44,9 @@ const typescript = `
 `;
 
 @Component({
-  selector: 'v-doc-govcz-snackbar-basic-example',
-  imports: [SnackbarComponent, ButtonComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-snackbar-basic-example',
+    imports: [ButtonComponent],
+    template: template
 })
 export class GovCzSnackbarBasicExampleComponent {
   snackbar = inject(SnackbarService);

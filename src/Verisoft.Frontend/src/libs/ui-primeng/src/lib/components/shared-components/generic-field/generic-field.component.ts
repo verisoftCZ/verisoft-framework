@@ -1,3 +1,4 @@
+
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,11 +8,13 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
+  DatasourceType,
   FilterEvent,
   LazyLoadEvent,
 } from '@verisoft/core';
 import {
   BaseFormInputComponent,
+  DatasourceDirective,
   FieldSize,
   FieldSizeType,
   GENERIC_FIELD_COMPONENT_TOKEN,
@@ -19,32 +22,32 @@ import {
   GenericFieldType,
   GenericFieldTypeType,
 } from '@verisoft/ui-core';
+import { Icons } from '../../../icons';
 import { CalendarComponent } from '../../calendar';
+import { CheckboxComponent } from '../../checkbox';
 import { DropdownComponent } from '../../dropdown';
 import { MultiselectComponent } from '../../multiselect';
 import { TextfieldComponent } from '../../textfield';
-import { TristatecheckboxComponent } from '../../tristatecheckbox';
-import { Icons } from '../../../icons';
 
 @Component({
-  selector: 'v-generic-field',
-  standalone: true,
-  imports: [
+    selector: 'v-generic-field',
+    imports: [
     DropdownComponent,
     CalendarComponent,
-    TristatecheckboxComponent,
     MultiselectComponent,
     TextfieldComponent,
     ReactiveFormsModule,
-  ],
-  providers: [
-    {
-      provide: GENERIC_FIELD_COMPONENT_TOKEN,
-      useExisting: GenericFieldComponent,
-    },
-  ],
-  templateUrl: './generic-field.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    CheckboxComponent,
+    DatasourceDirective
+],
+    providers: [
+        {
+            provide: GENERIC_FIELD_COMPONENT_TOKEN,
+            useExisting: GenericFieldComponent,
+        },
+    ],
+    templateUrl: './generic-field.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GenericFieldComponent<T>
   extends BaseFormInputComponent
@@ -67,6 +70,14 @@ export class GenericFieldComponent<T>
   @Input() lazy = false;
 
   @Input() filter = true;
+
+  @Input() datasource?: DatasourceType<T>
+
+  @Input() filterField?: string;
+
+  @Input() showFilter?: boolean;
+
+  @Input() localSearch?: boolean;
 
   @Output() changed = new EventEmitter<any>();
   @Output() showed = new EventEmitter<any>();

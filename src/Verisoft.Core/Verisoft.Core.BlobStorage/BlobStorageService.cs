@@ -6,13 +6,13 @@ namespace Verisoft.Core.BlobStorage;
 
 public class BlobStorageService(BlobServiceClient blobServiceClient, string containerName) : IBlobStorageService
 {
-    public async Task<string> UploadFileAsync(IFormFile file)
+    public async Task<string> UploadFileAsync(IFormFile file, PublicAccessType publicAccessType = PublicAccessType.None)
     {
         var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-        await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
+        await containerClient.CreateIfNotExistsAsync(publicAccessType);
 
         var blobClient = containerClient.GetBlobClient(file.FileName);
-        using (var stream = file.OpenReadStream())
+        await using (var stream = file.OpenReadStream())
         {
             await blobClient.UploadAsync(stream, true);
         }

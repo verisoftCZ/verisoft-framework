@@ -28,10 +28,9 @@ items: MenuItem[] = [
 `;
 
 @Component({
-  selector: 'v-doc-govcz-breadcrumb-basic-example',
-  imports: [BreadcrumbComponent],
-  standalone: true,
-  template: template,
+    selector: 'v-doc-govcz-breadcrumb-basic-example',
+    imports: [BreadcrumbComponent],
+    template: template
 })
 export class GovCzBreadcrumbBasicExampleComponent {
   code = new DocumentationCodeBuilder()

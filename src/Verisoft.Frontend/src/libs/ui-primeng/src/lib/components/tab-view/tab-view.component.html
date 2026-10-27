@@ -1,23 +1,41 @@
 <div class="v-tab-view">
   @if (useRouting) {
-  <p-tabMenu
-    [model]="mergedItems | tabMenu"
-    [activeItem]="items[activeIndex]"
-    (activeItemChange)="activeItemChanged($event)"
-  >
-  </p-tabMenu>
+  <p-tabs [value]="activeIndex">
+    <p-tablist>
+      @for(tab of mergedItems; track tab.url; let index = $index){
+      <p-tab [value]="index" [routerLink]="tab.url" (valueChange)="activeItemChanged(index)">
+        @if (tab.icon) {
+        <i [class]="tab.icon"></i>
+        }
+        <span>{{ tab.title }}</span>
+      </p-tab>
+      }
+    </p-tablist>
+  </p-tabs>
   <router-outlet></router-outlet>
   } @else {
-  <p-tabView (activeIndexChange)="activeItemChanged($event)">
-    @for (item of mergedItems; track item; let index = $index) {
-    <p-tabPanel [selected]="activeIndex === index" [header]="item.title" [disabled]="item.disabled === true">
-      @if (item.contentTemplate){
-      <ng-container *ngTemplateOutlet="item.contentTemplate"></ng-container>
-      } @else if (item.content) {
-      {{ item.content }}
+  <p-tabs [value]="activeIndex">
+    <p-tablist>
+      @for (tab of mergedItems; track tab; let index = $index) {
+      <p-tab [value]="index" (valueChange)="activeItemChanged(index)">
+        @if (tab.icon) {
+        <i [class]="tab.icon"></i>
+        }
+        <span>{{ tab.title }}</span>
+      </p-tab>
       }
-    </p-tabPanel>
-    }
-  </p-tabView>
+    </p-tablist>
+    <p-tabpanels>
+      @for (tab of mergedItems; track tab; let index = $index) {
+      <p-tabpanel [value]="index">
+        @if (tab.contentTemplate){
+        <ng-container *ngTemplateOutlet="tab.contentTemplate"></ng-container>
+        } @else if (tab.content) {
+        {{ tab.content }}
+        }
+      </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
   }
 </div>

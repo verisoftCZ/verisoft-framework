@@ -3,7 +3,7 @@ import {
   DOCS_CODE_LANG,
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
-import { TabViewModule } from '@verisoft/ui-govcz';
+import { TabViewComponent, TabViewItemComponent } from '@verisoft/ui-govcz';
 
 const template = `
 <div class="row">
@@ -25,9 +25,8 @@ const template = `
 
 @Component({
   selector: 'v-doc-govcz-tabview-basic-example',
-  imports: [TabViewModule],
-  standalone: true,
-  template: template,
+  imports: [TabViewComponent, TabViewItemComponent],
+  template: template
 })
 export class GovCzTabViewBasicExampleComponent {
   code = new DocumentationCodeBuilder()

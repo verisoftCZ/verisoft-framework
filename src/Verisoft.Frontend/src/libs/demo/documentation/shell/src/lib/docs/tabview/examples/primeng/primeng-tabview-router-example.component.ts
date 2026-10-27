@@ -3,7 +3,7 @@ import {
   DOCS_CODE_LANG,
   DocumentationCodeBuilder,
 } from '@verisoft/demo-documentation-ui';
-import { TabViewModule } from '@verisoft/ui-primeng';
+import { TabViewComponent, TabViewItemComponent } from '@verisoft/ui-primeng';
 
 const template = `
     <v-tab-view [useRouting]="true">
@@ -13,10 +13,9 @@ const template = `
 `;
 
 @Component({
-  selector: 'v-doc-primeng-tabview-size-example',
-  imports: [TabViewModule],
-  standalone: true,
-  template: template,
+  selector: 'v-doc-primeng-tabview-routing-example',
+  imports: [TabViewComponent, TabViewItemComponent],
+  template: template
 })
 export class PrimengTabViewRouterExampleComponent {
   code = new DocumentationCodeBuilder()
