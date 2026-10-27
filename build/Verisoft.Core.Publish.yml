@@ -1,0 +1,73 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+  name: "VerisoftHosted"
+
+variables:
+  # Major.Minor se meni rucne. Patch je counter, ktery pri zmene prefixu zacina znovu od seedu (17 = po 1.1.16).
+  versionPrefix: '1.1'
+  patch: $[counter(variables['versionPrefix'], 17)]
+  project: 'src/Verisoft.Core/*/*.csproj'
+  buildConfiguration: 'Release'
+  netCoreSdkVersion: '10.x'
+
+steps:
+- checkout: self
+  fetchDepth: 0
+  persistCredentials: true
+
+- script: echo "##vso[build.updatebuildnumber]$(versionPrefix).$(patch)"
+  displayName: 'Set version $(versionPrefix).$(patch)'
+
+- task: UseDotNet@2
+  displayName: 'Use .NET sdk $(netCoreSdkVersion)'
+  inputs:
+    version: $(netCoreSdkVersion)
+
+- task: UseDotNet@2
+  displayName: 'Install .NET 8 runtime'
+  inputs:
+    packageType: 'runtime'
+    version: '8.x'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '$(project)'
+    feedsToUse: 'select'
+    vstsFeed: '5e1c1cd0-6e9d-43e0-a570-faca2b5ac27c'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
+  inputs:
+    command: build
+    projects: '$(project)'
+    arguments: '-c $(buildConfiguration) --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet pack'
+  inputs:
+    command: pack
+    packagesToPack: '$(project)'
+    nobuild: true
+    versioningScheme: byBuildNumber
+    verbosityPack: Detailed
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+    nuGetFeedType: external
+    publishFeedCredentials: 'nuget org verisoft acc'
+
+# Tag na GitHubu se vytvori az po uspesnem publish.
+# Pouziva identitu Azure Pipelines GitHub App z checkoutu (persistCredentials), zadny PAT.
+- script: |
+    git -c user.name="Azure Pipelines" -c user.email="azure-pipelines@verisoft.cz" \
+      tag -a "nuget-v$(Build.BuildNumber)" "$(Build.SourceVersion)" -m "NuGet packages v$(Build.BuildNumber)"
+    git push origin "nuget-v$(Build.BuildNumber)"
+  displayName: 'Tag version on GitHub'

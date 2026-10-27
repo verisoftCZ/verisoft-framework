@@ -27,6 +27,7 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 0
+        persistCredentials: true
 
       - task: NodeTool@0
         inputs:
@@ -56,3 +57,16 @@ jobs:
         workingDirectory: $(applicationPath)
         env:
           NODE_AUTH_TOKEN: $(NPM_ACCESS_TOKEN)
+
+      - script: |
+          VERSION=$(node -p "require('./src/libs/core/package.json').version")
+          echo "##vso[task.setvariable variable=npmVersion]$VERSION"
+        displayName: "Read published version"
+        workingDirectory: $(applicationPath)
+
+      # Pouziva identitu Azure Pipelines GitHub App z checkoutu (persistCredentials), zadny PAT.
+      - script: |
+          git -c user.name="Azure Pipelines" -c user.email="azure-pipelines@verisoft.cz" \
+            tag -a "npm-v$(npmVersion)" "$(Build.SourceVersion)" -m "NPM packages v$(npmVersion)"
+          git push origin "npm-v$(npmVersion)"
+        displayName: "Tag version on GitHub"
