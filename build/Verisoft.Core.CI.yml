@@ -1,11 +1,18 @@
 trigger:
   branches:
     include:
-    - master
+    - main
     - releases/*
   paths:
     include:
     - src/Verisoft.Core/**
+
+# Bez filtru na cesty, aby se povinna kontrola v PR spustila vzdy.
+pr:
+  branches:
+    include:
+    - main
+    - releases/*
 
 pool:
   vmImage: 'ubuntu-latest'
