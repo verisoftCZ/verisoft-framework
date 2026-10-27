@@ -40,6 +40,18 @@ jobs:
         displayName: "Install dependencies"
         workingDirectory: $(applicationPath)
 
+      # Overi NPM token pred buildem; neplatny token vraci pri publish matouci 404.
+      - script: |
+          if [ -z "$NODE_AUTH_TOKEN" ] || [ "$NODE_AUTH_TOKEN" = '$(NPM_ACCESS_TOKEN)' ]; then
+            echo "##[error]Secret variable NPM_ACCESS_TOKEN is not set on this pipeline."
+            exit 1
+          fi
+          npm whoami
+        displayName: "Verify npm authentication"
+        workingDirectory: $(applicationPath)
+        env:
+          NODE_AUTH_TOKEN: $(NPM_ACCESS_TOKEN)
+
       - script: |
           echo "Bumping version: ${{ parameters.releaseType }}"
           npx nx release version --specifier ${{ parameters.releaseType }}
