@@ -1,53 +1,112 @@
-# Uloziste konfiguraci komponent
+# Úložiště konfigurací komponent
 
-`Verisoft.Core.ConfigurationStorage` (.NET 8 a .NET 10) uklada libovolne JSON
-konfigurace FE komponent do jedne relacni tabulky. Backend obsah neslucuje,
-neinterpretuje ani nekonvertuje mezi verzemi schematu.
+`Verisoft.Core.ConfigurationStorage` (.NET 8 a .NET 10) ukládá libovolné JSON
+konfigurace FE komponent do jedné relační tabulky. Backend obsah neslučuje,
+neinterpretuje ani nekonvertuje mezi verzemi schématu.
 
-## Datovy model a pravidla
+## Datový model a pravidla
 
 Tabulka `ComponentConfigurations` obsahuje `Id` (Guid), `Context`, `ComponentId`,
 `ConfigurationType`, `Level`, `UserId`, `Data`, `SchemaVersion` a `UpdatedAt` (UTC).
 
 | Pole | Pravidlo |
 | --- | --- |
-| Context | Aplikacni kontext, 1 az 100 znaku; nastavuje hostitel, nikoli klient |
-| ComponentId | Identifikator konkretni komponenty, 1 az 200 znaku |
-| ConfigurationType | Nezavisly druh konfigurace, 1 az 100 znaku, napr. table, export, filters |
+| Context | Aplikační kontext, 1 až 100 znaků; nastavuje hostitel, nikoli klient |
+| ComponentId | Identifikátor konkrétní komponenty, 1 až 200 znaků |
+| ConfigurationType | Nezávislý druh konfigurace, 1 až 100 znaků, např. table, export, filters |
 | Level | Admin = 1 (ADMIN), User = 2 (USER) |
-| UserId | Stabilni identifikator prihlaseneho uzivatele, nejvyse 200 znaku; pro ADMIN vzdy null |
-| Data | Libovolna syntakticky platna JSON hodnota; v API je JSON, nikoli escapovany retezec |
-| SchemaVersion | Kladne cislo, vychozi 1; verzi formatu a jeji interpretaci vlastni FE |
-| UpdatedAt | Cas posledniho ulozeni; urcuje server |
+| UserId | Stabilní identifikátor přihlášeného uživatele, nejvýše 200 znaků; pro ADMIN vždy null |
+| Data | Libovolná syntakticky platná JSON hodnota; v API je JSON, nikoli escapovaný řetězec |
+| SchemaVersion | Kladné číslo, výchozí 1; verzi formátu a její interpretaci vlastní FE |
+| UpdatedAt | Čas posledního uložení; určuje server |
 
-Filtrovane unikatni indexy zajistuji nejvyse jeden ADMIN zaznam pro
-`Context + ComponentId + ConfigurationType` a jeden USER zaznam pro
+Filtrované unikátní indexy zajišťují nejvýše jeden ADMIN záznam pro
+`Context + ComponentId + ConfigurationType` a jeden USER záznam pro
 `Context + ComponentId + ConfigurationType + UserId`.
-Databazova omezeni kontroluji soulad urovne s vlastnikem a kladnou verzi schematu.
-Mapovani a DemoApi migrace cili na SQL Server; relacni testy pouzivaji SQLite.
+Databázová omezení kontrolují soulad úrovně s vlastníkem a kladnou verzi schématu.
+Mapování a DemoApi migrace cílí na SQL Server; relační testy používají SQLite.
 
-PUT je upsert: vytvori zaznam, nebo nahradi cely JSON a verzi existujiciho zaznamu,
-pricemz zachova jeho `Id`. Pri kolizi dvou prvnich ulozeni unikatni index zabrani
-duplicite a sluzba zopakuje operaci jako aktualizaci. Soubazne zmeny nemaji ETag
-ani merge; vyhrava posledni uspesny zapis. Historie konfiguraci se neuklada.
-`SchemaVersion` neznamena historii zaznamu, ale verzi formatu JSONu.
+PUT je upsert: vytvoří záznam, nebo nahradí celý JSON a verzi existujícího záznamu,
+přičemž zachová jeho `Id`. Při kolizi dvou prvních uložení unikátní index zabrání
+duplicitě a služba zopakuje operaci jako aktualizaci. Souběžné změny nemají ETag
+ani merge; vyhrává poslední úspěšný zápis. Historie konfigurací se neukládá.
+`SchemaVersion` neznamená historii záznamu, ale verzi formátu JSONu.
 
-USER operace vzdy pouzivaji vlastnika z autentizacniho kontextu `IUserContext`.
-API neprijima `UserId`, `Context` ani cizi ID zaznamu jako cil operace.
-ADMIN konfigurace jsou citelne vsem prihlasenym uzivatelum ve stejnem kontextu;
-jejich zapis a mazani vyzaduji politiku `ConfigurationStorage.Admin`, vychozi roli
-`Admin`. Toto pravidlo kontroluje controller i sluzba pri primem pouziti pres DI.
+USER operace vždy používají vlastníka z autentizačního kontextu `IUserContext`.
+API nepřijímá `UserId`, `Context` ani cizí ID záznamu jako cíl operace.
+ADMIN konfigurace jsou čitelné všem přihlášeným uživatelům ve stejném kontextu;
+jejich zápis a mazání vyžadují politiku `ConfigurationStorage.Admin`, výchozí roli
+`Admin`. Toto pravidlo kontroluje controller i služba při přímém použití přes DI.
 
-Kontext je v teto verzi konfigurace hostitelske aplikace, ne automaticky tenant.
-Pro multitenantni aplikaci je treba zajistit duveryhodne oddeleni kontextu;
-nepouzivejte neoverenou hodnotu z FE jako autorizacni hranici.
-Pouzivejte stabilni, konzistentne psane klice a identifikatory uzivatelu.
+Kontext je v této verzi konfigurace hostitelské aplikace, ne automaticky tenant.
+Pro multitenantní aplikaci je třeba zajistit důvěryhodné oddělení kontextu;
+nepoužívejte neověřenou hodnotu z FE jako autorizační hranici.
+Používejte stabilní, konzistentně psané klíče a identifikátory uživatelů.
 
-## Zapojeni do jine aplikace
+## Souběh USER a ADMIN konfigurace
 
-Pridejte referenci na knihovnu a EF SQL Server provider odpovidajici verze.
-Zaregistrujte existujici `IUserContext`, ktery vraci prihlaseny `ClaimsPrincipal`,
-controller services a uloziste:
+Pro stejnou komponentu a typ konfigurace mohou a mají existovat obě úrovně.
+Například tyto záznamy jsou platné současně:
+
+| Context | ComponentId | ConfigurationType | Level | UserId | Data |
+| --- | --- | --- | --- | --- | --- |
+| DemoApi | users-list | table | ADMIN | null | { "pageSize": 50 } |
+| DemoApi | users-list | table | USER | user-456 | { "pageSize": 25 } |
+| DemoApi | users-list | table | USER | user-789 | { "pageSize": 100 } |
+
+Při čtení `users-list/table` dostane `user-456` ADMIN konfiguraci s hodnotou 50
+a svou USER konfiguraci s hodnotou 25. FE může upřednostnit vlastní nastavení 25.
+Uživatel `user-789` dostane stejnou ADMIN konfiguraci a svou USER hodnotu 100.
+Uživatel bez vlastní konfigurace dostane ADMIN konfiguraci a `user: null`.
+Po smazání vlastní konfigurace může FE znovu použít ADMIN nastavení.
+Backend tyto hodnoty neslučuje ani za FE nevybírá výsledek.
+
+Pořadí vytvoření úrovní nehraje roli: ADMIN lze uložit před USER i po něm.
+Zápis jedné úrovně nemění druhou. Opakovaný zápis stejného klíče ve stejné
+úrovni a pro stejného vlastníka aktualizuje existující záznam místo vytvoření dalšího.
+
+To se liší od správy více pojmenovaných presetů, např. "Project Configuration".
+Naše konfigurace nemá pole `Name`; `ComponentId` ani `ConfigurationType` nejsou
+názvy presetů, ale stabilní technické klíče. Nezakazujeme tedy shodu těchto klíčů
+mezi USER a ADMIN a nepřidáváme přípony jako " - System Configuration".
+Takový zákaz by znemožnil uživatelské nastavení nad společným ADMIN základem.
+Pokud by JSON obsahoval vlastní pole s názvem, backend je neinterpretuje
+a jeho unikátnost nekontroluje. Více pojmenovaných presetů a pravidla jejich
+názvů by byly samostatným rozšířením datového modelu a API.
+
+## K čemu slouží Context
+
+`Context` je jmenný prostor hostitelské aplikace v úložišti. Umožňuje oddělit
+konfigurace více aplikací, které sdílejí stejnou databázovou tabulku a používají
+stejné technické klíče. Například oba tyto ADMIN záznamy mohou existovat současně:
+
+| Context | ComponentId | ConfigurationType | Level | UserId | Data |
+| --- | --- | --- | --- | --- | --- |
+| SalesApp | users-list | table | ADMIN | null | { "pageSize": 25 } |
+| SupportApp | users-list | table | ADMIN | null | { "pageSize": 100 } |
+
+SalesApp zaregistruje úložiště s `options.Context = "SalesApp"`, SupportApp
+s `options.Context = "SupportApp"`. Každá pak přes úložiště čte a mění pouze
+své záznamy, i když obě požadují `users-list/table`. Stejné oddělení platí pro
+USER konfigurace, i když by obě aplikace používaly shodný `UserId`.
+
+Hodnota se nastavuje na serveru při registraci služby, nikoli v HTTP požadavku.
+DemoApi používá `"DemoApi"`, výchozí hodnota knihovny je `"default"`.
+`Context` je součástí unikátních indexů i podmínek pro čtení, zápis a mazání.
+Není to EF `DbContext`, databázové schéma ani automaticky identifikátor tenanta.
+Jde o logické oddělení dat v této službě, nikoli náhradu autentizace, autorizace
+nebo databázových oprávnění. Samotný `Context` nezajišťuje multitenantní bezpečnost.
+
+Pro jednu aplikaci s vlastní databází není další jmenný prostor nezbytný;
+v této implementaci zůstává součástí klíče kvůli možnosti sdílet tabulku mezi
+aplikacemi. Pokud více aplikací použije stejný `Context` ve stejné tabulce,
+budou záměrně pracovat se stejným prostorem konfigurací.
+
+## Zapojení do jiné aplikace
+
+Přidejte referenci na knihovnu a EF SQL Server provider odpovídající verze.
+Zaregistrujte existující `IUserContext`, který vrací přihlášený `ClaimsPrincipal`,
+controller services a úložiště:
 
 ```csharp
 using System.Security.Claims;
@@ -67,14 +126,14 @@ builder.Services.AddConfigurationStorage<AppDbContext>(
     configureAdminPolicy: policy => policy.RequireRole("Admin"));
 ```
 
-Vychozi claim je `ClaimTypes.NameIdentifier`. Pokud autentizace ponechava
-nemapovane JWT claims, nastavte napr. `options.UserIdClaimType = "sub"`.
-Claim musi byt stabilni a jednoznacny v ramci aplikacniho kontextu; samotne jmeno
-nebo e-mail se jako nahrada identifikatoru nepouzivaji. Pokud prijimate tokeny vice
-issueru, musi jejich identifikatory byt v tomto kontextu jednoznacne.
-Politiku lze zmenit napr. na `policy.RequireClaim("permission", "configuration.admin")`.
+Výchozí claim je `ClaimTypes.NameIdentifier`. Pokud autentizace ponechává
+nemapované JWT claims, nastavte např. `options.UserIdClaimType = "sub"`.
+Claim musí být stabilní a jednoznačný v rámci aplikačního kontextu; samotné jméno
+nebo e-mail se jako náhrada identifikátoru nepoužívají. Pokud přijímáte tokeny více
+issuerů, musí jejich identifikátory být v tomto kontextu jednoznačné.
+Politiku lze změnit např. na `policy.RequireClaim("permission", "configuration.admin")`.
 
-DbContext explicitne pripoji model:
+DbContext explicitně připojí model:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -84,8 +143,8 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-Zpristupnete zdedeny controller na vlastni route. V aplikaci s API versioningem
-pridejte take odpovidajici `[ApiVersion]`, jako v DemoApi:
+Zpřístupněte zděděný controller na vlastní route. V aplikaci s API versioningem
+přidejte také odpovídající `[ApiVersion]`, jako v DemoApi:
 
 ```csharp
 using Microsoft.AspNetCore.Mvc;
@@ -96,60 +155,60 @@ public sealed class ComponentConfigurationsController(IConfigurationStorage stor
     : ConfigurationStorageControllerBase(storage);
 ```
 
-Pipeline musi obsahovat autentizaci, autorizaci a `MapControllers()`.
-Pri registraci DbContextu pres vlastni rozhrani pouzijte parametr `contextFactory`,
-aby uloziste sdilelo stejnou scoped instanci. DemoApi tak pouziva `IDemoApiDbContext`.
-Pri primem volani `IConfigurationStorage` obsluzte `ValidationException` a
+Pipeline musí obsahovat autentizaci, autorizaci a `MapControllers()`.
+Při registraci DbContextu přes vlastní rozhraní použijte parametr `contextFactory`,
+aby úložiště sdílelo stejnou scoped instanci. DemoApi tak používá `IDemoApiDbContext`.
+Při přímém volání `IConfigurationStorage` obslužte `ValidationException` a
 `UnauthorizedAccessException`; HTTP controller je mapuje na 400 a 403.
-Pouzivejte kratke scoped instance DbContextu, typicky jednu pro kazdy pozadavek.
+Používejte krátké scoped instance DbContextu, typicky jednu pro každý požadavek.
 
 ## DemoApi a migrace
 
-DemoApi pouziva kontext `DemoApi` a prefix `/api/v2/component-configurations`.
-Lokalni launch profil posloucha na `http://localhost:6389`.
-Databaze a ostatni zavislosti DemoApi musi byt dostupne jako pri beznem spousteni.
+DemoApi používá kontext `DemoApi` a prefix `/api/v2/component-configurations`.
+Lokální launch profil poslouchá na `http://localhost:6389`.
+Databáze a ostatní závislosti DemoApi musí být dostupné jako při běžném spouštění.
 
-Migrace `20261103143146_AddComponentConfigurationStorage` vytvari pouze novou
-tabulku, indexy a kontrolni omezeni. `Down` tuto tabulku odstrani vcetne jejiho obsahu.
-Prikazy spoustejte z korene repozitare:
+Migrace `20261103143146_AddComponentConfigurationStorage` vytváří pouze novou
+tabulku, indexy a kontrolní omezení. `Down` tuto tabulku odstraní včetně jejího obsahu.
+Příkazy spouštějte z kořene repozitáře:
 
 ```powershell
 dotnet ef database update --project src/Verisoft.DemoApi/Verisoft.DemoApi.Data.EF --startup-project src/Verisoft.DemoApi/Verisoft.DemoApi.Data.EF --context DemoApiDbContext
 dotnet run --project src/Verisoft.DemoApi/Verisoft.DemoApi.Host
 ```
 
-Design-time factory nacte `Database:ConnectionString` z user secrets datoveho
-projektu nebo z promenne prostredi `Database__ConnectionString`. Volitelne lze
-predat connection string jako posledni argument za `--`. Pri update se aplikuji
-i dosud neprovedene starsi migrace. Nova aplikace si vygeneruje vlastni migraci
-ze sveho DbContextu; DemoApi migrace nejsou soucasti knihovny.
+Design-time factory načte `Database:ConnectionString` z user secrets datového
+projektu nebo z proměnné prostředí `Database__ConnectionString`. Volitelně lze
+předat connection string jako poslední argument za `--`. Při update se aplikují
+i dosud neprovedené starší migrace. Nová aplikace si vygeneruje vlastní migraci
+ze svého DbContextu; DemoApi migrace nejsou součástí knihovny.
 
-Autentizace pouziva `Authorization: Bearer <token>`. Existujici demo endpoint
-`GET /api/Auth/token?email=<email existujiciho uzivatele>` vraci token v poli `token`.
-Pozor: soucasny demo `TokenService` pridava roli `Admin` kazdemu tokenu. Takovy
-token tedy neoveri zamitnuti ADMIN zapisu beznemu uzivateli. Pro tento scenar
-pouzijte duveryhodne vydany token bez teto role; automaticke HTTP testy uz overuji
-obe identity samostatne. Knihovna sama roli zadnemu uzivateli neprideluje.
+Autentizace používá `Authorization: Bearer <token>`. Existující demo endpoint
+`GET /api/Auth/token?email=<email existujiciho uzivatele>` vrací token v poli `token`.
+Pozor: současný demo `TokenService` přidává roli `Admin` každému tokenu. Takový
+token tedy neověří zamítnutí ADMIN zápisu běžnému uživateli. Pro tento scénář
+použijte důvěryhodně vydaný token bez této role; automatické HTTP testy už ověřují
+obě identity samostatně. Knihovna sama roli žádnému uživateli nepřiděluje.
 
 ## HTTP API
 
-Relativni cesty v tabulce navazuji na `/api/v2/component-configurations`:
+Relativní cesty v tabulce navazují na `/api/v2/component-configurations`:
 
-| Metoda | Cesta | Vysledek |
+| Metoda | Cesta | Výsledek |
 | --- | --- | --- |
-| GET | /{componentId}/{configurationType} | 200, oddelene ADMIN a vlastni USER |
-| POST | /query | 200, davkove cteni dvojic komponenta/typ bez limitu poctu polozek |
-| PUT | /{componentId}/{configurationType}/user | 200, upsert vlastni konfigurace |
-| PUT | /{componentId}/{configurationType}/admin | 200, upsert sdilene konfigurace; pouze administrator |
-| DELETE | /{componentId}/{configurationType}/user | 204, nebo 404 pokud vlastni zaznam neexistuje |
-| DELETE | /{componentId}/{configurationType}/admin | 204, nebo 404; pouze administrator |
+| GET | /{componentId}/{configurationType} | 200, odděleně ADMIN a vlastní USER |
+| POST | /query | 200, dávkové čtení dvojic komponenta/typ bez limitu počtu položek |
+| PUT | /{componentId}/{configurationType}/user | 200, upsert vlastní konfigurace |
+| PUT | /{componentId}/{configurationType}/admin | 200, upsert sdílené konfigurace; pouze administrátor |
+| DELETE | /{componentId}/{configurationType}/user | 204, nebo 404 pokud vlastní záznam neexistuje |
+| DELETE | /{componentId}/{configurationType}/admin | 204, nebo 404; pouze administrátor |
 
-Neprihlaseny klient dostane 401, nedostatecne opravneni nebo chybejici stabilni
-identifikator 403. Chybny JSON, chybejici `data`, nekladna verze, neplatny klic
-nebo neplatna davka vraceji 400. JSON hodnota `null` je platny obsah konfigurace
-a neni totez co chybejici konfigurace.
+Nepřihlášený klient dostane 401, nedostatečné oprávnění nebo chybějící stabilní
+identifikátor 403. Chybný JSON, chybějící `data`, nekladná verze, neplatný klíč
+nebo neplatná dávka vracejí 400. JSON hodnota `null` je platný obsah konfigurace
+a není totéž co chybějící konfigurace.
 
-Ulozeni vlastni konfigurace:
+Uložení vlastní konfigurace:
 
 ```http
 PUT /api/v2/component-configurations/users-list/table/user
@@ -169,11 +228,11 @@ Content-Type: application/json
 }
 ```
 
-Pro ADMIN pouzijte stejne telo a cestu koncici `/admin`.
-Pro novou verzi formatu poslete novy JSON a vyssi `schemaVersion` stejnym PUT.
-Ruzne typy, napr. `table`, `export` a `filters`, se ukladaji nezavisle.
+Pro ADMIN použijte stejné tělo a cestu končící `/admin`.
+Pro novou verzi formátu pošlete nový JSON a vyšší `schemaVersion` stejným PUT.
+Různé typy, např. `table`, `export` a `filters`, se ukládají nezávisle.
 
-Davkove cteni:
+Dávkové čtení:
 
 ```http
 POST /api/v2/component-configurations/query
@@ -189,11 +248,11 @@ Content-Type: application/json
 }
 ```
 
-Odpoved obsahuje jednu polozku pro kazdou pozadovanou dvojici ve stejnem poradi.
-Prazdne pole `configurations` je platne a vraci prazdne pole vysledku.
-GET vraci stejnou strukturu, ale jako jeden objekt misto pole.
-DemoApi serializuje `level` jako retezec `Admin` nebo `User`; urovne jsou soucasne
-jednoznacne rozlisene poli `admin` a `user`.
+Odpověď obsahuje jednu položku pro každou požadovanou dvojici ve stejném pořadí.
+Prázdné pole `configurations` je platné a vrací prázdné pole výsledků.
+GET vrací stejnou strukturu, ale jako jeden objekt místo pole.
+DemoApi serializuje `level` jako řetězec `Admin` nebo `User`; úrovně jsou současně
+jednoznačně rozlišené poli `admin` a `user`.
 
 ```json
 {
@@ -210,12 +269,12 @@ jednoznacne rozlisene poli `admin` a `user`.
 }
 ```
 
-Pokud konfigurace neexistuji, HTTP cteni stale vraci 200 s `admin: null` a
-`user: null`. Nikdy nevraci konfiguraci jineho uzivatele.
+Pokud konfigurace neexistují, HTTP čtení stále vrací 200 s `admin: null` a
+`user: null`. Nikdy nevrací konfiguraci jiného uživatele.
 
-## Priklad FE
+## Příklad FE
 
-Jednoducha volba cele konfigurace respektujici prioritu USER pred ADMIN:
+Jednoduchá volba celé konfigurace respektující prioritu USER před ADMIN:
 
 ```javascript
 const response = await fetch(
@@ -228,14 +287,14 @@ const selected = available.user ?? available.admin;
 const configuration = selected ? selected.data : defaultsFromCode;
 ```
 
-Tento priklad nahrazuje celou konfiguraci. Skladani jednotlivych vlastnosti,
-podpora konkretnich verzi schematu a pripadna migrace JSONu jsou odpovednosti FE.
-Backend neposkytuje slouceny vysledek. Po smazani USER konfigurace tak FE muze
-znovu pouzit ADMIN; bez obou urovni pouzije nastaveni definovane v kodu.
-`filters` znamena dlouhodobe prednastaveni, nikoli aktualni hodnoty filtru;
-ty zustavaji v URL.
+Tento příklad nahrazuje celou konfiguraci. Skládání jednotlivých vlastností,
+podpora konkrétních verzí schématu a případná migrace JSONu jsou odpovědností FE.
+Backend neposkytuje sloučený výsledek. Po smazání USER konfigurace tak FE může
+znovu použít ADMIN; bez obou úrovní použije nastavení definované v kódu.
+`filters` znamená dlouhodobé přednastavení, nikoli aktuální hodnoty filtrů;
+ty zůstávají v URL.
 
-Kompletni pozadavky jsou v souboru
+Kompletní požadavky jsou v souboru
 [ComponentConfigurations.http](../../../src/Verisoft.DemoApi/Verisoft.DemoApi.Host/ComponentConfigurations.http).
 
 ## Testy
@@ -244,9 +303,9 @@ Kompletni pozadavky jsou v souboru
 dotnet test src/Verisoft.Core/Verisoft.Core.ConfigurationStorage.Test/Verisoft.Core.ConfigurationStorage.Test.csproj
 ```
 
-NUnit testy bezi na .NET 8 a .NET 10 bez externi databaze. Pokryvaji persistence,
-upsert vcetne kolize prvnich zapisu, omezeni vlastniku a unikatnosti, izolaci
-uzivatelu i aplikacnich kontextu, autorizaci ADMIN operaci, libovolny JSON,
-verzi schematu, mazani, chybejici konfigurace a davkove cteni.
-HTTP testy navic overuji routovani, model binding, stavove kody 400/401/403/404,
-ignorovani podstrceneho `UserId` a cely cyklus ulozeni/nacteni/smazani.
+NUnit testy běží na .NET 8 a .NET 10 bez externí databáze. Pokrývají persistenci,
+upsert včetně kolize prvních zápisů, omezení vlastníků a unikátnosti, izolaci
+uživatelů i aplikačních kontextů, autorizaci ADMIN operací, libovolný JSON,
+verzi schématu, mazání, chybějící konfigurace a dávkové čtení.
+HTTP testy navíc ověřují routování, model binding, stavové kódy 400/401/403/404,
+ignorování podstrčeného `UserId` a celý cyklus uložení/načtení/smazání.
