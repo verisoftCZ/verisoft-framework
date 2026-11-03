@@ -120,6 +120,62 @@ namespace Verisoft.DemoApi.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Verisoft.Core.ConfigurationStorage.ComponentConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ComponentId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ConfigurationType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SchemaVersion")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Context", "ComponentId", "ConfigurationType")
+                        .IsUnique()
+                        .HasFilter("[Level] = 1");
+
+                    b.HasIndex("Context", "ComponentId", "ConfigurationType", "UserId")
+                        .IsUnique()
+                        .HasFilter("[Level] = 2");
+
+                    b.ToTable("ComponentConfigurations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ComponentConfigurations_Owner", "([Level] = 1 AND [UserId] IS NULL) OR ([Level] = 2 AND [UserId] IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_ComponentConfigurations_SchemaVersion", "[SchemaVersion] > 0");
+                        });
+                });
+
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
                     b.Property<int>("Id")

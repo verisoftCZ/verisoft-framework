@@ -3,6 +3,7 @@ using Verisoft.Core.Authentication;
 using Verisoft.Core.Codebooks.Common.Entities.Configurations;
 using Verisoft.Core.Codebooks.Common.InstallExtensions.CodebookRegistration;
 using Verisoft.Core.Common.Configuration;
+using Verisoft.Core.ConfigurationStorage;
 using Verisoft.Core.Data.EntityFramework;
 using Verisoft.Core.Data.EntityFramework.Walkers;
 using Verisoft.DemoApi.Common.Entities;
@@ -33,6 +34,7 @@ public class DemoApiDbContext(IDatabaseConfig databaseConfig, ICodebookRegistry 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DemoApiDbContext).Assembly);
         modelBuilder.HasDefaultSchema(databaseConfig.DefaultSchema);
         modelBuilder.ApplyCodebookRecordConfigurations(codebookRegistry, true);
+        modelBuilder.AddConfigurationStorage();
 
         modelBuilder.Entity<UserEntity>()
             .HasIndex(u => u.Email)

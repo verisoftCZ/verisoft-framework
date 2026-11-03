@@ -26,6 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.ConfigurationStorage\Verisoft.Core.ConfigurationStorage.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Contracts\Verisoft.Core.Contracts.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
 	  <ProjectReference Include="..\..\Verisoft.Core\Verisoft.Core.Data\Verisoft.Core.Data.csproj" />

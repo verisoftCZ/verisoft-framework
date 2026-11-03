@@ -19,6 +19,7 @@ nepřevádí.
 - [Auditování](backend/03-Data/Auditovani.md)
 - [Concurrency a zamykání záznamů](backend/03-Data/Concurrency.md)
 - [Konfigurace](backend/04-Infrastruktura/Konfigurace.md)
+- [Uloziste konfiguraci komponent](backend/04-Infrastruktura/Configuration-storage.md)
 - [Lokální prostředí a kontejnery](backend/04-Infrastruktura/Kontejnerizace-a-lokální-prostředí.md)
 - [MassTransit a RabbitMQ](backend/04-Infrastruktura/MassTransit-RabbitMQ.md)
 - [Monitoring a health checks](backend/04-Infrastruktura/Monitoring.md)
