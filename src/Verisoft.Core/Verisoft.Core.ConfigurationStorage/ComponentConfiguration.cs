@@ -1,3 +1,5 @@
+using Verisoft.Core.Common.Entities;
+
 namespace Verisoft.Core.ConfigurationStorage;
 
 public enum ConfigurationLevel
@@ -6,10 +8,8 @@ public enum ConfigurationLevel
     User = 2,
 }
 
-public sealed class ComponentConfiguration
+public sealed class ComponentConfiguration : BaseEntity<Guid>
 {
-    public Guid Id { get; set; }
-
     public required string Context { get; set; }
 
     public required string ComponentId { get; set; }
@@ -23,6 +23,4 @@ public sealed class ComponentConfiguration
     public required string Data { get; set; }
 
     public int SchemaVersion { get; set; } = 1;
-
-    public DateTimeOffset UpdatedAt { get; set; }
 }

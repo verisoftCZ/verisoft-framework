@@ -9,8 +9,11 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 using Verisoft.Core.Authentication;
+using Verisoft.Core.Data.EntityFramework;
+using Verisoft.Core.Data.EntityFramework.Walkers;
 
 namespace Verisoft.Core.ConfigurationStorage.Test;
 
@@ -49,6 +52,59 @@ public class ConfigurationStorageTests
     {
         await provider.DisposeAsync();
         await connection.DisposeAsync();
+    }
+
+    [Test]
+    public async Task FrameworkAuditDoesNotReplaceStableOwnership()
+    {
+        identity.User = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, "alice"), new Claim(ClaimTypes.Name, "Alice Display")], "test"));
+        var first = await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
+        using (var scope = provider.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<StorageDbContext>();
+            var repository = scope.ServiceProvider.GetRequiredService<IComponentConfigurationRepository>();
+            Assert.That(repository.UnitOfWork, Is.SameAs(context));
+            var entity = await context.Set<ComponentConfiguration>().SingleAsync();
+            Assert.That(entity.CreatedBy, Is.EqualTo("Alice Display"));
+            Assert.That(entity.CreatedAt, Is.Not.Null);
+            Assert.That(entity.UserId, Is.EqualTo("alice"));
+            Assert.That(entity.UpdatedAt, Is.Null);
+            Assert.That(first.UpdatedAt.UtcDateTime, Is.EqualTo(entity.CreatedAt));
+        }
+
+        identity.User = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, "alice"), new Claim(ClaimTypes.Name, "Alice Renamed")], "test"));
+        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("[]")));
+        using var updatedScope = provider.CreateScope();
+        var updated = await updatedScope.ServiceProvider.GetRequiredService<StorageDbContext>().Set<ComponentConfiguration>().SingleAsync();
+        Assert.That(updated.CreatedBy, Is.EqualTo("Alice Display"));
+        Assert.That(updated.UpdatedBy, Is.EqualTo("Alice Renamed"));
+        Assert.That(updated.UserId, Is.EqualTo("alice"));
+        Assert.That(updated.UpdatedAt, Is.Not.Null);
+    }
+
+    [TestCase(ConfigurationLevel.User)]
+    [TestCase(ConfigurationLevel.Admin)]
+    public async Task SoftDeletePreservesAuditAndAllowsRecreation(ConfigurationLevel level)
+    {
+        identity.User = Principal("administrator", true);
+        var first = await Use(storage => storage.UpsertAsync(Key(), level, Request()));
+        Assert.That(await Use(storage => storage.DeleteAsync(Key(), level)), Is.True);
+        Assert.That(await Use(storage => storage.DeleteAsync(Key(), level)), Is.False);
+        var missing = (await Use(storage => storage.GetAsync([Key()]))).Single();
+        Assert.That(missing.Admin, Is.Null);
+        Assert.That(missing.User, Is.Null);
+        var recreated = await Use(storage => storage.UpsertAsync(Key(), level, Request("[]")));
+        Assert.That(recreated.Id, Is.Not.EqualTo(first.Id));
+        using var scope = provider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<StorageDbContext>();
+        Assert.That(await context.Set<ComponentConfiguration>().CountAsync(), Is.EqualTo(1));
+        var removed = await context.Set<ComponentConfiguration>().IgnoreQueryFilters().SingleAsync(entity => entity.Id == first.Id);
+        Assert.That(removed.IsDeleted, Is.True);
+        Assert.That(removed.UpdatedBy, Is.EqualTo("administrator"));
+        Assert.That(removed.UpdatedAt, Is.Not.Null);
+        Assert.That(await context.Set<ComponentConfiguration>().IgnoreQueryFilters().CountAsync(), Is.EqualTo(2));
     }
 
     [Test]
@@ -215,6 +271,65 @@ public class ConfigurationStorageTests
     }
 
     [Test]
+    public void PrincipalUserIdDefaultsToNameIdentifier()
+    {
+        IPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, "stable-alice"),
+            new Claim(ClaimTypes.Name, "Alice Display"),
+            new Claim("sub", "external-alice")], "test"));
+
+        Assert.That(principal.GetUserId(), Is.EqualTo("stable-alice"));
+        Assert.That(principal.GetUserId("sub"), Is.EqualTo("external-alice"));
+        Assert.That(principal.GetUserName(), Is.EqualTo("stable-alice"));
+    }
+
+    [Test]
+    public void PrincipalUserIdDoesNotFallBackToNameOrAnotherClaim()
+    {
+        IPrincipal principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim(ClaimTypes.Name, "alice")], "test"));
+        Assert.That(principal.GetUserName(), Is.EqualTo("alice"));
+        Assert.Throws<UnauthorizedAccessException>(() => principal.GetUserId());
+        Assert.Throws<UnauthorizedAccessException>(() => Principal("alice").GetUserId("sub"));
+    }
+
+    [TestCase("")]
+    [TestCase(" ")]
+    public void PrincipalUserIdRejectsBlankValues(string value)
+        => Assert.Throws<UnauthorizedAccessException>(() => Principal(value).GetUserId());
+
+    [TestCase("")]
+    [TestCase(" ")]
+    public void PrincipalUserIdRejectsBlankClaimTypes(string claimType)
+        => Assert.Throws<ArgumentException>(() => Principal("alice").GetUserId(claimType));
+
+    [Test]
+    public void PrincipalUserIdRequiresAuthenticatedClaimsPrincipal()
+    {
+        IPrincipal anonymous = new ClaimsPrincipal(new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, "alice")]));
+        Assert.Throws<UnauthorizedAccessException>(() => anonymous.GetUserId());
+        Assert.Throws<UnauthorizedAccessException>(() => new GenericPrincipal(new GenericIdentity("alice"), []).GetUserId());
+        Assert.Throws<UnauthorizedAccessException>(() => ((IPrincipal)null!).GetUserId());
+    }
+
+    [Test]
+    public async Task ConfiguredUserIdClaimControlsStorageOwnership()
+    {
+        identity.User = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, "alice"),
+            new Claim("sub", "external-alice")], "test"));
+        await using var customProvider = CreateProvider("app", "sub");
+        using var scope = customProvider.CreateScope();
+        var storage = scope.ServiceProvider.GetRequiredService<IConfigurationStorage>();
+        var saved = await storage.UpsertAsync(Key(), ConfigurationLevel.User, Request());
+        Assert.That((await storage.GetAsync([Key()])).Single().User!.Id, Is.EqualTo(saved.Id));
+        var entity = await scope.ServiceProvider.GetRequiredService<StorageDbContext>().Set<ComponentConfiguration>().SingleAsync();
+        Assert.That(entity.UserId, Is.EqualTo("external-alice"));
+        Assert.That((await Use(defaultStorage => defaultStorage.GetAsync([Key()]))).Single().User, Is.Null);
+        identity.User = Principal("alice");
+        Assert.ThrowsAsync<UnauthorizedAccessException>(() => storage.GetAsync([Key()]));
+    }
+
+    [Test]
     public void AnonymousOrMissingStableIdentityIsRejected()
     {
         identity.User = new ClaimsPrincipal(new ClaimsIdentity());
@@ -291,13 +406,17 @@ public class ConfigurationStorageTests
         Assert.That(persisted.SchemaVersion, Is.EqualTo(1));
     }
 
-    private ServiceProvider CreateProvider(string context)
+    private ServiceProvider CreateProvider(string context, string userIdClaimType = ClaimTypes.NameIdentifier)
     {
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSingleton<IUserContext>(identity);
         services.AddDbContext<StorageDbContext>(options => options.UseSqlite(connection).AddInterceptors(interceptor, queryInterceptor));
-        services.AddConfigurationStorage<StorageDbContext>(options => options.Context = context);
+        services.AddConfigurationStorage<StorageDbContext>(options =>
+        {
+            options.Context = context;
+            options.UserIdClaimType = userIdClaimType;
+        });
         return services.BuildServiceProvider();
     }
 
@@ -322,9 +441,22 @@ public class ConfigurationStorageTests
         => new() { Id = Guid.NewGuid(), Context = "app", ComponentId = "users-list", ConfigurationType = "table", Level = level, UserId = owner, Data = "{}" };
 }
 
-public sealed class StorageDbContext(DbContextOptions<StorageDbContext> options) : DbContext(options)
+public sealed class StorageDbContext(DbContextOptions<StorageDbContext> options, IUserContext userContext)
+    : EntityFrameworkDbContextBase(userContext, new WalkerFactory(NullLogger<CascadeWalker>.Instance), TimeProvider.System)
 {
-    protected override void OnModelCreating(ModelBuilder modelBuilder) => modelBuilder.AddConfigurationStorage();
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        foreach (var extension in options.Extensions)
+        {
+            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
+        }
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.AddConfigurationStorage();
+        base.OnModelCreating(modelBuilder);
+    }
 }
 
 internal sealed class StubUserContext : IUserContext
@@ -354,7 +486,8 @@ internal sealed class ConcurrentInsertInterceptor(SqliteConnection connection) :
         {
             Enabled = false;
             var pending = eventData.Context!.ChangeTracker.Entries<ComponentConfiguration>().Single(entry => entry.State == EntityState.Added).Entity;
-            await using var other = new StorageDbContext(new DbContextOptionsBuilder<StorageDbContext>().UseSqlite(connection).Options);
+            await using var other = new StorageDbContext(new DbContextOptionsBuilder<StorageDbContext>().UseSqlite(connection).Options,
+                new StubUserContext { User = ConfigurationStorageTests.Principal("concurrent-writer") });
             InsertedId = Guid.NewGuid();
             other.Add(new ComponentConfiguration
             {

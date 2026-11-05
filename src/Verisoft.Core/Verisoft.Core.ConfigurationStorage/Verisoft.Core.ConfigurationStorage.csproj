@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Verisoft.Core.Authentication\Verisoft.Core.Authentication.csproj" />
+    <ProjectReference Include="..\Verisoft.Core.Data.EF\Verisoft.Core.Data.EntityFramework.csproj" />
   </ItemGroup>
 </Project>

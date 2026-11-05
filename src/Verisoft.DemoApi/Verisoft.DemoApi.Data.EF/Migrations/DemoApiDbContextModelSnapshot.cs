@@ -144,9 +144,20 @@ namespace Verisoft.DemoApi.Database.Migrations
                         .HasColumnType("nvarchar(100)")
                         .UseCollation("Latin1_General_100_BIN2");
 
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.Property<string>("Data")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Level")
                         .HasColumnType("int");
@@ -154,8 +165,12 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Property<int>("SchemaVersion")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("UserId")
                         .HasMaxLength(200)
@@ -166,11 +181,11 @@ namespace Verisoft.DemoApi.Database.Migrations
 
                     b.HasIndex("Context", "ComponentId", "ConfigurationType")
                         .IsUnique()
-                        .HasFilter("[Level] = 1");
+                        .HasFilter("([Level] = 1) AND [IsDeleted] = CAST(0 AS bit)");
 
                     b.HasIndex("Context", "ComponentId", "ConfigurationType", "UserId")
                         .IsUnique()
-                        .HasFilter("[Level] = 2");
+                        .HasFilter("([Level] = 2) AND [IsDeleted] = CAST(0 AS bit)");
 
                     b.ToTable("ComponentConfigurations", null, t =>
                         {

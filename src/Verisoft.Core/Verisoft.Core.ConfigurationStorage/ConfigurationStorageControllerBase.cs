@@ -1,14 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Verisoft.Core.ConfigurationStorage;
 
 [ApiController]
 [Authorize]
-[TypeFilter(typeof(ConfigurationStorageExceptionFilter))]
 [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
 [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
 [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -53,33 +50,4 @@ public abstract class ConfigurationStorageControllerBase(IConfigurationStorage s
 
     private static ConfigurationKey Key(string componentId, string configurationType)
         => new() { ComponentId = componentId, ConfigurationType = configurationType };
-}
-
-public sealed class ConfigurationStorageExceptionFilter : IExceptionFilter
-{
-    public void OnException(ExceptionContext context)
-    {
-        if (context.Exception is ValidationException validation)
-        {
-            context.Result = new BadRequestObjectResult(new ValidationProblemDetails(
-                new Dictionary<string, string[]> { ["configuration"] = [validation.Message] })
-            {
-                Status = StatusCodes.Status400BadRequest,
-            });
-        }
-        else if (context.Exception is UnauthorizedAccessException)
-        {
-            context.Result = new ObjectResult(new ProblemDetails
-            {
-                Status = StatusCodes.Status403Forbidden,
-                Title = "The current identity cannot access this configuration operation.",
-            }) { StatusCode = StatusCodes.Status403Forbidden };
-        }
-        else
-        {
-            return;
-        }
-
-        context.ExceptionHandled = true;
-    }
 }

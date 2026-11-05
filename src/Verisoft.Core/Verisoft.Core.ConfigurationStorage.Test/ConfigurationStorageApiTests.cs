@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
+using Verisoft.Core.AspNet;
 using Verisoft.Core.Authentication;
 
 namespace Verisoft.Core.ConfigurationStorage.Test;
@@ -40,10 +41,12 @@ public class ConfigurationStorageApiTests
             .ConfigureServices(services =>
             {
                 services.AddLogging();
+                services.AddProblemDetails();
+                services.AddVerisoftExceptionHandlers();
                 services.AddHttpContextAccessor();
                 services.AddScoped<IUserContext>(provider => new StubUserContext
                 {
-                    User = provider.GetRequiredService<IHttpContextAccessor>().HttpContext!.User,
+                    User = provider.GetRequiredService<IHttpContextAccessor>().HttpContext?.User ?? new System.Security.Claims.ClaimsPrincipal(),
                 });
                 services.AddAuthentication("test").AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>("test", _ => { });
                 services.AddDbContext<StorageDbContext>(options => options.UseSqlite(connection));
@@ -52,6 +55,7 @@ public class ConfigurationStorageApiTests
             })
             .Configure(app =>
             {
+                app.UseExceptionHandler();
                 app.UseRouting();
                 app.UseAuthentication();
                 app.UseAuthorization();
@@ -70,6 +74,44 @@ public class ConfigurationStorageApiTests
         client.Dispose();
         host.Dispose();
         await connection.DisposeAsync();
+    }
+
+    [Test]
+    public async Task GlobalValidationWorksOutsideConfigurationController()
+    {
+        var response = await client.GetAsync("/shared-errors/validation");
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        Assert.That(problem!.Errors["name"], Is.EqualTo(new[] { "Name is required." }));
+    }
+
+    [TestCase("forbidden", HttpStatusCode.Forbidden)]
+    [TestCase("unexpected", HttpStatusCode.InternalServerError)]
+    public async Task GlobalErrorsDoNotExposeExceptionDetails(string kind, HttpStatusCode expected)
+    {
+        var response = await client.GetAsync("/shared-errors/" + kind);
+        Assert.That(response.StatusCode, Is.EqualTo(expected));
+        Assert.That(await response.Content.ReadAsStringAsync(), Does.Not.Contain("private exception detail"));
+    }
+
+    [Test]
+    public async Task ServiceValidationUsesGlobalProblemDetails()
+    {
+        var response = await client.GetAsync(Root + "/%20users-list/table");
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        Assert.That(problem!.Errors, Is.Not.Empty);
+    }
+
+    [Test]
+    public async Task InvalidOwnerUsesGlobalForbiddenResponse()
+    {
+        AsUser(new string('a', 201));
+        var response = await client.GetAsync(Single);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        Assert.That(problem!.Title, Is.EqualTo("Forbidden"));
+        Assert.That(problem.Detail, Is.Null);
     }
 
     [Test]
@@ -198,6 +240,20 @@ public class ConfigurationStorageApiTests
 
 [Route("configurations")]
 public sealed class TestConfigurationsController(IConfigurationStorage storage) : ConfigurationStorageControllerBase(storage);
+
+[ApiController]
+[Route("shared-errors")]
+public sealed class TestErrorsController : ControllerBase
+{
+    [HttpGet("{kind}")]
+    public IActionResult Get(string kind) => throw (kind switch
+    {
+        "validation" => new System.ComponentModel.DataAnnotations.ValidationException(
+            new System.ComponentModel.DataAnnotations.ValidationResult("Name is required.", ["name", "name"]), null, null),
+        "forbidden" => new UnauthorizedAccessException("private exception detail"),
+        _ => new InvalidOperationException("private exception detail"),
+    });
+}
 
 internal sealed class TestAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)

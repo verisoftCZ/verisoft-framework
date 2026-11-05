@@ -30,11 +30,11 @@ public class DemoApiDbContext(IDatabaseConfig databaseConfig, ICodebookRegistry 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AddConfigurationStorage();
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DemoApiDbContext).Assembly);
         modelBuilder.HasDefaultSchema(databaseConfig.DefaultSchema);
         modelBuilder.ApplyCodebookRecordConfigurations(codebookRegistry, true);
-        modelBuilder.AddConfigurationStorage();
 
         modelBuilder.Entity<UserEntity>()
             .HasIndex(u => u.Email)

@@ -4,10 +4,38 @@
 konfigurace FE komponent do jedné relační tabulky. Backend obsah neslučuje,
 neinterpretuje ani nekonvertuje mezi verzemi schématu.
 
+## Architektura
+
+MVC controller volá `IConfigurationStorage`, jehož implementací je
+`ConfigurationStorageService`. Služba řeší validaci, autentizaci, autorizaci
+a sestavení odpovědi; nemá přímou závislost na DbContextu. Doménové operace jsou
+upsert a čtení podle složeného klíče, nikoli obecné CRUD podle ID, proto služba
+poskytuje vlastní rozhraní místo zpřístupnění generického CRUD API.
+
+`IComponentConfigurationRepository` rozšiřuje frameworkové `IRepository`.
+`ComponentConfigurationRepository` dědí z `EntityFrameworkRepositoryBase`
+a řeší EF dotazy, parametrizaci dávek a persistenci. Upsert včetně commitu
+a opakování při kolizi prvního zápisu je jedna repository operace. Mazání
+používá `Remove` a služba následně volá `IUnitOfWork.CommitAsync`.
+
+`ComponentConfiguration` dědí z `BaseEntity<Guid>`. Audit, soft delete,
+query filter a rozšíření unikátních indexů zajišťuje
+`EntityFrameworkDbContextBase`. Repository sdílí scoped kontext hostitele.
+Repository je interní datová hranice aplikace, ne autorizované API; controllery
+a další konzumenti musí přistupovat přes službu.
+
+Chyby řeší globální handlery z `Verisoft.Core.AspNet`, registrované přes
+`AddVerisoftExceptionHandlers`: `ValidationException` vrací 400,
+`UnauthorizedAccessException` bezpečnou 403, neočekávané chyby nadále 500.
+Mapování platí pro celou aplikaci, nikoli pouze konfigurace. Vlastní handlery
+registrujte před frameworkovými; záchytný `GlobalExceptionHandler` musí být
+poslední. Controller nemá vlastní exception filter; MVC a API versioning zůstávají.
+
 ## Datový model a pravidla
 
 Tabulka `ComponentConfigurations` obsahuje `Id` (Guid), `Context`, `ComponentId`,
-`ConfigurationType`, `Level`, `UserId`, `Data`, `SchemaVersion` a `UpdatedAt` (UTC).
+`ConfigurationType`, `Level`, `UserId`, `Data`, `SchemaVersion` a auditní pole
+`CreatedBy`, `CreatedAt`, `UpdatedBy`, `UpdatedAt`, `IsDeleted` z `BaseEntity`.
 
 | Pole | Pravidlo |
 | --- | --- |
@@ -18,11 +46,12 @@ Tabulka `ComponentConfigurations` obsahuje `Id` (Guid), `Context`, `ComponentId`
 | UserId | Stabilní identifikátor přihlášeného uživatele, nejvýše 200 znaků; pro ADMIN vždy null |
 | Data | Libovolná syntakticky platná JSON hodnota; v API je JSON, nikoli escapovaný řetězec |
 | SchemaVersion | Kladné číslo, výchozí 1; verzi formátu a její interpretaci vlastní FE |
-| UpdatedAt | Čas posledního uložení; určuje server |
+| UpdatedAt | API vrací UTC čas posledního uložení: auditní UpdatedAt, nebo CreatedAt před první změnou |
 
-Filtrované unikátní indexy zajišťují nejvýše jeden ADMIN záznam pro
+Filtrované unikátní indexy zajišťují nejvýše jeden aktivní ADMIN záznam pro
 `Context + ComponentId + ConfigurationType` a jeden USER záznam pro
-`Context + ComponentId + ConfigurationType + UserId`.
+`Context + ComponentId + ConfigurationType + UserId`. Frameworková konvence
+do obou indexů přidává podmínku `IsDeleted = 0`.
 Databázová omezení kontrolují soulad úrovně s vlastníkem a kladnou verzi schématu.
 Mapování a DemoApi migrace cílí na SQL Server; relační testy používají SQLite.
 Sloupce `Context`, `ComponentId`, `ConfigurationType` a `UserId` používají binární
@@ -33,9 +62,19 @@ a konfigurační klíče s okrajovými mezerami, protože SQL Server by je při 
 
 PUT je upsert: vytvoří záznam, nebo nahradí celý JSON a verzi existujícího záznamu,
 přičemž zachová jeho `Id`. Při kolizi dvou prvních uložení unikátní index zabrání
-duplicitě a služba zopakuje operaci jako aktualizaci. Souběžné změny nemají ETag
-ani merge; vyhrává poslední úspěšný zápis. Historie konfigurací se neukládá.
+duplicitě a repository zopakuje operaci jako aktualizaci. Souběžné změny nemají ETag
+ani merge; vyhrává poslední úspěšný zápis. Historie změn JSONu se neukládá.
 `SchemaVersion` neznamená historii záznamu, ale verzi formátu JSONu.
+
+DELETE používá frameworkový soft delete: řádek zůstává v databázi s auditem
+mazání, ale čtení ho nevrací. Další PUT vytvoří nový aktivní řádek s novým `Id`.
+Smazaný JSON tedy zůstává uložený; případná retenční politika je odpovědností
+hostitelské aplikace.
+
+Auditní `CreatedBy` a `UpdatedBy` plní framework přes `IUserContext.GetUserName()`.
+Nejsou autorizačním klíčem: vlastnictví USER konfigurace nadále určuje stabilní
+`UserId` z claimu. Změna zobrazovaného jména ani jiný administrátor při změně
+ADMIN konfigurace nesmí změnit její vlastnictví.
 
 USER operace vždy používají vlastníka z autentizačního kontextu `IUserContext`.
 API nepřijímá `UserId`, `Context` ani cizí ID záznamu jako cíl operace.
@@ -110,16 +149,25 @@ budou záměrně pracovat se stejným prostorem konfigurací.
 ## Zapojení do jiné aplikace
 
 Přidejte referenci na knihovnu a EF SQL Server provider odpovídající verze.
+Hostitelský kontext musí dědit z `EntityFrameworkDbContextBase` s řádně
+inicializovanými `IUserContext`, `IWalkerFactory` a `TimeProvider`, jako DemoApi.
+Samostatný `DbContext` již není podporován, protože neposkytuje frameworkový
+audit a soft delete.
 Zaregistrujte existující `IUserContext`, který vrací přihlášený `ClaimsPrincipal`,
 controller services a úložiště:
 
 ```csharp
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Verisoft.Core.AspNet;
 using Verisoft.Core.ConfigurationStorage;
+using Verisoft.Core.Data.EntityFramework.Walkers;
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+builder.Services.AddVerisoftExceptionHandlers();
+builder.Services.AddScoped<IWalkerFactory, WalkerFactory>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 builder.Services.AddConfigurationStorage<AppDbContext>(
@@ -138,13 +186,14 @@ nebo e-mail se jako náhrada identifikátoru nepoužívají. Pokud přijímáte 
 issuerů, musí jejich identifikátory být v tomto kontextu jednoznačné.
 Politiku lze změnit např. na `policy.RequireClaim("permission", "configuration.admin")`.
 
-DbContext explicitně připojí model:
+DbContext explicitně připojí model před základním `OnModelCreating`, aby
+framework našel entitu při nastavení soft-delete query filtru:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    base.OnModelCreating(modelBuilder);
     modelBuilder.AddConfigurationStorage();
+    base.OnModelCreating(modelBuilder);
 }
 ```
 
@@ -160,11 +209,12 @@ public sealed class ComponentConfigurationsController(IConfigurationStorage stor
     : ConfigurationStorageControllerBase(storage);
 ```
 
-Pipeline musí obsahovat autentizaci, autorizaci a `MapControllers()`.
+Pipeline musí obsahovat `UseExceptionHandler()` před autentizací, autorizací
+a `MapControllers()`.
 Při registraci DbContextu přes vlastní rozhraní použijte parametr `contextFactory`,
 aby úložiště sdílelo stejnou scoped instanci. DemoApi tak používá `IDemoApiDbContext`.
 Při přímém volání `IConfigurationStorage` obslužte `ValidationException` a
-`UnauthorizedAccessException`; HTTP controller je mapuje na 400 a 403.
+`UnauthorizedAccessException`; HTTP middleware je přes globální handlery mapuje na 400 a 403.
 Používejte krátké scoped instance DbContextu, typicky jednu pro každý požadavek.
 
 ## DemoApi a migrace
@@ -177,6 +227,14 @@ Migrace `20261103143146_AddComponentConfigurationStorage` vytváří tabulku, in
 a kontrolní omezení. Navazující `20261105161804_ConfigurationStorageBinaryCollation`
 nastavuje binární kolaci klíčových sloupců a obnovuje unikátní indexy.
 Jejich `Down` operace odstraní tabulku, respektive vrátí původní kolaci.
+Migrace `20261105220323_ConfigurationStorageFrameworkEntity` přidává audit
+a soft delete a upravuje indexy přes frameworkovou konvenci. U starých řádků
+přebírá poslední známý čas do `CreatedAt` a nastaví `CreatedBy` na
+`configuration-storage:migration`; skutečný čas vytvoření ani původní autor
+nejsou zpětně známí. `UserId` a JSON zůstávají beze změny.
+Její `Down` trvale odstraní soft-deleted řádky (aby se neobnovily smazané
+konfigurace a nekolidovaly původní indexy), zachová aktivní řádky a jejich
+poslední čas uložení a odebere auditní sloupce. Před rollbackem zálohujte data.
 Příkazy spouštějte z kořene repozitáře:
 
 ```powershell
@@ -318,6 +376,9 @@ dotnet test src/Verisoft.Core/Verisoft.Core.ConfigurationStorage.Test/Verisoft.C
 NUnit testy běží na .NET 8 a .NET 10 bez externí databáze. Pokrývají persistenci,
 upsert včetně kolize prvních zápisů, omezení vlastníků a unikátnosti, izolaci
 uživatelů i aplikačních kontextů, autorizaci ADMIN operací, libovolný JSON,
-verzi schématu, mazání, chybějící konfigurace a dávkové čtení.
+verzi schématu, frameworkový audit, oddělení autora od vlastníka, soft delete
+a opětovné vytvoření klíče, chybějící konfigurace a dávkové čtení.
 HTTP testy navíc ověřují routování, model binding, stavové kódy 400/401/403/404,
 ignorování podstrčeného `UserId` a celý cyklus uložení/načtení/smazání.
+Globální handlery se testují také na controlleru mimo úložiště, včetně
+bezpečné odpovědi 500 bez zveřejnění textu neočekávané výjimky.

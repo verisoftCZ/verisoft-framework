@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Verisoft.Core.Data.EntityFramework;
 
 namespace Verisoft.Core.ConfigurationStorage;
 
@@ -22,7 +23,7 @@ public static class ConfigurationStorageExtensions
         Action<ConfigurationStorageOptions>? configure = null,
         Action<AuthorizationPolicyBuilder>? configureAdminPolicy = null,
         Func<IServiceProvider, TContext>? contextFactory = null)
-        where TContext : DbContext
+        where TContext : EntityFrameworkDbContextBase
     {
         services.AddOptions<ConfigurationStorageOptions>()
             .Configure(options => configure?.Invoke(options))
@@ -44,12 +45,9 @@ public static class ConfigurationStorageExtensions
             }
         }));
         services.TryAddSingleton(TimeProvider.System);
-        services.AddScoped<IConfigurationStorage>(provider => new ComponentConfigurationStorage<TContext>(
-            contextFactory is null ? provider.GetRequiredService<TContext>() : contextFactory(provider),
-            provider.GetRequiredService<Verisoft.Core.Authentication.IUserContext>(),
-            provider.GetRequiredService<IAuthorizationService>(),
-            provider.GetRequiredService<Microsoft.Extensions.Options.IOptions<ConfigurationStorageOptions>>(),
-            provider.GetRequiredService<TimeProvider>()));
+        services.TryAddScoped<IComponentConfigurationRepository>(provider => new ComponentConfigurationRepository(
+            contextFactory is null ? provider.GetRequiredService<TContext>() : contextFactory(provider)));
+        services.TryAddScoped<IConfigurationStorage, ConfigurationStorageService>();
         return services;
     }
 
