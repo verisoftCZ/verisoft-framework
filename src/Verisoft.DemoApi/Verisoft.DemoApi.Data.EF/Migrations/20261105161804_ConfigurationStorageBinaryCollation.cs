@@ -10,6 +10,10 @@ namespace Verisoft.DemoApi.Data.EF.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropCheckConstraint(
+                name: "CK_ComponentConfigurations_Owner",
+                table: "ComponentConfigurations");
+
             migrationBuilder.DropIndex(
                 name: "IX_ComponentConfigurations_Context_ComponentId_ConfigurationType",
                 table: "ComponentConfigurations");
@@ -76,11 +80,20 @@ namespace Verisoft.DemoApi.Data.EF.Migrations
                 columns: new[] { "Context", "ComponentId", "ConfigurationType", "UserId" },
                 unique: true,
                 filter: "[Level] = 2");
+
+            migrationBuilder.AddCheckConstraint(
+                name: "CK_ComponentConfigurations_Owner",
+                table: "ComponentConfigurations",
+                sql: "([Level] = 1 AND [UserId] IS NULL) OR ([Level] = 2 AND [UserId] IS NOT NULL)");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropCheckConstraint(
+                name: "CK_ComponentConfigurations_Owner",
+                table: "ComponentConfigurations");
+
             migrationBuilder.DropIndex(
                 name: "IX_ComponentConfigurations_Context_ComponentId_ConfigurationType",
                 table: "ComponentConfigurations");
@@ -147,6 +160,11 @@ namespace Verisoft.DemoApi.Data.EF.Migrations
                 columns: new[] { "Context", "ComponentId", "ConfigurationType", "UserId" },
                 unique: true,
                 filter: "[Level] = 2");
+
+            migrationBuilder.AddCheckConstraint(
+                name: "CK_ComponentConfigurations_Owner",
+                table: "ComponentConfigurations",
+                sql: "([Level] = 1 AND [UserId] IS NULL) OR ([Level] = 2 AND [UserId] IS NOT NULL)");
         }
     }
 }

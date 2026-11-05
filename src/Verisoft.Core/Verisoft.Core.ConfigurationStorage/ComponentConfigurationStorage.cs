@@ -189,12 +189,18 @@ internal sealed class ComponentConfigurationStorage<TContext>(
         foreach (var key in keys)
         {
             var matchesKey = Expression.AndAlso(
-                Expression.Equal(componentId, Expression.Constant(key.ComponentId)),
-                Expression.Equal(configurationType, Expression.Constant(key.ConfigurationType)));
+                Expression.Equal(componentId, Capture(key.ComponentId)),
+                Expression.Equal(configurationType, Capture(key.ConfigurationType)));
             predicate = predicate is null ? matchesKey : Expression.OrElse(predicate, matchesKey);
         }
 
         return Expression.Lambda<Func<ComponentConfiguration, bool>>(predicate!, configuration);
+    }
+
+    private static Expression Capture<TValue>(TValue value)
+    {
+        Expression<Func<TValue>> accessor = () => value;
+        return accessor.Body;
     }
 
     private static ConfigurationResponse? ToResponse(ComponentConfiguration? configuration)

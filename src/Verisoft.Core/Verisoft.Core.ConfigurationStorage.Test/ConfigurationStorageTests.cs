@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Data.Common;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text.Json;
@@ -20,6 +21,7 @@ public class ConfigurationStorageTests
     private ServiceProvider provider = null!;
     private StubUserContext identity = null!;
     private ConcurrentInsertInterceptor interceptor = null!;
+    private QueryCommandInterceptor queryInterceptor = null!;
 
     private static ConfigurationKey Key(string component = "users-list", string type = "table")
         => new() { ComponentId = component, ConfigurationType = type };
@@ -35,9 +37,11 @@ public class ConfigurationStorageTests
         connection.CreateCollation("Latin1_General_100_BIN2", string.CompareOrdinal);
         identity = new StubUserContext { User = Principal("alice") };
         interceptor = new ConcurrentInsertInterceptor(connection);
+        queryInterceptor = new QueryCommandInterceptor();
         provider = CreateProvider("app");
         using var scope = provider.CreateScope();
         await scope.ServiceProvider.GetRequiredService<StorageDbContext>().Database.EnsureCreatedAsync();
+        queryInterceptor.Clear();
     }
 
     [TearDown]
@@ -196,6 +200,21 @@ public class ConfigurationStorageTests
     }
 
     [Test]
+    public async Task BatchKeysAreSentAsSqlParameters()
+    {
+        const string componentId = "component-value-not-in-sql-text";
+        await Use(storage => storage.GetAsync([Key(componentId)]));
+        Assert.That(queryInterceptor.Commands, Has.Count.EqualTo(1));
+        Assert.That(queryInterceptor.Commands[0], Does.Not.Contain(componentId));
+
+        var firstCommand = queryInterceptor.Commands[0];
+        queryInterceptor.Clear();
+        await Use(storage => storage.GetAsync([Key("another-component-value")]));
+        Assert.That(queryInterceptor.Commands, Has.Count.EqualTo(1));
+        Assert.That(queryInterceptor.Commands[0], Is.EqualTo(firstCommand));
+    }
+
+    [Test]
     public void AnonymousOrMissingStableIdentityIsRejected()
     {
         identity.User = new ClaimsPrincipal(new ClaimsIdentity());
@@ -277,7 +296,7 @@ public class ConfigurationStorageTests
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddSingleton<IUserContext>(identity);
-        services.AddDbContext<StorageDbContext>(options => options.UseSqlite(connection).AddInterceptors(interceptor));
+        services.AddDbContext<StorageDbContext>(options => options.UseSqlite(connection).AddInterceptors(interceptor, queryInterceptor));
         services.AddConfigurationStorage<StorageDbContext>(options => options.Context = context);
         return services.BuildServiceProvider();
     }
@@ -351,5 +370,22 @@ internal sealed class ConcurrentInsertInterceptor(SqliteConnection connection) :
         }
 
         return result;
+    }
+}
+
+internal sealed class QueryCommandInterceptor : DbCommandInterceptor
+{
+    public List<string> Commands { get; } = [];
+
+    public void Clear() => Commands.Clear();
+
+    public override ValueTask<DbDataReader> ReaderExecutedAsync(
+        DbCommand command,
+        CommandExecutedEventData eventData,
+        DbDataReader result,
+        CancellationToken cancellationToken = default)
+    {
+        Commands.Add(command.CommandText);
+        return ValueTask.FromResult(result);
     }
 }
