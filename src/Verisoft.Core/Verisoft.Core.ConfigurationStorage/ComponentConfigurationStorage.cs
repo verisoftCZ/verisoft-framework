@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +17,7 @@ internal sealed class ComponentConfigurationStorage<TContext>(
     TimeProvider timeProvider) : IConfigurationStorage
     where TContext : DbContext
 {
+    private const int QueryBatchSize = 500;
     private readonly ConfigurationStorageOptions options = options.Value;
 
     public async Task<IReadOnlyList<ComponentConfigurationsResponse>> GetAsync(IReadOnlyCollection<ConfigurationKey> keys, CancellationToken cancellationToken = default)
@@ -26,20 +28,30 @@ internal sealed class ComponentConfigurationStorage<TContext>(
             ValidateKey(key);
         }
 
-        var componentIds = keys.Select(key => key.ComponentId).Distinct().ToArray();
-        var types = keys.Select(key => key.ConfigurationType).Distinct().ToArray();
-        var configurations = await dbContext.Set<ComponentConfiguration>().AsNoTracking()
+        if (keys.Count == 0)
+        {
+            return [];
+        }
+
+        var requestedKeys = keys.Distinct().ToArray();
+        var query = dbContext.Set<ComponentConfiguration>().AsNoTracking()
             .Where(configuration => configuration.Context == options.Context
-                && componentIds.Contains(configuration.ComponentId)
-                && types.Contains(configuration.ConfigurationType)
-                && (configuration.Level == ConfigurationLevel.Admin || (configuration.Level == ConfigurationLevel.User && configuration.UserId == userId)))
-            .ToListAsync(cancellationToken);
+                && (configuration.Level == ConfigurationLevel.Admin || (configuration.Level == ConfigurationLevel.User && configuration.UserId == userId)));
+        var configurations = new List<ComponentConfiguration>();
+        for (var index = 0; index < requestedKeys.Length; index += QueryBatchSize)
+        {
+            var keyBatch = requestedKeys.Skip(index).Take(QueryBatchSize).ToArray();
+            configurations.AddRange(await query.Where(BuildKeyPredicate(keyBatch)).ToListAsync(cancellationToken));
+        }
+
+        var configurationsByKey = configurations.ToDictionary(configuration =>
+            (configuration.ComponentId, configuration.ConfigurationType, configuration.Level));
 
         return keys.Select(key => new ComponentConfigurationsResponse(
             key.ComponentId,
             key.ConfigurationType,
-            ToResponse(configurations.SingleOrDefault(configuration => configuration.ComponentId == key.ComponentId && configuration.ConfigurationType == key.ConfigurationType && configuration.Level == ConfigurationLevel.Admin)),
-            ToResponse(configurations.SingleOrDefault(configuration => configuration.ComponentId == key.ComponentId && configuration.ConfigurationType == key.ConfigurationType && configuration.Level == ConfigurationLevel.User))))
+            configurationsByKey.TryGetValue((key.ComponentId, key.ConfigurationType, ConfigurationLevel.Admin), out var admin) ? ToResponse(admin) : null,
+            configurationsByKey.TryGetValue((key.ComponentId, key.ConfigurationType, ConfigurationLevel.User), out var user) ? ToResponse(user) : null))
             .ToArray();
     }
 
@@ -129,7 +141,9 @@ internal sealed class ComponentConfigurationStorage<TContext>(
         }
 
         var userId = principal.FindFirst(options.UserIdClaimType)?.Value;
-        if (string.IsNullOrWhiteSpace(userId) || userId.Length > 200)
+        if (string.IsNullOrWhiteSpace(userId)
+            || userId.Length > 200
+            || !string.Equals(userId, userId.Trim(), StringComparison.Ordinal))
         {
             throw new UnauthorizedAccessException("A stable user identifier is required.");
         }
@@ -145,6 +159,11 @@ internal sealed class ComponentConfigurationStorage<TContext>(
         }
 
         Validator.ValidateObject(key, new ValidationContext(key), true);
+        if (!string.Equals(key.ComponentId, key.ComponentId.Trim(), StringComparison.Ordinal)
+            || !string.Equals(key.ConfigurationType, key.ConfigurationType.Trim(), StringComparison.Ordinal))
+        {
+            throw new ValidationException("Configuration keys must not have leading or trailing whitespace.");
+        }
     }
 
     private void Apply(ComponentConfiguration configuration, SaveConfigurationRequest request)
@@ -152,6 +171,30 @@ internal sealed class ComponentConfigurationStorage<TContext>(
         configuration.Data = request.Data.GetRawText();
         configuration.SchemaVersion = request.SchemaVersion;
         configuration.UpdatedAt = timeProvider.GetUtcNow();
+        var entry = dbContext.Entry(configuration);
+        if (entry.State != EntityState.Added)
+        {
+            entry.Property(value => value.Data).IsModified = true;
+            entry.Property(value => value.SchemaVersion).IsModified = true;
+            entry.Property(value => value.UpdatedAt).IsModified = true;
+        }
+    }
+
+    private static Expression<Func<ComponentConfiguration, bool>> BuildKeyPredicate(IReadOnlyCollection<ConfigurationKey> keys)
+    {
+        var configuration = Expression.Parameter(typeof(ComponentConfiguration), "configuration");
+        var componentId = Expression.Property(configuration, nameof(ComponentConfiguration.ComponentId));
+        var configurationType = Expression.Property(configuration, nameof(ComponentConfiguration.ConfigurationType));
+        Expression? predicate = null;
+        foreach (var key in keys)
+        {
+            var matchesKey = Expression.AndAlso(
+                Expression.Equal(componentId, Expression.Constant(key.ComponentId)),
+                Expression.Equal(configurationType, Expression.Constant(key.ConfigurationType)));
+            predicate = predicate is null ? matchesKey : Expression.OrElse(predicate, matchesKey);
+        }
+
+        return Expression.Lambda<Func<ComponentConfiguration, bool>>(predicate!, configuration);
     }
 
     private static ConfigurationResponse? ToResponse(ComponentConfiguration? configuration)

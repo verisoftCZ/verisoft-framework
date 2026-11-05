@@ -129,17 +129,20 @@ namespace Verisoft.DemoApi.Database.Migrations
                     b.Property<string>("ComponentId")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("ConfigurationType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("Context")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -156,7 +159,8 @@ namespace Verisoft.DemoApi.Database.Migrations
 
                     b.Property<string>("UserId")
                         .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(200)")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.HasKey("Id");
 

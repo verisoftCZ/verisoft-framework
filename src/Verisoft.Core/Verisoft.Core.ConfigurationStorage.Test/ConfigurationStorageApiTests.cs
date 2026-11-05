@@ -35,6 +35,7 @@ public class ConfigurationStorageApiTests
     {
         connection = new SqliteConnection("Data Source=:memory:");
         await connection.OpenAsync();
+        connection.CreateCollation("Latin1_General_100_BIN2", string.CompareOrdinal);
         host = await new HostBuilder().ConfigureWebHost(webBuilder => webBuilder.UseTestServer()
             .ConfigureServices(services =>
             {

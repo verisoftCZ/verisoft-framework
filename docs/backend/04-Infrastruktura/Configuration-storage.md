@@ -25,6 +25,11 @@ Filtrované unikátní indexy zajišťují nejvýše jeden ADMIN záznam pro
 `Context + ComponentId + ConfigurationType + UserId`.
 Databázová omezení kontrolují soulad úrovně s vlastníkem a kladnou verzi schématu.
 Mapování a DemoApi migrace cílí na SQL Server; relační testy používají SQLite.
+Sloupce `Context`, `ComponentId`, `ConfigurationType` a `UserId` používají binární
+case-sensitive kolaci, aby SQL Server porovnával klíče stejně jako přesné ordinal
+porovnání v .NET. Identifikátor uživatele musí být stabilní; API odmítá identifikátory
+a konfigurační klíče s okrajovými mezerami, protože SQL Server by je při rovnosti
+řetězců mohl považovat za shodné.
 
 PUT je upsert: vytvoří záznam, nebo nahradí celý JSON a verzi existujícího záznamu,
 přičemž zachová jeho `Id`. Při kolizi dvou prvních uložení unikátní index zabrání
@@ -168,8 +173,10 @@ DemoApi používá kontext `DemoApi` a prefix `/api/v2/component-configurations`
 Lokální launch profil poslouchá na `http://localhost:6389`.
 Databáze a ostatní závislosti DemoApi musí být dostupné jako při běžném spouštění.
 
-Migrace `20261103143146_AddComponentConfigurationStorage` vytváří pouze novou
-tabulku, indexy a kontrolní omezení. `Down` tuto tabulku odstraní včetně jejího obsahu.
+Migrace `20261103143146_AddComponentConfigurationStorage` vytváří tabulku, indexy
+a kontrolní omezení. Navazující `20261105161804_ConfigurationStorageBinaryCollation`
+nastavuje binární kolaci klíčových sloupců a obnovuje unikátní indexy.
+Jejich `Down` operace odstraní tabulku, respektive vrátí původní kolaci.
 Příkazy spouštějte z kořene repozitáře:
 
 ```powershell
@@ -202,6 +209,11 @@ Relativní cesty v tabulce navazují na `/api/v2/component-configurations`:
 | PUT | /{componentId}/{configurationType}/admin | 200, upsert sdílené konfigurace; pouze administrátor |
 | DELETE | /{componentId}/{configurationType}/user | 204, nebo 404 pokud vlastní záznam neexistuje |
 | DELETE | /{componentId}/{configurationType}/admin | 204, nebo 404; pouze administrátor |
+
+Dávkový endpoint nemá limit počtu klíčů. Backend dotaz rozděluje do bloků po 500
+požadovaných dvojicích, takže nevytváří kartézské kombinace komponent a typů
+a drží počet SQL parametrů na blok v limitu SQL Serveru. Odpověď zachovává pořadí
+vstupu; opakovaný klíč se ve výsledku objeví opakovaně.
 
 Nepřihlášený klient dostane 401, nedostatečné oprávnění nebo chybějící stabilní
 identifikátor 403. Chybný JSON, chybějící `data`, nekladná verze, neplatný klíč

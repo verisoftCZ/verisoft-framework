@@ -5,6 +5,8 @@ using System.Text.Json;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Verisoft.Core.Authentication;
@@ -30,6 +32,7 @@ public class ConfigurationStorageTests
     {
         connection = new SqliteConnection("Data Source=:memory:");
         await connection.OpenAsync();
+        connection.CreateCollation("Latin1_General_100_BIN2", string.CompareOrdinal);
         identity = new StubUserContext { User = Principal("alice") };
         interceptor = new ConcurrentInsertInterceptor(connection);
         provider = CreateProvider("app");
@@ -77,6 +80,24 @@ public class ConfigurationStorageTests
         Assert.That(bob.Id, Is.Not.EqualTo(alice.Id));
         identity.User = Principal("alice");
         Assert.That((await Use(storage => storage.GetAsync([Key()]))).Single().User!.Id, Is.EqualTo(alice.Id));
+    }
+
+    [Test]
+    public async Task UserIdsAndConfigurationKeysUseOrdinalCaseSensitiveEquality()
+    {
+        var lowerCase = await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"owner\":\"lower\"}")));
+        identity.User = Principal("Alice");
+        Assert.That((await Use(storage => storage.GetAsync([Key()]))).Single().User, Is.Null);
+        var upperCase = await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"owner\":\"upper\"}")));
+        Assert.That(upperCase.Id, Is.Not.EqualTo(lowerCase.Id));
+
+        identity.User = Principal("alice");
+        var differentlyCasedKey = Key("Users-list");
+        Assert.That((await Use(storage => storage.GetAsync([differentlyCasedKey]))).Single().User, Is.Null);
+        var differentlyCasedRecord = await Use(storage => storage.UpsertAsync(differentlyCasedKey, ConfigurationLevel.User, Request("{\"key\":\"upper\"}")));
+        Assert.That(differentlyCasedRecord.Id, Is.Not.EqualTo(lowerCase.Id));
+        Assert.That((await Use(storage => storage.GetAsync([Key(), differentlyCasedKey]))).Select(result => result.User!.Id),
+            Is.EqualTo(new[] { lowerCase.Id, differentlyCasedRecord.Id }));
     }
 
     [Test]
@@ -158,6 +179,8 @@ public class ConfigurationStorageTests
     public void InvalidInputIsRejected()
     {
         Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key(" "), ConfigurationLevel.User, Request())));
+        Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key("users-list "), ConfigurationLevel.User, Request())));
+        Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key("users-list", "table "), ConfigurationLevel.User, Request())));
         Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key(new string('a', 201)), ConfigurationLevel.User, Request())));
         Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request(version: 0))));
         Assert.ThrowsAsync<ValidationException>(() => Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, new SaveConfigurationRequest { Data = default })));
@@ -168,8 +191,8 @@ public class ConfigurationStorageTests
     public async Task ServiceAcceptsEmptyAndLargeBatches()
     {
         Assert.That(await Use(storage => storage.GetAsync([])), Is.Empty);
-        var keys = Enumerable.Range(0, 101).Select(index => Key($"component-{index}")).ToArray();
-        Assert.That(await Use(storage => storage.GetAsync(keys)), Has.Count.EqualTo(101));
+        var keys = Enumerable.Range(0, 601).Select(index => Key($"component-{index}")).ToArray();
+        Assert.That(await Use(storage => storage.GetAsync(keys)), Has.Count.EqualTo(601));
     }
 
     [Test]
@@ -193,6 +216,21 @@ public class ConfigurationStorageTests
         Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync());
     }
 
+    [Test]
+    public void ConfigurationKeysAndOwnerUseBinaryCaseSensitiveCollation()
+    {
+        using var scope = provider.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<StorageDbContext>();
+        var entityType = context.GetService<IDesignTimeModel>().Model.FindEntityType(typeof(ComponentConfiguration))!;
+        Assert.Multiple(() =>
+        {
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.Context))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.ComponentId))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.ConfigurationType))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.UserId))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
+        });
+    }
+
     [TestCase(ConfigurationLevel.Admin, "alice")]
     [TestCase(ConfigurationLevel.User, null)]
     [TestCase((ConfigurationLevel)99, null)]
@@ -214,6 +252,24 @@ public class ConfigurationStorageTests
         Assert.That(result.Data.GetProperty("winner").GetBoolean(), Is.True);
         using var scope = provider.CreateScope();
         Assert.That(await scope.ServiceProvider.GetRequiredService<StorageDbContext>().Set<ComponentConfiguration>().CountAsync(), Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task UpsertReplacesFieldsEvenWhenNewValuesMatchTheTrackedSnapshot()
+    {
+        var original = Request("{\"value\":\"original\"}", 1);
+        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, original));
+
+        using var staleScope = provider.CreateScope();
+        var staleStorage = staleScope.ServiceProvider.GetRequiredService<IConfigurationStorage>();
+        await staleStorage.UpsertAsync(Key(), ConfigurationLevel.User, original);
+
+        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"value\":\"newer\"}", 2)));
+        await staleStorage.UpsertAsync(Key(), ConfigurationLevel.User, original);
+
+        var persisted = (await Use(storage => storage.GetAsync([Key()]))).Single().User!;
+        Assert.That(persisted.Data.GetProperty("value").GetString(), Is.EqualTo("original"));
+        Assert.That(persisted.SchemaVersion, Is.EqualTo(1));
     }
 
     private ServiceProvider CreateProvider(string context)

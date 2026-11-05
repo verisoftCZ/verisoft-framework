@@ -13,10 +13,10 @@ public sealed class ComponentConfigurationMapping : IEntityTypeConfiguration<Com
             table.HasCheckConstraint("CK_ComponentConfigurations_SchemaVersion", "[SchemaVersion] > 0");
         });
         builder.HasKey(configuration => configuration.Id);
-        builder.Property(configuration => configuration.Context).HasMaxLength(100).IsRequired();
-        builder.Property(configuration => configuration.ComponentId).HasMaxLength(200).IsRequired();
-        builder.Property(configuration => configuration.ConfigurationType).HasMaxLength(100).IsRequired();
-        builder.Property(configuration => configuration.UserId).HasMaxLength(200);
+        builder.Property(configuration => configuration.Context).HasMaxLength(100).UseCollation("Latin1_General_100_BIN2").IsRequired();
+        builder.Property(configuration => configuration.ComponentId).HasMaxLength(200).UseCollation("Latin1_General_100_BIN2").IsRequired();
+        builder.Property(configuration => configuration.ConfigurationType).HasMaxLength(100).UseCollation("Latin1_General_100_BIN2").IsRequired();
+        builder.Property(configuration => configuration.UserId).HasMaxLength(200).UseCollation("Latin1_General_100_BIN2");
         builder.Property(configuration => configuration.Data).IsRequired();
         builder.HasIndex(configuration => new { configuration.Context, configuration.ComponentId, configuration.ConfigurationType })
             .IsUnique().HasFilter("[Level] = 1");

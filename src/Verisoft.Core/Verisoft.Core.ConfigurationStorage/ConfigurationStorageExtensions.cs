@@ -26,7 +26,9 @@ public static class ConfigurationStorageExtensions
     {
         services.AddOptions<ConfigurationStorageOptions>()
             .Configure(options => configure?.Invoke(options))
-            .Validate(options => !string.IsNullOrWhiteSpace(options.Context) && options.Context.Length <= 100, "Context must contain 1 to 100 characters.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Context)
+                && options.Context.Length <= 100
+                && string.Equals(options.Context, options.Context.Trim(), StringComparison.Ordinal), "Context must contain 1 to 100 characters without leading or trailing whitespace.")
             .Validate(options => !string.IsNullOrWhiteSpace(options.UserIdClaimType), "UserIdClaimType is required.")
             .ValidateOnStart();
         services.AddAuthorization(options => options.AddPolicy(ConfigurationStorageOptions.AdminPolicy, policy =>
