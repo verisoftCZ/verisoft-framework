@@ -28,6 +28,8 @@ public static class InstallExtensions
     {
         services.AddExceptionHandler<InvalidSortPropertyExceptionHandler>();
         services.AddExceptionHandler<CrawlerExceptionHandler>();
+        services.AddExceptionHandler<ValidationExceptionHandler>();
+        services.AddExceptionHandler<UnauthorizedAccessExceptionHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
     }
 

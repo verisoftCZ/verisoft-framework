@@ -17,6 +17,7 @@ using Verisoft.Core.BlobStorage.InstallExtensions;
 using Verisoft.Core.Codebooks.Common.Extensions;
 using Verisoft.Core.Common.Configuration;
 using Verisoft.Core.Common.TypeMapper;
+using Verisoft.Core.ConfigurationStorage;
 using Verisoft.Core.Data.EntityFramework.Configuration;
 using Verisoft.Core.Data.EntityFramework.Walkers;
 using Verisoft.Core.HangFire;
@@ -79,6 +80,7 @@ public static class InstallExtensions
         RegisterDatabase(serviceCollection);
         RegisterRepositories(serviceCollection);
         RegisterAuthentication(serviceCollection, configuration);
+        RegisterConfigurationStorage(serviceCollection);
         RegisterMapper(serviceCollection);
         RegisterMonitoring(serviceCollection, configuration);
         RegisterHealthChecks(serviceCollection, configuration);
@@ -90,6 +92,13 @@ public static class InstallExtensions
         RegisterExceptionHandlers(serviceCollection);
         serviceCollection.AddVerisoftFluentValidation<ClientValidator>();
         serviceCollection.AddVerisoftExceptionHandlers();
+    }
+
+    private static void RegisterConfigurationStorage(IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddConfigurationStorage<DemoApiDbContext>(
+            options => options.Context = "DemoApi",
+            contextFactory: provider => (DemoApiDbContext)provider.GetRequiredService<IDemoApiDbContext>());
     }
 
     private static void RegisterTemplates(IServiceCollection serviceCollection)

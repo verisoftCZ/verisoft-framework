@@ -3,6 +3,7 @@ using Verisoft.Core.Authentication;
 using Verisoft.Core.Codebooks.Common.Entities.Configurations;
 using Verisoft.Core.Codebooks.Common.InstallExtensions.CodebookRegistration;
 using Verisoft.Core.Common.Configuration;
+using Verisoft.Core.ConfigurationStorage;
 using Verisoft.Core.Data.EntityFramework;
 using Verisoft.Core.Data.EntityFramework.Walkers;
 using Verisoft.DemoApi.Common.Entities;
@@ -27,8 +28,11 @@ public class DemoApiDbContext(IDatabaseConfig databaseConfig, ICodebookRegistry 
 
     public DbSet<CodebookParentEntity> CodebookParent { get; set; }
 
+    public DbSet<ComponentConfiguration> ComponentConfigurations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AddConfigurationStorage();
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DemoApiDbContext).Assembly);
         modelBuilder.HasDefaultSchema(databaseConfig.DefaultSchema);
