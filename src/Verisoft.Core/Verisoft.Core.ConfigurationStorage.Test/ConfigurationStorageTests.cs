@@ -364,6 +364,8 @@ public class ConfigurationStorageTests
             Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.ComponentId))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
             Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.ConfigurationType))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
             Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.UserId))!.GetCollation(), Is.EqualTo("Latin1_General_100_BIN2"));
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.Version))!.IsConcurrencyToken, Is.True);
+            Assert.That(entityType.FindProperty(nameof(ComponentConfiguration.IsDeleted))!.IsConcurrencyToken, Is.False);
         });
     }
 
@@ -382,7 +384,7 @@ public class ConfigurationStorageTests
     [TestCase(ConfigurationLevel.User, true)]
     [TestCase(ConfigurationLevel.Admin, false)]
     [TestCase(ConfigurationLevel.Admin, true)]
-    public async Task UpsertRetriesWhenLoadedConfigurationIsDeleted(ConfigurationLevel level, bool recreate)
+    public async Task UpsertConflictsWhenLoadedConfigurationIsDeleted(ConfigurationLevel level, bool recreate)
     {
         identity.User = Principal("administrator", true);
         var original = await Use(storage => storage.UpsertAsync(Key(), level, Request("\"original\"")));
@@ -396,17 +398,17 @@ public class ConfigurationStorageTests
             }
         };
 
-        var saved = await Use(storage => storage.UpsertAsync(Key(), level, Request("\"latest\"", 3)));
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => Use(storage => storage.UpsertAsync(Key(), level, Request("\"latest\"", 3))));
         var available = (await Use(storage => storage.GetAsync([Key()]))).Single();
         var persisted = level == ConfigurationLevel.User ? available.User : available.Admin;
-        Assert.That(persisted, Is.Not.Null);
-        Assert.That(persisted!.Id, Is.EqualTo(saved.Id));
-        Assert.That(persisted.Data.GetString(), Is.EqualTo("latest"));
-        Assert.That(persisted.SchemaVersion, Is.EqualTo(3));
-        Assert.That(saved.Id, Is.Not.EqualTo(original.Id));
         if (recreate)
         {
-            Assert.That(saved.Id, Is.EqualTo(recreatedId));
+            Assert.That(persisted!.Id, Is.EqualTo(recreatedId));
+            Assert.That(persisted.Data.GetString(), Is.EqualTo("recreated"));
+        }
+        else
+        {
+            Assert.That(persisted, Is.Null);
         }
 
         using var scope = provider.CreateScope();
@@ -414,24 +416,6 @@ public class ConfigurationStorageTests
             .Set<ComponentConfiguration>().IgnoreQueryFilters().SingleAsync(entity => entity.Id == original.Id);
         Assert.That(deleted.IsDeleted, Is.True);
         Assert.That(deleted.Data, Is.EqualTo("\"original\""));
-    }
-
-    [Test]
-    public async Task UpsertStopsAfterRepeatedConcurrentDeletes()
-    {
-        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
-        var attempts = 0;
-        async Task DeleteAndRecreate()
-        {
-            attempts++;
-            Assert.That(await Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)), Is.True);
-            await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
-            interceptor.BeforeSave = DeleteAndRecreate;
-        }
-
-        interceptor.BeforeSave = DeleteAndRecreate;
-        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("[]"))));
-        Assert.That(attempts, Is.EqualTo(3));
     }
 
     [TestCase(false)]
@@ -448,7 +432,7 @@ public class ConfigurationStorageTests
             }
         };
 
-        Assert.That(await Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)), Is.False);
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)));
         var persisted = (await Use(storage => storage.GetAsync([Key()]))).Single().User;
         if (recreate)
         {
@@ -461,15 +445,14 @@ public class ConfigurationStorageTests
     }
 
     [Test]
-    public async Task ConcurrentFirstInsertIsRetriedAsUpdate()
+    public async Task ConcurrentFirstInsertSurfacesUniqueConflict()
     {
         interceptor.Enabled = true;
-        var result = await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"winner\":true}", 3)));
-        Assert.That(result.Id, Is.EqualTo(interceptor.InsertedId));
-        Assert.That(result.SchemaVersion, Is.EqualTo(3));
-        Assert.That(result.Data.GetProperty("winner").GetBoolean(), Is.True);
+        Assert.ThrowsAsync<DbUpdateException>(() => Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"winner\":true}", 3))));
         using var scope = provider.CreateScope();
-        Assert.That(await scope.ServiceProvider.GetRequiredService<StorageDbContext>().Set<ComponentConfiguration>().CountAsync(), Is.EqualTo(1));
+        var stored = await scope.ServiceProvider.GetRequiredService<StorageDbContext>().Set<ComponentConfiguration>().SingleAsync();
+        Assert.That(stored.Id, Is.EqualTo(interceptor.InsertedId));
+        Assert.That(stored.Data, Is.EqualTo("{}"));
     }
 
     [Test]
@@ -483,11 +466,11 @@ public class ConfigurationStorageTests
         await staleStorage.UpsertAsync(Key(), ConfigurationLevel.User, original);
 
         await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("{\"value\":\"newer\"}", 2)));
-        await staleStorage.UpsertAsync(Key(), ConfigurationLevel.User, original);
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => staleStorage.UpsertAsync(Key(), ConfigurationLevel.User, original));
 
         var persisted = (await Use(storage => storage.GetAsync([Key()]))).Single().User!;
-        Assert.That(persisted.Data.GetProperty("value").GetString(), Is.EqualTo("original"));
-        Assert.That(persisted.SchemaVersion, Is.EqualTo(1));
+        Assert.That(persisted.Data.GetProperty("value").GetString(), Is.EqualTo("newer"));
+        Assert.That(persisted.SchemaVersion, Is.EqualTo(2));
     }
 
     [TestCase(null, "sub")]

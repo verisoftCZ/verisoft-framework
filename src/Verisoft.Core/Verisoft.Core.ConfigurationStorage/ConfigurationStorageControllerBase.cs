@@ -26,18 +26,21 @@ public abstract class ConfigurationStorageControllerBase(IConfigurationStorage s
 
     [HttpPut("{componentId}/{configurationType}/user")]
     [ProducesResponseType(typeof(ConfigurationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ConfigurationResponse>> SaveUser(string componentId, string configurationType, SaveConfigurationRequest request, CancellationToken cancellationToken)
         => Ok(await storage.UpsertAsync(Key(componentId, configurationType), ConfigurationLevel.User, request, cancellationToken));
 
     [HttpPut("{componentId}/{configurationType}/admin")]
     [Authorize(Policy = ConfigurationStorageOptions.AdminPolicy)]
     [ProducesResponseType(typeof(ConfigurationResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ConfigurationResponse>> SaveAdmin(string componentId, string configurationType, SaveConfigurationRequest request, CancellationToken cancellationToken)
         => Ok(await storage.UpsertAsync(Key(componentId, configurationType), ConfigurationLevel.Admin, request, cancellationToken));
 
     [HttpDelete("{componentId}/{configurationType}/user")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteUser(string componentId, string configurationType, CancellationToken cancellationToken)
         => await storage.DeleteAsync(Key(componentId, configurationType), ConfigurationLevel.User, cancellationToken) ? NoContent() : NotFound();
 
@@ -45,6 +48,7 @@ public abstract class ConfigurationStorageControllerBase(IConfigurationStorage s
     [Authorize(Policy = ConfigurationStorageOptions.AdminPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteAdmin(string componentId, string configurationType, CancellationToken cancellationToken)
         => await storage.DeleteAsync(Key(componentId, configurationType), ConfigurationLevel.Admin, cancellationToken) ? NoContent() : NotFound();
 

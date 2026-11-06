@@ -182,6 +182,7 @@ z databáze. Další PUT vytvoří konfiguraci s novým `id`.
 | Chybějící nebo neplatné přihlášení | `401 Unauthorized` |
 | Chybějící oprávnění nebo stabilní identifikátor uživatele | `403 Forbidden` |
 | Neplatný JSON, chybějící `data`, nekladná verze nebo neplatný klíč/dávka | `400 Bad Request` |
+| Souběžná změna záznamu během zápisu nebo mazání | `409 Conflict` |
 | Čtení neuložené konfigurace | `200 OK`, chybějící úrovně jsou `null` |
 | Smazání neuložené konfigurace | `404 Not Found` |
 
@@ -193,6 +194,10 @@ z databáze. Další PUT vytvoří konfiguraci s novým `id`.
   ne klient; DemoApi používá `DemoApi`. Nejde automaticky o bezpečné oddělení tenantů.
 - DemoApi vrací `level` jako řetězec `Admin` nebo `User`; v jiném hostiteli záleží
   na nastavení JSON serializace.
+- Při konfliktu `rowversion` server zápis neopakuje ani nepřepisuje souběžnou změnu;
+  klient dostane `409 Conflict` a může znovu načíst aktuální konfiguraci. Verze
+  není posílána klientovi, takže ochrana se týká souběžných zápisů v databázi,
+  nikoli úprav založených na dávno načteném stavu na klientovi.
 
 ## Zapojení na backendu
 

@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 using Verisoft.Core.AspNet;
+using Verisoft.Core.AspNet.Concurency.Extensions;
 using Verisoft.Core.Authentication;
 
 namespace Verisoft.Core.ConfigurationStorage.Test;
@@ -42,6 +43,7 @@ public class ConfigurationStorageApiTests
             {
                 services.AddLogging();
                 services.AddProblemDetails();
+                services.AddConcurency<StorageDbContext>();
                 services.AddVerisoftExceptionHandlers();
                 services.AddHttpContextAccessor();
                 services.AddScoped<IUserContext>(provider => new StubUserContext
@@ -83,6 +85,15 @@ public class ConfigurationStorageApiTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         Assert.That(problem!.Errors["name"], Is.EqualTo(new[] { "Name is required." }));
+    }
+
+    [Test]
+    public async Task ConcurrencyErrorsUseFramework409Handler()
+    {
+        var response = await client.GetAsync("/shared-errors/concurrency");
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Conflict));
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        Assert.That(problem!.Title, Is.EqualTo("Concurrency conflict"));
     }
 
     [TestCase("forbidden", HttpStatusCode.Forbidden)]
@@ -248,6 +259,7 @@ public sealed class TestErrorsController : ControllerBase
     [HttpGet("{kind}")]
     public IActionResult Get(string kind) => throw (kind switch
     {
+        "concurrency" => new DbUpdateConcurrencyException("concurrent update"),
         "validation" => new System.ComponentModel.DataAnnotations.ValidationException(
             new System.ComponentModel.DataAnnotations.ValidationResult("Name is required.", ["name", "name"]), null, null),
         "forbidden" => new UnauthorizedAccessException("private exception detail"),

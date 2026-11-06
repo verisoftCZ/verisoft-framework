@@ -9,7 +9,6 @@ public sealed class ComponentConfigurationRepository(EntityFrameworkDbContextBas
     : EntityFrameworkRepositoryBase<ComponentConfiguration, Guid>(dbContext), IComponentConfigurationRepository
 {
     private const int QueryBatchSize = 500;
-    private const int MaxWriteAttempts = 3;
 
     public async Task<IReadOnlyList<ComponentConfiguration>> GetAvailableAsync(string context, string userId, IReadOnlyCollection<ConfigurationKey> keys, CancellationToken cancellationToken = default)
     {
@@ -36,57 +35,25 @@ public sealed class ComponentConfigurationRepository(EntityFrameworkDbContextBas
     {
         var key = new ConfigurationKey { ComponentId = replacement.ComponentId, ConfigurationType = replacement.ConfigurationType };
         var configuration = await FindAsync(replacement.Context, key, replacement.Level, replacement.UserId, cancellationToken);
-        for (var attempt = 1; ; attempt++)
+        if (configuration is null)
         {
-            var isNew = configuration is null;
-            if (configuration is null)
-            {
-                configuration = replacement;
-                await AddAsync(configuration);
-            }
-            else
-            {
-                Apply(configuration, replacement);
-            }
-
-            try
-            {
-                await UnitOfWork.CommitAsync(cancellationToken);
-                return configuration;
-            }
-            catch (DbUpdateConcurrencyException exception) when (!isNew && attempt < MaxWriteAttempts
-                && exception.Entries.Count == 1 && ReferenceEquals(exception.Entries[0].Entity, configuration))
-            {
-                dbContext.Entry(configuration).State = EntityState.Detached;
-                configuration = await FindAsync(replacement.Context, key, replacement.Level, replacement.UserId, cancellationToken);
-            }
-            catch (DbUpdateException exception) when (isNew && attempt < MaxWriteAttempts
-                && exception.Entries.Count == 1 && ReferenceEquals(exception.Entries[0].Entity, configuration))
-            {
-                dbContext.Entry(configuration).State = EntityState.Detached;
-                configuration = await FindAsync(replacement.Context, key, replacement.Level, replacement.UserId, cancellationToken);
-                if (configuration is null)
-                {
-                    throw;
-                }
-            }
+            configuration = replacement;
+            await AddAsync(configuration);
         }
+        else
+        {
+            Apply(configuration, replacement);
+        }
+
+        await UnitOfWork.CommitAsync(cancellationToken);
+        return configuration;
     }
 
     public async Task<bool> DeleteAsync(ComponentConfiguration configuration, CancellationToken cancellationToken = default)
     {
         Remove(configuration);
-        try
-        {
-            await UnitOfWork.CommitAsync(cancellationToken);
-            return true;
-        }
-        catch (DbUpdateConcurrencyException exception) when (exception.Entries.Count == 1
-            && ReferenceEquals(exception.Entries[0].Entity, configuration))
-        {
-            dbContext.Entry(configuration).State = EntityState.Detached;
-            return false;
-        }
+        await UnitOfWork.CommitAsync(cancellationToken);
+        return true;
     }
 
     private void Apply(ComponentConfiguration configuration, ComponentConfiguration replacement)
