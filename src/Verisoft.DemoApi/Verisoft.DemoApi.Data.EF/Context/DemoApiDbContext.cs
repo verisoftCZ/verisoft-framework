@@ -28,6 +28,8 @@ public class DemoApiDbContext(IDatabaseConfig databaseConfig, ICodebookRegistry 
 
     public DbSet<CodebookParentEntity> CodebookParent { get; set; }
 
+    public DbSet<ComponentConfiguration> ComponentConfigurations { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.AddConfigurationStorage();

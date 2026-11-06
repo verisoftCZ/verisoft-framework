@@ -8,7 +8,7 @@ public enum ConfigurationLevel
     User = 2,
 }
 
-public sealed class ComponentConfiguration : BaseEntity<Guid>
+public sealed class ComponentConfiguration : BaseEntity<Guid>, IOptimisticLockable
 {
     public required string Context { get; set; }
 
@@ -23,4 +23,6 @@ public sealed class ComponentConfiguration : BaseEntity<Guid>
     public required string Data { get; set; }
 
     public int SchemaVersion { get; set; } = 1;
+
+    public byte[] Version { get; set; } = [];
 }

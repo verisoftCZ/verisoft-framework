@@ -9,7 +9,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Verisoft.Core.Authentication;
 using Verisoft.Core.Data.EntityFramework;
@@ -376,6 +378,88 @@ public class ConfigurationStorageTests
         Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync());
     }
 
+    [TestCase(ConfigurationLevel.User, false)]
+    [TestCase(ConfigurationLevel.User, true)]
+    [TestCase(ConfigurationLevel.Admin, false)]
+    [TestCase(ConfigurationLevel.Admin, true)]
+    public async Task UpsertRetriesWhenLoadedConfigurationIsDeleted(ConfigurationLevel level, bool recreate)
+    {
+        identity.User = Principal("administrator", true);
+        var original = await Use(storage => storage.UpsertAsync(Key(), level, Request("\"original\"")));
+        Guid? recreatedId = null;
+        interceptor.BeforeSave = async () =>
+        {
+            Assert.That(await Use(storage => storage.DeleteAsync(Key(), level)), Is.True);
+            if (recreate)
+            {
+                recreatedId = (await Use(storage => storage.UpsertAsync(Key(), level, Request("\"recreated\"")))).Id;
+            }
+        };
+
+        var saved = await Use(storage => storage.UpsertAsync(Key(), level, Request("\"latest\"", 3)));
+        var available = (await Use(storage => storage.GetAsync([Key()]))).Single();
+        var persisted = level == ConfigurationLevel.User ? available.User : available.Admin;
+        Assert.That(persisted, Is.Not.Null);
+        Assert.That(persisted!.Id, Is.EqualTo(saved.Id));
+        Assert.That(persisted.Data.GetString(), Is.EqualTo("latest"));
+        Assert.That(persisted.SchemaVersion, Is.EqualTo(3));
+        Assert.That(saved.Id, Is.Not.EqualTo(original.Id));
+        if (recreate)
+        {
+            Assert.That(saved.Id, Is.EqualTo(recreatedId));
+        }
+
+        using var scope = provider.CreateScope();
+        var deleted = await scope.ServiceProvider.GetRequiredService<StorageDbContext>()
+            .Set<ComponentConfiguration>().IgnoreQueryFilters().SingleAsync(entity => entity.Id == original.Id);
+        Assert.That(deleted.IsDeleted, Is.True);
+        Assert.That(deleted.Data, Is.EqualTo("\"original\""));
+    }
+
+    [Test]
+    public async Task UpsertStopsAfterRepeatedConcurrentDeletes()
+    {
+        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
+        var attempts = 0;
+        async Task DeleteAndRecreate()
+        {
+            attempts++;
+            Assert.That(await Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)), Is.True);
+            await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
+            interceptor.BeforeSave = DeleteAndRecreate;
+        }
+
+        interceptor.BeforeSave = DeleteAndRecreate;
+        Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("[]"))));
+        Assert.That(attempts, Is.EqualTo(3));
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task ConcurrentDeleteDoesNotDeleteRecreatedConfiguration(bool recreate)
+    {
+        await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request()));
+        interceptor.BeforeSave = async () =>
+        {
+            Assert.That(await Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)), Is.True);
+            if (recreate)
+            {
+                await Use(storage => storage.UpsertAsync(Key(), ConfigurationLevel.User, Request("[]")));
+            }
+        };
+
+        Assert.That(await Use(storage => storage.DeleteAsync(Key(), ConfigurationLevel.User)), Is.False);
+        var persisted = (await Use(storage => storage.GetAsync([Key()]))).Single().User;
+        if (recreate)
+        {
+            Assert.That(persisted!.Data.ValueKind, Is.EqualTo(JsonValueKind.Array));
+        }
+        else
+        {
+            Assert.That(persisted, Is.Null);
+        }
+    }
+
     [Test]
     public async Task ConcurrentFirstInsertIsRetriedAsUpdate()
     {
@@ -404,6 +488,43 @@ public class ConfigurationStorageTests
         var persisted = (await Use(storage => storage.GetAsync([Key()]))).Single().User!;
         Assert.That(persisted.Data.GetProperty("value").GetString(), Is.EqualTo("original"));
         Assert.That(persisted.SchemaVersion, Is.EqualTo(1));
+    }
+
+    [TestCase(null, "sub")]
+    [TestCase("", "sub")]
+    [TestCase(" ", "sub")]
+    [TestCase(" app", "sub")]
+    [TestCase("app ", "sub")]
+    [TestCase("app", null)]
+    [TestCase("app", "")]
+    [TestCase("app", " ")]
+    public void OptionsRejectInvalidValues(string? context, string? claimType)
+    {
+        using var optionsProvider = CreateProvider(context!, claimType!);
+        Assert.Throws<OptionsValidationException>(() => _ = optionsProvider.GetRequiredService<IOptions<ConfigurationStorageOptions>>().Value);
+    }
+
+    [TestCase(100, true)]
+    [TestCase(101, false)]
+    public void OptionsValidateContextLength(int length, bool valid)
+    {
+        using var optionsProvider = CreateProvider(new string('a', length));
+        if (valid)
+        {
+            Assert.That(optionsProvider.GetRequiredService<IOptions<ConfigurationStorageOptions>>().Value.Context, Has.Length.EqualTo(length));
+        }
+        else
+        {
+            Assert.Throws<OptionsValidationException>(() => _ = optionsProvider.GetRequiredService<IOptions<ConfigurationStorageOptions>>().Value);
+        }
+    }
+
+    [Test]
+    public void InvalidOptionsFailAtHostStartup()
+    {
+        using var host = new HostBuilder().ConfigureServices(services =>
+            services.AddConfigurationStorage<StorageDbContext>(options => options.Context = null!)).Build();
+        Assert.ThrowsAsync<OptionsValidationException>(() => host.StartAsync());
     }
 
     private ServiceProvider CreateProvider(string context, string userIdClaimType = ClaimTypes.NameIdentifier)
@@ -444,18 +565,39 @@ public class ConfigurationStorageTests
 public sealed class StorageDbContext(DbContextOptions<StorageDbContext> options, IUserContext userContext)
     : EntityFrameworkDbContextBase(userContext, new WalkerFactory(NullLogger<CascadeWalker>.Instance), TimeProvider.System)
 {
+    public DbSet<ComponentConfiguration> ComponentConfigurations { get; set; } = null!;
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         foreach (var extension in options.Extensions)
         {
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
         }
+
+        optionsBuilder.AddInterceptors(
+            new Verisoft.Core.AspNet.Concurency.DataInterceptors.OptimisticConcurrencyInterceptor(),
+            new SqliteRowVersionInterceptor());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.AddConfigurationStorage();
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<ComponentConfiguration>().Property(configuration => configuration.Version).ValueGeneratedNever();
+    }
+}
+
+internal sealed class SqliteRowVersionInterceptor : SaveChangesInterceptor
+{
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in eventData.Context!.ChangeTracker.Entries<ComponentConfiguration>()
+            .Where(entry => entry.State is EntityState.Added or EntityState.Modified))
+        {
+            entry.Property(configuration => configuration.Version).CurrentValue = System.Security.Cryptography.RandomNumberGenerator.GetBytes(8);
+        }
+
+        return ValueTask.FromResult(result);
     }
 }
 
@@ -477,6 +619,8 @@ internal sealed class StubUserContext : IUserContext
 internal sealed class ConcurrentInsertInterceptor(SqliteConnection connection) : SaveChangesInterceptor
 {
     public bool Enabled { get; set; }
+
+    public Func<Task>? BeforeSave { get; set; }
 
     public Guid InsertedId { get; private set; }
 
@@ -500,6 +644,13 @@ internal sealed class ConcurrentInsertInterceptor(SqliteConnection connection) :
                 Data = "{}",
             });
             await other.SaveChangesAsync(cancellationToken);
+        }
+
+        var beforeSave = BeforeSave;
+        BeforeSave = null;
+        if (beforeSave is not null)
+        {
+            await beforeSave();
         }
 
         return result;

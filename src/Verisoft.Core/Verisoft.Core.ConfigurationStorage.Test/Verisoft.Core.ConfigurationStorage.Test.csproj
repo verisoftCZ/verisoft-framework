@@ -23,5 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Verisoft.Core.ConfigurationStorage\Verisoft.Core.ConfigurationStorage.csproj" />
     <ProjectReference Include="..\Verisoft.Core.AspNet\Verisoft.Core.AspNet.csproj" />
+    <ProjectReference Include="..\Verisoft.Core.AspNet.Concurency\Verisoft.Core.AspNet.Concurency.csproj" />
   </ItemGroup>
 </Project>

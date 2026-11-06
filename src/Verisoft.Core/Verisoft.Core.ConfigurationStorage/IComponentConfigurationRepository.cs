@@ -9,4 +9,6 @@ public interface IComponentConfigurationRepository : IRepository<ComponentConfig
     Task<ComponentConfiguration?> FindAsync(string context, ConfigurationKey key, ConfigurationLevel level, string? owner, CancellationToken cancellationToken = default);
 
     Task<ComponentConfiguration> UpsertAsync(ComponentConfiguration replacement, CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteAsync(ComponentConfiguration configuration, CancellationToken cancellationToken = default);
 }

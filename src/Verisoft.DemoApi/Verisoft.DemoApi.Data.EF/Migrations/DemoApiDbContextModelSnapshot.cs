@@ -157,6 +157,7 @@ namespace Verisoft.DemoApi.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
+                        .IsConcurrencyToken()
                         .HasColumnType("bit");
 
                     b.Property<int>("Level")

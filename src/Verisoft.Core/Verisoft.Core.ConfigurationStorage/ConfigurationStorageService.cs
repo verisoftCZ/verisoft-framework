@@ -64,9 +64,7 @@ public sealed class ConfigurationStorageService(
             return false;
         }
 
-        repository.Remove(configuration);
-        await repository.UnitOfWork.CommitAsync(cancellationToken);
-        return true;
+        return await repository.DeleteAsync(configuration, cancellationToken);
     }
 
     private async Task<string?> GetOwnerAsync(ConfigurationLevel level)

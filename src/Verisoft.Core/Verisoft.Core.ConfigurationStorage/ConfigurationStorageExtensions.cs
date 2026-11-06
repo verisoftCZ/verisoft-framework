@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,10 @@ namespace Verisoft.Core.ConfigurationStorage;
 
 public sealed class ConfigurationStorageOptions
 {
+    [Required, StringLength(100, MinimumLength = 1)]
     public string Context { get; set; } = "default";
 
+    [Required]
     public string UserIdClaimType { get; set; } = ClaimTypes.NameIdentifier;
 
     public const string AdminPolicy = "ConfigurationStorage.Admin";
@@ -27,10 +30,9 @@ public static class ConfigurationStorageExtensions
     {
         services.AddOptions<ConfigurationStorageOptions>()
             .Configure(options => configure?.Invoke(options))
-            .Validate(options => !string.IsNullOrWhiteSpace(options.Context)
-                && options.Context.Length <= 100
-                && string.Equals(options.Context, options.Context.Trim(), StringComparison.Ordinal), "Context must contain 1 to 100 characters without leading or trailing whitespace.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.UserIdClaimType), "UserIdClaimType is required.")
+            .ValidateDataAnnotations()
+            .Validate(options => options.Context is null
+                || string.Equals(options.Context, options.Context.Trim(), StringComparison.Ordinal), "Context must not have leading or trailing whitespace.")
             .ValidateOnStart();
         services.AddAuthorization(options => options.AddPolicy(ConfigurationStorageOptions.AdminPolicy, policy =>
         {
