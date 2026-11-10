@@ -120,6 +120,87 @@ namespace Verisoft.DemoApi.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Verisoft.Core.ConfigurationStorage.ComponentConfiguration", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ComponentId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("ConfigurationType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SchemaVersion")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .UseCollation("Latin1_General_100_BIN2");
+
+                    b.Property<byte[]>("Version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Context", "ComponentId", "ConfigurationType")
+                        .IsUnique()
+                        .HasFilter("([Level] = 1) AND [IsDeleted] = CAST(0 AS bit)");
+
+                    b.HasIndex("Context", "ComponentId", "ConfigurationType", "UserId")
+                        .IsUnique()
+                        .HasFilter("([Level] = 2) AND [IsDeleted] = CAST(0 AS bit)");
+
+                    b.ToTable("ComponentConfigurations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ComponentConfigurations_Owner", "([Level] = 1 AND [UserId] IS NULL) OR ([Level] = 2 AND [UserId] IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_ComponentConfigurations_SchemaVersion", "[SchemaVersion] > 0");
+                        });
+                });
+
             modelBuilder.Entity("Verisoft.DemoApi.Common.Entities.BlobEntity", b =>
                 {
                     b.Property<int>("Id")

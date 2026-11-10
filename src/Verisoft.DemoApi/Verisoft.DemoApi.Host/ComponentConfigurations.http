@@ -1,0 +1,69 @@
+@baseUrl = http://localhost:6389/api
+@token = replace-with-user-bearer-token
+@adminToken = replace-with-admin-bearer-token
+
+### Create or replace the current user's configuration
+PUT {{baseUrl}}/v2/component-configurations/users-list/table/user
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "data": {
+    "columns": [
+      { "key": "firstName", "visible": true, "order": 1, "width": 200 },
+      { "key": "email", "visible": false, "order": 2 }
+    ],
+    "pageSize": 25,
+    "density": "compact"
+  },
+  "schemaVersion": 1
+}
+
+### Create or replace the shared ADMIN default
+PUT {{baseUrl}}/v2/component-configurations/users-list/table/admin
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "data": { "pageSize": 50, "density": "normal" },
+  "schemaVersion": 1
+}
+
+### Read both levels without merging
+GET {{baseUrl}}/v2/component-configurations/users-list/table
+Authorization: Bearer {{token}}
+
+### Read multiple components and configuration types
+POST {{baseUrl}}/v2/component-configurations/query
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "configurations": [
+    { "componentId": "users-list", "configurationType": "table" },
+    { "componentId": "users-list", "configurationType": "export" },
+    { "componentId": "dashboard-main", "configurationType": "widgets" }
+  ]
+}
+
+### Remove the current user's override (204; subsequent delete returns 404)
+DELETE {{baseUrl}}/v2/component-configurations/users-list/table/user
+Authorization: Bearer {{token}}
+
+### Remove the shared ADMIN default
+DELETE {{baseUrl}}/v2/component-configurations/users-list/table/admin
+Authorization: Bearer {{adminToken}}
+
+### After both deletes: 200 with admin: null and user: null
+GET {{baseUrl}}/v2/component-configurations/users-list/table
+Authorization: Bearer {{token}}
+
+### A regular user's attempt to change ADMIN settings must return 403
+PUT {{baseUrl}}/v2/component-configurations/users-list/table/admin
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "data": {},
+  "schemaVersion": 1
+}
